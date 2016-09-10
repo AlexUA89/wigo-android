@@ -3,7 +3,10 @@ package com.wigo.android.core;
 import android.app.Application;
 import android.content.Context;
 
+import com.facebook.FacebookSdk;
+import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wigo.android.core.server.requestapi.WigoRestClient;
 
 /**
  * Created with IntelliJ IDEA.
@@ -18,10 +21,17 @@ public class ContextProvider extends Application {
 
     private static ObjectMapper objectMapper;
 
+    private static WigoRestClient wigoRestClient;
+
     @Override
     public void onCreate() {
         super.onCreate();
         instance = this;
+        //facebook initialization
+        FacebookSdk.sdkInitialize(getApplicationContext());
+        AppEventsLogger.activateApp(this);
+
+        wigoRestClient = new WigoRestClient();
     }
 
     synchronized public static ContextProvider getInstance() {
@@ -37,5 +47,17 @@ public class ContextProvider extends Application {
             objectMapper = new ObjectMapper();
         }
         return objectMapper;
+    }
+
+    public static void setInstance(ContextProvider instance) {
+        ContextProvider.instance = instance;
+    }
+
+    public static WigoRestClient getWigoRestClient() {
+        return wigoRestClient;
+    }
+
+    public static void setWigoRestClient(WigoRestClient wigoRestClient) {
+        ContextProvider.wigoRestClient = wigoRestClient;
     }
 }

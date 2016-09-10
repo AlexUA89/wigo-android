@@ -1,15 +1,10 @@
 package com.wigo.android.ui;
 
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
-import android.content.pm.Signature;
 import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
-import android.util.Base64;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -17,23 +12,14 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
-import com.facebook.FacebookSdk;
-import com.facebook.appevents.AppEventsLogger;
 import com.wigo.android.R;
-import com.wigo.android.core.AppLog;
 import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.preferences.SharedPrefHelper;
-import com.wigo.android.core.server.dto.LoginResponseDto;
-import com.wigo.android.core.server.requestapi.ServerRequestAdapter;
 import com.wigo.android.ui.fragments.ChatFragment;
 import com.wigo.android.ui.fragments.MapFragment;
 import com.wigo.android.ui.slidingmenu.NavDrawerItem;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity {
@@ -139,28 +125,28 @@ public class MainActivity extends FragmentActivity {
 //            }
 //        });
 
-//        MapFragment fragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
-        ChatFragment fragment = (ChatFragment) getSupportFragmentManager().findFragmentByTag(ChatFragment.FRAGMENT_TAG);
+        MapFragment fragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
+//        ChatFragment fragment = (ChatFragment) getSupportFragmentManager().findFragmentByTag(ChatFragment.FRAGMENT_TAG);
         if(fragment == null) {
 //            fragment = new MapFragment();
-            fragment = new ChatFragment();
+            fragment = new MapFragment();
             Bundle args = new Bundle();
             args.putString(ChatFragment.TO_USER_ID, SharedPrefHelper.getUserId(null));
             fragment.setArguments(args);
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, ChatFragment.FRAGMENT_TAG).commit();
         }
 
-        ServerRequestAdapter.singinRequest("alexua89@gmail.com", "qweqwe", new Response.Listener<LoginResponseDto>() {
-            @Override
-            public void onResponse(LoginResponseDto response) {
-                System.out.println(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                AppLog.D("DEVELOP", new String(error.networkResponse.data));
-            }
-        });
+//        ServerRequestAdapter.singinRequest("alexua89@gmail.com", "qweqwe", new Response.Listener<LoginResponseDto>() {
+//            @Override
+//            public void onResponse(LoginResponseDto response) {
+//                System.out.println(response);
+//            }
+//        }, new Response.ErrorListener() {
+//            @Override
+//            public void onErrorResponse(VolleyError error) {
+//                AppLog.D("DEVELOP", new String(error.networkResponse.data));
+//            }
+//        });
 
     }
 

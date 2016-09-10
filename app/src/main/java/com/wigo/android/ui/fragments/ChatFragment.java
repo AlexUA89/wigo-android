@@ -20,8 +20,6 @@ import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.SendingMessageResponseDto;
 import com.wigo.android.core.server.socketapi.SocketHelper;
 import com.wigo.android.ui.base.BaseTextWatcher;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
 
 import java.util.ArrayList;
 
@@ -107,26 +105,26 @@ public class ChatFragment extends Fragment {
         });
     }
 
-    com.android.volley.Response.Listener<SendingMessageResponseDto> sendMessageListener = new Response.Listener<SendingMessageResponseDto>() {
-        @Override
-        public void onResponse(SendingMessageResponseDto response) {
-            Database db = DBManager.getDatabase();
-            long messageId = DBConstants.DEFAULT_ROW_ID;
-            if (db.open()) {
-                //TODO change
-//                messageId = db.insertNewDBStorable(new Message(response.getData()));
-            }
-            Message msg = (Message) db.selectDBStorableByTypeAndId(Message.TypeID, messageId);
-            db.close();
-            System.out.println("Have sent");
-        }
-    };
-
-    Response.ErrorListener errorSendMessageListener = new Response.ErrorListener() {
-        @Override
-        public void onErrorResponse(VolleyError error) {
-            System.out.println("Error");
-        }
-    };
+//    com.android.volley.Response.Listener<SendingMessageResponseDto> sendMessageListener = new Response.Listener<SendingMessageResponseDto>() {
+//        @Override
+//        public void onResponse(SendingMessageResponseDto response) {
+//            Database db = DBManager.getDatabase();
+//            long messageId = DBConstants.DEFAULT_ROW_ID;
+//            if (db.open()) {
+//                //TODO change
+////                messageId = db.insertNewDBStorable(new Message(response.getData()));
+//            }
+//            Message msg = (Message) db.selectDBStorableByTypeAndId(Message.TypeID, messageId);
+//            db.close();
+//            System.out.println("Have sent");
+//        }
+//    };
+//
+//    Response.ErrorListener errorSendMessageListener = new Response.ErrorListener() {
+//        @Override
+//        public void onErrorResponse(VolleyError error) {
+//            System.out.println("Error");
+//        }
+//    };
 
 }
