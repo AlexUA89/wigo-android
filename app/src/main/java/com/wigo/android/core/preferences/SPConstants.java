@@ -31,4 +31,6 @@ class SPConstants {
 
     public static final String Y_GLOBAL = "y_global";
 
+    public static final String FACEBOOK_TOKEN = "FACEBOOK_TOKEN";
+
 }

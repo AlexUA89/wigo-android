@@ -55,8 +55,16 @@ public class SharedPrefHelper {
         getEditor().putString(SPConstants.EMAIL, email).commit();
     }
 
+    public static void setFacebookTooken(String token) {
+        getEditor().putString(SPConstants.FACEBOOK_TOKEN, token).commit();
+    }
+
     public static String getEmail(String defaultEmail) {
         return getSHP().getString(SPConstants.EMAIL, defaultEmail);
+    }
+
+    public static String getFacebookTooken(String defaultToken) {
+        return getSHP().getString(SPConstants.EMAIL, defaultToken);
     }
 
     public static void setToken(String token) {

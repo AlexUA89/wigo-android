@@ -33,4 +33,6 @@
     <!-- Content Description -->
     <string name="desc_list_item_icon">Item Icon</string>
 
+    <string name="facebook_app_id">303606623329436</string>
+
 </resources>
