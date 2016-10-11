@@ -29,15 +29,8 @@ public class ChatFragment extends Fragment {
     public static final String FRAGMENT_TAG = "CHAT_FRAGMENT";
 
     public static final String TO_USER_ID = "toUserId";
-    public static final String XCOORD = "xcoord";
-    public static final String YCOORD = "ycoord";
     public static final String CHAT_GROUP_ID = "chatGroupId";
     private static final String LIST_KEY = "LIST_KEY";
-
-    Double xcoord = null;
-    Double ycoord = null;
-    String toUserId = null;
-    String chatGroupId = null;
 
     Button send = null;
     ArrayList<String> messagesArray = new ArrayList<>();
@@ -62,13 +55,7 @@ public class ChatFragment extends Fragment {
     }
 
     private void initParameters(Bundle args) {
-        ycoord = args.getDouble(YCOORD, Double.NaN);
-        xcoord = args.getDouble(XCOORD, Double.NaN);
-        toUserId = args.getString(TO_USER_ID, null);
-        chatGroupId = args.getString(CHAT_GROUP_ID, null);
-        if ((xcoord.isNaN() || ycoord.isNaN()) && toUserId == null && chatGroupId == null) {
-            throw new IllegalArgumentException("You didn't set parameters for fragment");
-        }
+
     }
 
 
@@ -104,27 +91,5 @@ public class ChatFragment extends Fragment {
             }
         });
     }
-
-//    com.android.volley.Response.Listener<SendingMessageResponseDto> sendMessageListener = new Response.Listener<SendingMessageResponseDto>() {
-//        @Override
-//        public void onResponse(SendingMessageResponseDto response) {
-//            Database db = DBManager.getDatabase();
-//            long messageId = DBConstants.DEFAULT_ROW_ID;
-//            if (db.open()) {
-//                //TODO change
-////                messageId = db.insertNewDBStorable(new Message(response.getData()));
-//            }
-//            Message msg = (Message) db.selectDBStorableByTypeAndId(Message.TypeID, messageId);
-//            db.close();
-//            System.out.println("Have sent");
-//        }
-//    };
-//
-//    Response.ErrorListener errorSendMessageListener = new Response.ErrorListener() {
-//        @Override
-//        public void onErrorResponse(VolleyError error) {
-//            System.out.println("Error");
-//        }
-//    };
 
 }

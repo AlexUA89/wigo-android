@@ -1,32 +1,42 @@
 package com.wigo.android.ui.fragments;
 
-import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
-import com.wigo.android.R;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.Circle;
-import com.google.android.gms.maps.model.CircleOptions;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.wigo.android.R;
+import com.wigo.android.core.ContextProvider;
+import com.wigo.android.ui.MainActivity;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by olkh on 11/13/2015.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener {
 
     private Circle circle;
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
     private GoogleMap mMap;
+
+    private HashMap<MarkerOptions, UUID> markers = new HashMap<>();
+    private HashMap<LatLng, UUID> positions = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -50,25 +60,21 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(50.449362, 30.479365);
-        mMap.addMarker(new MarkerOptions().position(sydney).title("Тут мы живем с солнышком ))"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        circle = mMap.addCircle(new CircleOptions()
-                .center(new LatLng(50.449362, 30.479365))
-                .radius(10000)
-                .strokeColor(Color.RED));
+        mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnInfoWindowClickListener(this);
 
+        LatLng sydney = new LatLng(50.449362, 30.479365);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         mMap.setMyLocationEnabled(true);
 
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-        // myMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
-        // myMap.setMapType(GoogleMap.MAP_TYPE_SATELLITE);
-        // myMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMapLongClickListener(this);
-
+        // Add a marker in Sydney and move the camera
+        getAllMarkers();
+        for (MarkerOptions marker : markers.keySet()) {
+            mMap.addMarker(marker);
+        }
 
     }
 
@@ -82,12 +88,35 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onMapLongClick(LatLng point) {
 
-        if(circle != null) {
-            circle.remove();
+//        if (circle != null) {
+//            circle.remove();
+//        }
+//
+//        circle = mMap.addCircle(new CircleOptions().center(point).radius(10000).strokeColor(Color.RED));
+
+    }
+
+    @Override
+    public void onInfoWindowClick(Marker marker) {
+        UUID id = positions.get(marker.getPosition());
+        ((MainActivity) getActivity()).openChatFragment(id);
+        Toast.makeText(ContextProvider.getAppContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+    }
+
+    private void getAllMarkers() {
+        for (int i = 0; i < 100; i++) {
+            LatLng pos = new LatLng((Math.random() - 0.5) * 90, (Math.random() - 0.5) * 180);
+            MarkerOptions marker = new MarkerOptions().position(pos).title("Position - " + i).snippet("Sniped text");
+            UUID id = UUID.randomUUID();
+            markers.put(marker, id);
+            positions.put(pos, id);
         }
 
-        circle = mMap.addCircle(new CircleOptions().center(point).radius(10000).strokeColor(Color.RED));
-
+        try {
+            Thread.sleep(5000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

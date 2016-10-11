@@ -21,11 +21,14 @@ import com.wigo.android.ui.slidingmenu.NavDrawerItem;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
 
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class MainActivity extends FragmentActivity {
 
     private DrawerLayout mDrawerLayout;
     private ListView mDrawerList;
+    private MapFragment mapFragment;
+    private ChatFragment chatFragment;
 
     // slide menu items
     private String[] navMenuTitles;
@@ -125,15 +128,18 @@ public class MainActivity extends FragmentActivity {
 //            }
 //        });
 
-        MapFragment fragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
+//        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
 //        ChatFragment fragment = (ChatFragment) getSupportFragmentManager().findFragmentByTag(ChatFragment.FRAGMENT_TAG);
-        if(fragment == null) {
+        if(mapFragment == null) {
 //            fragment = new MapFragment();
-            fragment = new MapFragment();
+            mapFragment = new MapFragment();
+            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mapFragment).commit();
+        }
+        if(chatFragment == null) {
+            chatFragment = new ChatFragment();
             Bundle args = new Bundle();
             args.putString(ChatFragment.TO_USER_ID, SharedPrefHelper.getUserId(null));
-            fragment.setArguments(args);
-            getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, fragment, ChatFragment.FRAGMENT_TAG).commit();
+            chatFragment.setArguments(args);
         }
 
 //        ServerRequestAdapter.singinRequest("alexua89@gmail.com", "qweqwe", new Response.Listener<LoginResponseDto>() {
@@ -158,11 +164,11 @@ public class MainActivity extends FragmentActivity {
         @Override
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
-            MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
+//            mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
             if(mapFragment == null) {
                 mapFragment = new MapFragment();
-                getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mapFragment, MapFragment.FRAGMENT_TAG).commit();
             }
+            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mapFragment).addToBackStack(null).commit();
             // display view for selected nav drawer item
 //            displayView(position);
             mDrawerLayout.closeDrawer(mDrawerList);
@@ -212,5 +218,14 @@ public class MainActivity extends FragmentActivity {
         mDrawerToggle.syncState();
     }
 
+    public void openChatFragment(UUID statusId){
+        if(chatFragment == null) {
+            chatFragment = new ChatFragment();
+            Bundle args = new Bundle();
+            args.putString(ChatFragment.TO_USER_ID, SharedPrefHelper.getUserId(null));
+            chatFragment.setArguments(args);
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment).addToBackStack(null).commit();
+    }
 
 }
