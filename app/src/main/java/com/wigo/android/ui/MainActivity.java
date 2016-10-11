@@ -165,10 +165,7 @@ public class MainActivity extends FragmentActivity {
         public void onItemClick(AdapterView<?> parent, View view, int position,
                                 long id) {
 //            mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
-            if(mapFragment == null) {
-                mapFragment = new MapFragment();
-            }
-            getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mapFragment).addToBackStack(null).commit();
+            openMapFragment();
             // display view for selected nav drawer item
 //            displayView(position);
             mDrawerLayout.closeDrawer(mDrawerList);
@@ -225,7 +222,20 @@ public class MainActivity extends FragmentActivity {
             args.putString(ChatFragment.TO_USER_ID, SharedPrefHelper.getUserId(null));
             chatFragment.setArguments(args);
         }
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment).addToBackStack(null).commit();
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();
+    }
+
+    public void openMapFragment(){
+        //deleting chat fragment
+        if(chatFragment!=null){
+            getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.fragment_container)).commit();
+            chatFragment = null;
+        }
+        if(mapFragment == null) {
+            mapFragment = new MapFragment();
+        }
+        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mapFragment, MapFragment.FRAGMENT_TAG).addToBackStack(null).commit();
+
     }
 
 }

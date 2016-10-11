@@ -3,6 +3,7 @@ package com.wigo.android.ui.fragments;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -30,6 +31,7 @@ import java.util.UUID;
  */
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener {
 
+    private View view;
     private Circle circle;
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
@@ -46,7 +48,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.map_fragment, container, false);
+        try {
+            view = inflater.inflate(R.layout.map_fragment, container, false);
+        } catch (InflateException e) {
+        /* map is already there, just return view as it is */
+        }
+        return view;
     }
 
     @Override
@@ -59,23 +66,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
-        mMap.setOnMapClickListener(this);
-        mMap.setOnMapLongClickListener(this);
-        mMap.setOnInfoWindowClickListener(this);
-
-        LatLng sydney = new LatLng(50.449362, 30.479365);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.setMyLocationEnabled(true);
-
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
-
-        // Add a marker in Sydney and move the camera
-        getAllMarkers();
-        for (MarkerOptions marker : markers.keySet()) {
-            mMap.addMarker(marker);
+        if(mMap == null) {
+            onFragmentCreated(googleMap);
+        } else {
+            onFragmentOpened(googleMap);
         }
-
     }
 
     @Override
@@ -117,6 +112,29 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+    }
+
+    private void onFragmentCreated(GoogleMap googleMap){
+        mMap = googleMap;
+        mMap.setOnMapClickListener(this);
+        mMap.setOnMapLongClickListener(this);
+        mMap.setOnInfoWindowClickListener(this);
+
+        LatLng sydney = new LatLng(50.449362, 30.479365);
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+        mMap.setMyLocationEnabled(true);
+
+        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+
+        // Add a marker in Sydney and move the camera
+        getAllMarkers();
+        for (MarkerOptions marker : markers.keySet()) {
+            mMap.addMarker(marker);
+        }
+    }
+
+    private void onFragmentOpened(GoogleMap googleMap) {
+
     }
 
 }
