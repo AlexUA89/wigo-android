@@ -1,7 +1,15 @@
 package com.wigo.android.ui.fragments;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.pm.PackageManager;
+import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -9,36 +17,38 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.google.android.gms.maps.CameraUpdate;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.Circle;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.ui.MainActivity;
+import com.wigo.android.ui.asynctasks.LoadMapStatusesTask;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by olkh on 11/13/2015.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener {
-
-    private View view;
-    private Circle circle;
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener {
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
+    private static final LatLng KIEV =  new LatLng(50.449362, 30.479365);
+    private static final float DEFAULT_ZOOM = 14;
+
+    private View view;
     private GoogleMap mMap;
 
     private HashMap<MarkerOptions, UUID> markers = new HashMap<>();
     private HashMap<LatLng, UUID> positions = new HashMap<>();
+
+    private LoadMapStatusesTask mt;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -66,7 +76,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        if(mMap == null) {
+        if (mMap == null) {
             onFragmentCreated(googleMap);
         } else {
             onFragmentOpened(googleMap);
@@ -76,18 +86,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onMapClick(LatLng point) {
 
-//        mMap.animateCamera(CameraUpdateFactory.newLatLng(point));
 
     }
 
     @Override
     public void onMapLongClick(LatLng point) {
 
-//        if (circle != null) {
-//            circle.remove();
-//        }
-//
-//        circle = mMap.addCircle(new CircleOptions().center(point).radius(10000).strokeColor(Color.RED));
 
     }
 
@@ -98,43 +102,50 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Toast.makeText(ContextProvider.getAppContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();// display toast
     }
 
-    private void getAllMarkers() {
-        for (int i = 0; i < 100; i++) {
-            LatLng pos = new LatLng((Math.random() - 0.5) * 90, (Math.random() - 0.5) * 180);
-            MarkerOptions marker = new MarkerOptions().position(pos).title("Position - " + i).snippet("Sniped text");
-            UUID id = UUID.randomUUID();
-            markers.put(marker, id);
-            positions.put(pos, id);
-        }
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void onFragmentCreated(GoogleMap googleMap){
+    private void onFragmentCreated(GoogleMap googleMap) {
+        //seting listeners
         mMap = googleMap;
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
 
-        LatLng sydney = new LatLng(50.449362, 30.479365);
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
-        mMap.setMyLocationEnabled(true);
-
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
-        // Add a marker in Sydney and move the camera
-        getAllMarkers();
-        for (MarkerOptions marker : markers.keySet()) {
-            mMap.addMarker(marker);
+        //define my last location
+        LocationManager mLocationManager = (LocationManager) ContextProvider.getAppContext().getSystemService(Context.LOCATION_SERVICE);
+        Criteria criteria = new Criteria();
+        String provider = mLocationManager.getBestProvider(criteria, true);
+        LatLng location;
+        if (ActivityCompat.checkSelfPermission(ContextProvider.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(ContextProvider.getAppContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            location = KIEV;
+        } else {
+            Location l = mLocationManager.getLastKnownLocation(provider);
+            location = new LatLng(l.getLatitude(), l.getLongitude());
         }
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+
+        CameraUpdate zoom = CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
+        googleMap.moveCamera(zoom);
+
+        mMap.setMyLocationEnabled(true);
+
+
+        //request for all markers
+        mt = new LoadMapStatusesTask(this);
+        mt.execute();
     }
 
     private void onFragmentOpened(GoogleMap googleMap) {
 
     }
 
+    @Override
+    public void loadMapStatusesDone(HashMap<MarkerOptions, UUID> markers, HashMap<LatLng, UUID> positions) {
+        this.markers = markers;
+        this.positions = positions;
+        for (MarkerOptions marker : this.markers.keySet()) {
+            mMap.addMarker(marker);
+        }
+    }
 }

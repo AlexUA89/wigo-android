@@ -84,10 +84,6 @@ public class MainActivity extends FragmentActivity {
                 navDrawerItems);
         mDrawerList.setAdapter(adapter);
 
-        // Set a toolbar to replace the action bar.
-//        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-//        toolbar.setNavigationIcon(R.mipmap.ic_drawer);
-
         // enabling action bar app icon and behaving it as toggle button
         getActionBar().setDisplayHomeAsUpEnabled(true);
         getActionBar().setHomeButtonEnabled(true);
@@ -110,49 +106,11 @@ public class MainActivity extends FragmentActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-
-
-//        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-//        fab.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
-//                if(mapFragment == null) {
-//                    mapFragment = new MapFragment();
-//                    getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mapFragment, MapFragment.FRAGMENT_TAG).commit();
-//                }
-//
-//
-//                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-//                        .setAction("Action", null).show();
-//            }
-//        });
-
-//        mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
-//        ChatFragment fragment = (ChatFragment) getSupportFragmentManager().findFragmentByTag(ChatFragment.FRAGMENT_TAG);
         if(mapFragment == null) {
 //            fragment = new MapFragment();
             mapFragment = new MapFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mapFragment).commit();
         }
-        if(chatFragment == null) {
-            chatFragment = new ChatFragment();
-            Bundle args = new Bundle();
-            args.putString(ChatFragment.TO_USER_ID, SharedPrefHelper.getUserId(null));
-            chatFragment.setArguments(args);
-        }
-
-//        ServerRequestAdapter.singinRequest("alexua89@gmail.com", "qweqwe", new Response.Listener<LoginResponseDto>() {
-//            @Override
-//            public void onResponse(LoginResponseDto response) {
-//                System.out.println(response);
-//            }
-//        }, new Response.ErrorListener() {
-//            @Override
-//            public void onErrorResponse(VolleyError error) {
-//                AppLog.D("DEVELOP", new String(error.networkResponse.data));
-//            }
-//        });
 
     }
 
