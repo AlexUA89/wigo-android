@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
 import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -96,7 +97,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
-        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!"+cameraPosition.target);
+        //request for all markers
+        LoadMapStatusesTask.loadData(this);
     }
 
     @Override
@@ -135,9 +137,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         mMap.setMyLocationEnabled(true);
 
-        //request for all markers
-        mt = new LoadMapStatusesTask(this);
-        mt.execute();
     }
 
     private void onFragmentOpened(GoogleMap googleMap) {

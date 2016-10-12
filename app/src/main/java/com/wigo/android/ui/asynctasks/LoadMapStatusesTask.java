@@ -1,6 +1,7 @@
 package com.wigo.android.ui.asynctasks;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -16,8 +17,30 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
     private LoadMapStatusesTaskListener listener;
     private HashMap<MarkerOptions, UUID> markers = new HashMap<>();
     private HashMap<LatLng, UUID> positions = new HashMap<>();
+    private static LoadMapStatusesTask task;
+    private static Handler handler;
+    private static final long TIME_DELAY = 1000;
 
-    public LoadMapStatusesTask(LoadMapStatusesTaskListener listener){
+    public static void loadData(final LoadMapStatusesTaskListener listener) {
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+        } else {
+            handler = new Handler();
+        }
+        if (task != null) {
+            task.cancel(true);
+            task = null;
+        }
+        handler.postDelayed(new Runnable() {
+            @Override
+            public void run() {
+                task = new LoadMapStatusesTask(listener);
+                task.execute();
+            }
+        }, TIME_DELAY);
+    }
+
+    private LoadMapStatusesTask(LoadMapStatusesTaskListener listener) {
         this.listener = listener;
     }
 
@@ -37,6 +60,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
         super.onPostExecute(result);
         listener.loadMapStatusesDone(markers, positions);
         listener = null;
+        task = null;
     }
 
     @Override
@@ -55,7 +79,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
 //        }
 
         UUID id = UUID.randomUUID();
-        LatLng pos =  new LatLng(50.449362, 30.479365);
+        LatLng pos = new LatLng(50.449362, 30.479365);
         MarkerOptions marker = new MarkerOptions().position(pos).title("Position - " + 1).snippet("Sniped text");
         markers.put(marker, id);
         positions.put(pos, id);
