@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -22,6 +23,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
@@ -36,7 +38,7 @@ import java.util.UUID;
 /**
  * Created by olkh on 11/13/2015.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener, LoadMapStatusesTask.LoadMapStatusesTaskListener {
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
     private static final LatLng KIEV =  new LatLng(50.449362, 30.479365);
@@ -85,14 +87,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapClick(LatLng point) {
-
-
     }
 
     @Override
     public void onMapLongClick(LatLng point) {
+    }
 
 
+    @Override
+    public void onCameraChange(CameraPosition cameraPosition) {
+        System.out.println("!!!!!!!!!!!!!!!!!!!!!!!"+cameraPosition.target);
     }
 
     @Override
@@ -108,6 +112,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnInfoWindowClickListener(this);
+        mMap.setOnCameraChangeListener(this);
 
         mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
 
@@ -129,7 +134,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         googleMap.moveCamera(zoom);
 
         mMap.setMyLocationEnabled(true);
-
 
         //request for all markers
         mt = new LoadMapStatusesTask(this);
