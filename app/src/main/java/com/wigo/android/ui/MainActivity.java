@@ -15,6 +15,7 @@ import android.widget.ListView;
 import com.wigo.android.R;
 import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.preferences.SharedPrefHelper;
+import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.ui.fragments.ChatFragment;
 import com.wigo.android.ui.fragments.MapFragment;
 import com.wigo.android.ui.slidingmenu.NavDrawerItem;
@@ -173,7 +174,7 @@ public class MainActivity extends FragmentActivity {
         mDrawerToggle.syncState();
     }
 
-    public void openChatFragment(UUID statusId){
+    public void openChatFragment(StatusDto statusDto){
         if(chatFragment == null) {
             chatFragment = new ChatFragment();
             Bundle args = new Bundle();
@@ -196,4 +197,8 @@ public class MainActivity extends FragmentActivity {
 
     }
 
+    @Override
+    public void onBackPressed() {
+
+    }
 }

@@ -127,22 +127,23 @@ public class LoginActivity extends Activity {
     }
 
     private void fillUserInfoAndGoNextActivity(final String token) {
-        if (token != null) {
-            ContextProvider.getWigoRestClient().getUserInfoFromFacebook(token, new AbstractWigoResponseHandler() {
-                @Override
-                public void onSuccess(int statusCode, Header[] headers, byte[] response) {
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if (token != null) {
+                    FaceBookUserInfoDto userInfoDto = null;
                     try {
-                        FaceBookUserInfoDto userInfoDto = ContextProvider.getObjectMapper().readValue(new String(response), FaceBookUserInfoDto.class);
-                        SharedPrefHelper.setEmail(userInfoDto.getEmail());
-                        SharedPrefHelper.setUserName(userInfoDto.getName());
-                        SharedPrefHelper.setToken(token);
-                        startMainActivity();
+                        userInfoDto = ContextProvider.getWigoRestClient().getUserInfoFromFacebook(token);
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                    SharedPrefHelper.setEmail(userInfoDto.getEmail());
+                    SharedPrefHelper.setUserName(userInfoDto.getName());
+                    SharedPrefHelper.setToken(token);
+                    startMainActivity();
                 }
-            });
-        }
+            }
+        }).start();
     }
 
 }

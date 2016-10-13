@@ -21,7 +21,8 @@ public class SocketHelper {
 
     private static final String TAG = SocketHelper.class.getCanonicalName();
     private static WebsocketClientEndpoint clientEndPoint;
-    private static String socketServerUrl = ContextProvider.getAppContext().getResources().getString(R.string.socket_server_url);
+    private static String socketServerUrl = "";
+//    private static String socketServerUrl = ContextProvider.getAppContext().getResources().getString(R.string.socket_server_url);
     private static ScheduledExecutorService executor = Executors.newScheduledThreadPool(2);
     //TODO should be hashmap of listeners
     private static MessageHandler listener;

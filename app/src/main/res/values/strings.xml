@@ -1,6 +1,5 @@
 <resources>
-    <string name="server_url">http://31.220.107.60:3000</string>
-    <string name="socket_server_url">ws://31.220.107.60:3000</string>
+    <string name="server_url">http://46.101.106.144:8080/wigo-server</string>
 
     <string name="app_name">WIGO</string>
     <string name="action_settings">Settings</string>

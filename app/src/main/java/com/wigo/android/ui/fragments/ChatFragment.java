@@ -12,12 +12,7 @@ import android.widget.EditText;
 import android.widget.ListView;
 
 import com.wigo.android.R;
-import com.wigo.android.core.database.DBManager;
-import com.wigo.android.core.database.Database;
-import com.wigo.android.core.database.constants.DBConstants;
-import com.wigo.android.core.database.datas.Message;
 import com.wigo.android.core.server.dto.MessageDto;
-import com.wigo.android.core.server.dto.SendingMessageResponseDto;
 import com.wigo.android.core.server.socketapi.SocketHelper;
 import com.wigo.android.ui.base.BaseTextWatcher;
 

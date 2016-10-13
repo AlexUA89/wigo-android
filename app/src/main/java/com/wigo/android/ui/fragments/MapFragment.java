@@ -26,14 +26,18 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.asynctasks.LoadMapStatusesTask;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -42,16 +46,13 @@ import java.util.UUID;
 public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener, LoadMapStatusesTask.LoadMapStatusesTaskListener {
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
-    private static final LatLng KIEV =  new LatLng(50.449362, 30.479365);
+    private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
     private static final float DEFAULT_ZOOM = 14;
 
     private View view;
     private GoogleMap mMap;
 
-    private HashMap<MarkerOptions, UUID> markers = new HashMap<>();
-    private HashMap<LatLng, UUID> positions = new HashMap<>();
-
-    private LoadMapStatusesTask mt;
+    private HashMap<LatLng, StatusDto> statuses = new HashMap<>();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -98,13 +99,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Override
     public void onCameraChange(CameraPosition cameraPosition) {
         //request for all markers
-        LoadMapStatusesTask.loadData(this);
+        LatLngBounds curScreen = mMap.getProjection()
+                .getVisibleRegion().latLngBounds;
+        LoadMapStatusesTask.loadData(this, curScreen);
     }
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        UUID id = positions.get(marker.getPosition());
-        ((MainActivity) getActivity()).openChatFragment(id);
+        StatusDto status = statuses.get(marker.getPosition());
+        ((MainActivity) getActivity()).openChatFragment(status);
         Toast.makeText(ContextProvider.getAppContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();// display toast
     }
 
@@ -136,7 +139,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         googleMap.moveCamera(zoom);
 
         mMap.setMyLocationEnabled(true);
-
     }
 
     private void onFragmentOpened(GoogleMap googleMap) {
@@ -144,11 +146,44 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     @Override
-    public void loadMapStatusesDone(HashMap<MarkerOptions, UUID> markers, HashMap<LatLng, UUID> positions) {
-        this.markers = markers;
-        this.positions = positions;
-        for (MarkerOptions marker : this.markers.keySet()) {
+    public void loadMapStatusesDone(List<StatusDto> statuses) {
+        List<StatusDto> newStatuses = new ArrayList<>();
+        List<MarkerOptions> newMarkers = new ArrayList<>();
+        for (StatusDto status : statuses) {
+            if (!alreadyHaveThisStatus(status)) newStatuses.add(status);
+        }
+        for (StatusDto status : newStatuses) {
+            LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
+            newMarkers.add(new MarkerOptions().position(pos).title(status.getName()));
+            this.statuses.put(pos, status);
+        }
+        for (MarkerOptions marker : newMarkers) {
             mMap.addMarker(marker);
         }
+    }
+
+    @Override
+    public void loadMapStateseTimeoutError(LatLngBounds curScreen) {
+        Toast.makeText(ContextProvider.getAppContext(), "Connection timeout. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+    }
+
+    @Override
+    public void loadMapStateseConnectionError(LatLngBounds curScreen) {
+        Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+    }
+
+    private boolean alreadyHaveThisStatus(StatusDto newStatus) {
+        for (StatusDto status : statuses.values()) {
+            if (status.getId().equals(newStatus.getId())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void refreshMap(){
+        mMap.clear();
+        this.statuses.clear();
+        onCameraChange(null);
     }
 }

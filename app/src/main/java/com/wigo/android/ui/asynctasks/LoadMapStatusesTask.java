@@ -3,11 +3,12 @@ package com.wigo.android.ui.asynctasks;
 import android.os.AsyncTask;
 import android.os.Handler;
 
-import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.LatLngBounds;
+import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.server.dto.StatusDto;
 
-import java.util.HashMap;
-import java.util.UUID;
+import java.io.IOException;
+import java.util.List;
 
 /**
  * Created by AlexUA89 on 10/12/2016.
@@ -15,13 +16,13 @@ import java.util.UUID;
 public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
 
     private LoadMapStatusesTaskListener listener;
-    private HashMap<MarkerOptions, UUID> markers = new HashMap<>();
-    private HashMap<LatLng, UUID> positions = new HashMap<>();
+    private LatLngBounds curScreen;
+    private List<StatusDto> statuses;
     private static LoadMapStatusesTask task;
     private static Handler handler;
     private static final long TIME_DELAY = 1000;
 
-    public static void loadData(final LoadMapStatusesTaskListener listener) {
+    public static void loadData(final LoadMapStatusesTaskListener listener, final LatLngBounds curScreen) {
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         } else {
@@ -34,14 +35,15 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                task = new LoadMapStatusesTask(listener);
+                task = new LoadMapStatusesTask(listener, curScreen);
                 task.execute();
             }
         }, TIME_DELAY);
     }
 
-    private LoadMapStatusesTask(LoadMapStatusesTaskListener listener) {
+    private LoadMapStatusesTask(LoadMapStatusesTaskListener listener, LatLngBounds curScreen) {
         this.listener = listener;
+        this.curScreen = curScreen;
     }
 
     @Override
@@ -51,14 +53,22 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
 
     @Override
     protected Void doInBackground(Void... params) {
-        getAllMarkers();
+        try {
+            statuses = ContextProvider.getWigoRestClient()
+                    .getStatusesListFromServer(curScreen.northeast.latitude, curScreen.southwest.latitude, curScreen.northeast.longitude, curScreen.southwest.longitude);
+        } catch (IOException e) {
+            e.printStackTrace();
+            listener.loadMapStateseConnectionError(curScreen);
+            this.cancel(true);
+            return null;
+        }
         return null;
     }
 
     @Override
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
-        listener.loadMapStatusesDone(markers, positions);
+        listener.loadMapStatusesDone(statuses);
         listener = null;
         task = null;
     }
@@ -69,29 +79,11 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
         listener = null;
     }
 
-    private void getAllMarkers() {
-//        for (int i = 0; i < 100; i++) {
-//            LatLng pos = new LatLng((Math.random() - 0.5) * 90, (Math.random() - 0.5) * 180);
-//            MarkerOptions marker = new MarkerOptions().position(pos).title("Position - " + i).snippet("Sniped text");
-//            UUID id = UUID.randomUUID();
-//            markers.put(marker, id);
-//            positions.put(pos, id);
-//        }
-
-        UUID id = UUID.randomUUID();
-        LatLng pos = new LatLng(50.449362, 30.479365);
-        MarkerOptions marker = new MarkerOptions().position(pos).title("Position - " + 1).snippet("Sniped text");
-        markers.put(marker, id);
-        positions.put(pos, id);
-
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
     public interface LoadMapStatusesTaskListener {
-        void loadMapStatusesDone(HashMap<MarkerOptions, UUID> markers, HashMap<LatLng, UUID> positions);
+        void loadMapStatusesDone(List<StatusDto> statuses);
+
+        void loadMapStateseTimeoutError(LatLngBounds curScreen);
+
+        void loadMapStateseConnectionError(LatLngBounds curScreen);
     }
 }
