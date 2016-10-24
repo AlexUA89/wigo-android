@@ -11,6 +11,7 @@ import com.wigo.android.core.server.dto.StatusDto;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Arrays;
 import java.util.List;
 
 import cz.msebera.android.httpclient.HttpResponse;
@@ -60,8 +61,8 @@ public class WigoRestClient {
         HttpResponse response = client.execute(request);
         BufferedReader reader = new BufferedReader(new InputStreamReader(response.getEntity().getContent(), "UTF-8"));
         String json = reader.readLine();
-        List<StatusDto> statuses = ContextProvider.getObjectMapper().readValue(json, new TypeReference<List<StatusDto>>(){});
-        return statuses;
+        StatusDto[] statuses = ContextProvider.getObjectMapper().readValue(json, StatusDto[].class);
+        return Arrays.asList(statuses);
     }
 
     private void setHeader(AbstractHttpMessage request) {

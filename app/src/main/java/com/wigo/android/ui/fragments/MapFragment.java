@@ -6,10 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
-import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -24,6 +21,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
@@ -32,13 +30,13 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.utils.BitmapUtils;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.asynctasks.LoadMapStatusesTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by olkh on 11/13/2015.
@@ -48,6 +46,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
     private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
     private static final float DEFAULT_ZOOM = 14;
+    private static final float SCALE_FOR_MAP_ITEMS = 2f;
 
     private View view;
     private GoogleMap mMap;
@@ -131,7 +130,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             location = KIEV;
         } else {
             Location l = mLocationManager.getLastKnownLocation(provider);
-            location = new LatLng(l.getLatitude(), l.getLongitude());
+            if (l == null) {
+                location = KIEV;
+            } else {
+                location = new LatLng(l.getLatitude(), l.getLongitude());
+            }
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
 
@@ -154,7 +157,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
         for (StatusDto status : newStatuses) {
             LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
-            newMarkers.add(new MarkerOptions().position(pos).title(status.getName()));
+            newMarkers.add(new MarkerOptions().position(pos).icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS))).title(status.getName()));
             this.statuses.put(pos, status);
         }
         for (MarkerOptions marker : newMarkers) {
@@ -181,7 +184,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         return false;
     }
 
-    private void refreshMap(){
+    private void refreshMap() {
         mMap.clear();
         this.statuses.clear();
         onCameraChange(null);

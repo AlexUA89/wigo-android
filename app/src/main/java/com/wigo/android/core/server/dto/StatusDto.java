@@ -17,6 +17,15 @@ public class StatusDto implements Serializable {
     private String text;
     private Date startDate;
     private Date endDate;
+    private String kind;
+
+    public String getKind() {
+        return kind;
+    }
+
+    public void setKind(String kind) {
+        this.kind = kind;
+    }
 
     public UUID getId() {
         return id;

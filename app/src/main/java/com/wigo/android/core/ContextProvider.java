@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wigo.android.core.server.requestapi.WigoRestClient;
 
