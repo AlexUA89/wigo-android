@@ -10,34 +10,51 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wigo.android.R;
+import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.MessageDto;
-import com.wigo.android.core.server.socketapi.SocketHelper;
+import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.ui.asynctasks.LoadMessageFroStatusTask;
+import com.wigo.android.ui.asynctasks.SendMessageTask;
 import com.wigo.android.ui.base.BaseTextWatcher;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.UUID;
 
-public class ChatFragment extends Fragment {
+public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.LoadMessagesForStatusTaskListener, SendMessageTask.SendMessageListener {
 
     private static final String TAG = ChatFragment.class.getCanonicalName();
     public static final String FRAGMENT_TAG = "CHAT_FRAGMENT";
 
-    public static final String TO_USER_ID = "toUserId";
-    public static final String CHAT_GROUP_ID = "chatGroupId";
-    private static final String LIST_KEY = "LIST_KEY";
+    public static final String STATUS_DTO = "statusId";
 
     Button send = null;
-    ArrayList<String> messagesArray = new ArrayList<>();
+    List<MessageDto> messagesArray = new ArrayList<>();
+    StatusDto status;
     ListView messagesList;
     EditText msg = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View fragmentView = inflater.inflate(R.layout.chat_fragment, container, false);
-        if (savedInstanceState != null && savedInstanceState.getStringArrayList(LIST_KEY) != null) {
-            messagesArray = savedInstanceState.getStringArrayList(LIST_KEY);
+        try {
+            String statusJson = (String) this.getArguments().get(STATUS_DTO);
+            if (statusJson != null) {
+                status = ContextProvider.getObjectMapper().readValue(statusJson, StatusDto.class);
+            }
+            if (status == null || (savedInstanceState != null && savedInstanceState.getStringArrayList(STATUS_DTO) != null)) {
+                statusJson = savedInstanceState.getString(STATUS_DTO);
+                status = ContextProvider.getObjectMapper().readValue(statusJson, StatusDto.class);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        View fragmentView = inflater.inflate(R.layout.chat_fragment, container, false);
         initView(fragmentView);
         initParameters(getArguments());
         return fragmentView;
@@ -45,7 +62,11 @@ public class ChatFragment extends Fragment {
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
-        outState.putStringArrayList(LIST_KEY, messagesArray);
+        try {
+            outState.putString(ChatFragment.STATUS_DTO, ContextProvider.getObjectMapper().writeValueAsString(status));
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
         super.onSaveInstanceState(outState);
     }
 
@@ -57,25 +78,16 @@ public class ChatFragment extends Fragment {
     private void initView(View fragmentView) {
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
         messagesList = (ListView) fragmentView.findViewById(R.id.listView);
-        messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, messagesArray));
+//        messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, messagesArray));
         final Fragment fr = this;
 
         send = (Button) fragmentView.findViewById(R.id.chat_fragment_send);
+        final ChatFragment that = this;
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                SocketHelper.sendMessage(new MessageDto(), new SocketHelper.MessageHandler() {
-                    @Override
-                    public void receiveMessage(final String message) {
-                        fr.getActivity().runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                messagesArray.add(message);
-                                messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, messagesArray));
-                            }
-                        });
-                    }
-                });
+                MessageDto messageDto = new MessageDto(UUID.randomUUID(), UUID.fromString("3465aed1-18dd-4b83-b337-0298dd59793a"), msg.getText().toString(), null);
+                new SendMessageTask(messageDto, status, that).execute();
             }
         });
 
@@ -86,5 +98,80 @@ public class ChatFragment extends Fragment {
             }
         });
     }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        LoadMessageFroStatusTask.loadData(this, status);
+    }
+
+    @Override
+    public void loadMessagesDone(List<MessageDto> messages) {
+        messagesArray = messages;
+        redrawMessage();
+    }
+
+    @Override
+    public void sendMessageDone(MessageDto message, StatusDto statusDto) {
+        messagesArray.add(message);
+        redrawMessage();
+        msg.setText("");
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ContextProvider.getAppContext(), "Message have sent", Toast.LENGTH_SHORT).show();// display toast
+            }
+        });
+    }
+
+    private void redrawMessage(){
+        List<String> texts = new ArrayList<>();
+        for (MessageDto txt : messagesArray) {
+            texts.add(txt.getText());
+        }
+        messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, texts));
+    }
+
+    @Override
+    public void loadMessagesTimeoutError(StatusDto statusDto) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ContextProvider.getAppContext(), "Timeout error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+            }
+        });
+    }
+
+    @Override
+    public void loadMessagesConnectionError(StatusDto statusDto) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+            }
+        });
+    }
+
+    @Override
+    public void sendMessageTimeoutError(MessageDto messages, StatusDto statusDto) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ContextProvider.getAppContext(), "Timeout error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+            }
+        });
+    }
+
+    @Override
+    public void sendMessageConnectionError(MessageDto messages, StatusDto statusDto) {
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+            }
+        });
+    }
+
+
 
 }

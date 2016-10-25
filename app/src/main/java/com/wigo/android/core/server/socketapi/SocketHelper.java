@@ -59,7 +59,7 @@ public class SocketHelper {
 
     public static void sendMessage(Dto message, MessageHandler msgH) {
         Long code = System.currentTimeMillis();
-        message.setCode(code);
+//        message.setCode(code);
         listener = msgH;
         try {
             final String msg = ContextProvider.getObjectMapper().writeValueAsString(message);

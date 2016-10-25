@@ -2,12 +2,13 @@ package com.wigo.android.core.server.dto;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 import java.util.UUID;
 
 /**
  * Created by AlexUA89 on 10/13/2016.
  */
-public class StatusDto implements Serializable {
+public class StatusDto extends Dto {
 
     private UUID id;
     private UUID userId;
@@ -18,6 +19,7 @@ public class StatusDto implements Serializable {
     private Date startDate;
     private Date endDate;
     private String kind;
+    private List<String> hashtags;
 
     public String getKind() {
         return kind;
@@ -89,5 +91,13 @@ public class StatusDto implements Serializable {
 
     public void setEndDate(Date endDate) {
         this.endDate = endDate;
+    }
+
+    public List<String> getHashtags() {
+        return hashtags;
+    }
+
+    public void setHashtags(List<String> hashtags) {
+        this.hashtags = hashtags;
     }
 }

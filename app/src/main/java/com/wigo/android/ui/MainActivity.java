@@ -12,7 +12,9 @@ import android.view.Window;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wigo.android.R;
+import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
@@ -22,7 +24,6 @@ import com.wigo.android.ui.slidingmenu.NavDrawerItem;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
 
 import java.util.ArrayList;
-import java.util.UUID;
 
 public class MainActivity extends FragmentActivity {
 
@@ -174,11 +175,15 @@ public class MainActivity extends FragmentActivity {
         mDrawerToggle.syncState();
     }
 
-    public void openChatFragment(StatusDto statusDto){
+    public void openChatFragment(StatusDto statusDto) {
         if(chatFragment == null) {
             chatFragment = new ChatFragment();
             Bundle args = new Bundle();
-            args.putString(ChatFragment.TO_USER_ID, SharedPrefHelper.getUserId(null));
+            try {
+                args.putString(ChatFragment.STATUS_DTO, ContextProvider.getObjectMapper().writeValueAsString(statusDto));
+            } catch (JsonProcessingException e) {
+                e.printStackTrace();
+            }
             chatFragment.setArguments(args);
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();

@@ -107,7 +107,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onInfoWindowClick(Marker marker) {
         StatusDto status = statuses.get(marker.getPosition());
         ((MainActivity) getActivity()).openChatFragment(status);
-        Toast.makeText(ContextProvider.getAppContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();// display toast
+        Toast.makeText(ContextProvider.getAppContext(), marker.getTitle() + " " + status.getId(), Toast.LENGTH_SHORT).show();// display toast
     }
 
     private void onFragmentCreated(GoogleMap googleMap) {
@@ -167,12 +167,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void loadMapStateseTimeoutError(LatLngBounds curScreen) {
-        Toast.makeText(ContextProvider.getAppContext(), "Connection timeout. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ContextProvider.getAppContext(), "Connection timeout. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+            }
+        });
     }
 
     @Override
     public void loadMapStateseConnectionError(LatLngBounds curScreen) {
-        Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+        getActivity().runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+            }
+        });
     }
 
     private boolean alreadyHaveThisStatus(StatusDto newStatus) {

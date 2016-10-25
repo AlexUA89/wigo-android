@@ -47,7 +47,9 @@
 
         <activity
             android:name="com.wigo.android.ui.MainActivity"
-            android:theme="@android:style/Theme.Holo.Light">
+            android:theme="@android:style/Theme.Holo.Light"
+            android:screenOrientation="portrait">
+
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
@@ -56,7 +58,8 @@
 
         <activity
             android:name="com.wigo.android.ui.activities.LoginActivity"
-            android:theme="@android:style/Theme.Holo.Light.Dialog">
+            android:theme="@android:style/Theme.Holo.Light.Dialog"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

@@ -2,69 +2,65 @@ package com.wigo.android.core.server.dto;
 
 import android.support.annotation.NonNull;
 
+import java.util.UUID;
+
 public class MessageDto extends Dto {
 
     @NonNull
-    private String message;
+    private UUID id;
 
-    private String toUserId;
+    @NonNull
+    private UUID userId;
 
-    private String chatGroupId;
+    @NonNull
+    private String text;
 
-    private Double xCoord;
-
-    private Double yCoord;
-
+    @NonNull
+    private String created;
 
     public MessageDto() {
     }
 
-    public MessageDto(@NonNull String message, String toUserId, String chatGroupId, Double xCoord, Double yCoord) {
-        this.message = message;
-        this.toUserId = toUserId;
-        this.chatGroupId = chatGroupId;
-        this.xCoord = xCoord;
-        this.yCoord = yCoord;
+    public MessageDto(@NonNull UUID id, @NonNull UUID userId, @NonNull String text, @NonNull String created) {
+        this.id = id;
+        this.userId = userId;
+        this.text = text;
+        this.created = created;
     }
 
     @NonNull
-    public String getMessage() {
-        return message;
+    public UUID getId() {
+        return id;
     }
 
-    public void setMessage(@NonNull String message) {
-        this.message = message;
+    public void setId(@NonNull UUID id) {
+        this.id = id;
     }
 
-    public String getToUserId() {
-        return toUserId;
+    @NonNull
+    public UUID getUserId() {
+        return userId;
     }
 
-    public void setToUserId(String toUserId) {
-        this.toUserId = toUserId;
+    public void setUserId(@NonNull UUID userId) {
+        this.userId = userId;
     }
 
-    public String getChatGroupId() {
-        return chatGroupId;
+    @NonNull
+    public String getText() {
+        return text;
     }
 
-    public void setChatGroupId(String chatGroupId) {
-        this.chatGroupId = chatGroupId;
+    public void setText(@NonNull String text) {
+        this.text = text;
     }
 
-    public Double getxCoord() {
-        return xCoord;
+    @NonNull
+    public String getCreated() {
+        return created;
     }
 
-    public void setxCoord(Double xCoord) {
-        this.xCoord = xCoord;
-    }
-
-    public Double getyCoord() {
-        return yCoord;
-    }
-
-    public void setyCoord(Double yCoord) {
-        this.yCoord = yCoord;
+    public void setCreated(@NonNull String created) {
+        this.created = created;
     }
 }

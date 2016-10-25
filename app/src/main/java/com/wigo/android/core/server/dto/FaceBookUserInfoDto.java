@@ -3,7 +3,7 @@ package com.wigo.android.core.server.dto;
 /**
  * Created by AlexUA on 9/10/2016.
  */
-public class FaceBookUserInfoDto {
+public class FaceBookUserInfoDto extends Dto {
 
     private String id;
 
