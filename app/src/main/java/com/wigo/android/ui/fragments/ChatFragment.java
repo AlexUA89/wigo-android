@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -17,6 +18,7 @@ import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.ui.asynctasks.LoadMessageFroStatusTask;
 import com.wigo.android.ui.asynctasks.SendMessageTask;
 import com.wigo.android.ui.base.BaseTextWatcher;
@@ -55,7 +57,6 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             e.printStackTrace();
         }
         View fragmentView = inflater.inflate(R.layout.chat_fragment, container, false);
-        initView(fragmentView);
         initParameters(getArguments());
         return fragmentView;
     }
@@ -75,9 +76,23 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     }
 
 
+
     private void initView(View fragmentView) {
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
         messagesList = (ListView) fragmentView.findViewById(R.id.listView);
+        TextView statusName = (TextView) fragmentView.findViewById(R.id.status_name);
+        TextView statusText = (TextView) fragmentView.findViewById(R.id.status_desc);
+        TextView statusHashtags = (TextView) fragmentView.findViewById(R.id.status_hashtags);
+        statusName.setVisibility(View.VISIBLE);
+        statusName.setText(status.getName());
+        if(StatusKind.event.toString().equals(status.getKind())){
+            statusText.setVisibility(View.VISIBLE);
+            statusText.setText(status.getText());
+        }
+        if(status.getHashtags()!=null){
+            statusHashtags.setVisibility(View.VISIBLE);
+            statusHashtags.setText(status.getHashtags().toString());
+        }
 //        messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, messagesArray));
         final Fragment fr = this;
 
@@ -102,6 +117,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     @Override
     public void onResume() {
         super.onResume();
+        initView(this.getView());
         LoadMessageFroStatusTask.loadData(this, status);
     }
 
@@ -126,8 +142,11 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
 
     private void redrawMessage(){
         List<String> texts = new ArrayList<>();
-        for (MessageDto txt : messagesArray) {
-            texts.add(txt.getText());
+//        for (MessageDto txt : messagesArray) {
+//            texts.add(txt.getText());
+//        }
+        for(int i = 0; i < 100 ; i++){
+            texts.add(i+"");
         }
         messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, texts));
     }
