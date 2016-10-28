@@ -19,13 +19,14 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
-import com.wigo.android.ui.asynctasks.LoadMessageFroStatusTask;
-import com.wigo.android.ui.asynctasks.SendMessageTask;
+import com.wigo.android.ui.elements.ChatMessagesAdapter;
+import com.wigo.android.ui.elements.LoadMessageFroStatusTask;
+import com.wigo.android.ui.elements.SendMessageTask;
 import com.wigo.android.ui.base.BaseTextWatcher;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -36,11 +37,10 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
 
     public static final String STATUS_DTO = "statusId";
 
-    Button send = null;
-    List<MessageDto> messagesArray = new ArrayList<>();
-    StatusDto status;
-    ListView messagesList;
-    EditText msg = null;
+    private Button send = null;
+    private StatusDto status;
+    private EditText msg = null;
+    private ChatMessagesAdapter adapter = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -75,11 +75,11 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
 
     }
 
-
-
     private void initView(View fragmentView) {
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
-        messagesList = (ListView) fragmentView.findViewById(R.id.listView);
+        ListView messagesList = (ListView) fragmentView.findViewById(R.id.listView);
+        adapter = new ChatMessagesAdapter();
+        messagesList.setAdapter(adapter);
         TextView statusName = (TextView) fragmentView.findViewById(R.id.status_name);
         TextView statusText = (TextView) fragmentView.findViewById(R.id.status_desc);
         TextView statusHashtags = (TextView) fragmentView.findViewById(R.id.status_hashtags);
@@ -93,9 +93,6 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             statusHashtags.setVisibility(View.VISIBLE);
             statusHashtags.setText(status.getHashtags().toString());
         }
-//        messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, messagesArray));
-        final Fragment fr = this;
-
         send = (Button) fragmentView.findViewById(R.id.chat_fragment_send);
         final ChatFragment that = this;
         send.setOnClickListener(new View.OnClickListener() {
@@ -123,14 +120,12 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
 
     @Override
     public void loadMessagesDone(List<MessageDto> messages) {
-        messagesArray = messages;
-        redrawMessage();
+        adapter.mergMessageArray(messages);
     }
 
     @Override
     public void sendMessageDone(MessageDto message, StatusDto statusDto) {
-        messagesArray.add(message);
-        redrawMessage();
+        adapter.mergMessageArray(Collections.singletonList(message));
         msg.setText("");
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -138,17 +133,6 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
                 Toast.makeText(ContextProvider.getAppContext(), "Message have sent", Toast.LENGTH_SHORT).show();// display toast
             }
         });
-    }
-
-    private void redrawMessage(){
-        List<String> texts = new ArrayList<>();
-//        for (MessageDto txt : messagesArray) {
-//            texts.add(txt.getText());
-//        }
-        for(int i = 0; i < 100 ; i++){
-            texts.add(i+"");
-        }
-        messagesList.setAdapter(new ArrayAdapter<>(getActivity(), android.R.layout.simple_spinner_item, texts));
     }
 
     @Override

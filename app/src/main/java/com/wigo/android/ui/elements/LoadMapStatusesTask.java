@@ -1,4 +1,4 @@
-package com.wigo.android.ui.asynctasks;
+package com.wigo.android.ui.elements;
 
 import android.os.AsyncTask;
 import android.os.Handler;

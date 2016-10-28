@@ -32,7 +32,7 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.utils.BitmapUtils;
 import com.wigo.android.ui.MainActivity;
-import com.wigo.android.ui.asynctasks.LoadMapStatusesTask;
+import com.wigo.android.ui.elements.LoadMapStatusesTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
