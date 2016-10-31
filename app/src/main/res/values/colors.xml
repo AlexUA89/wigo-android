@@ -14,4 +14,8 @@
     <color name="counter_text_color">#303030</color>
 
     <color name="chat_list_item_text">#272727</color>
+    <color name="chat_list_item_name_date">#303030</color>
+
+    <color name="chat_message_from_me">#C7EDFC</color>
+    <color name="chat_message_not_from_me">#F0F4F8</color>
 </resources>

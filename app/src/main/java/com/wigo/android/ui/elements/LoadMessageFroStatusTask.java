@@ -6,6 +6,8 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 
+import org.springframework.web.client.HttpClientErrorException;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Objects;
@@ -43,7 +45,7 @@ public class LoadMessageFroStatusTask  extends AsyncTask<Void, Void, Void> {
     protected Void doInBackground(Void... params) {
         try {
             messages = ContextProvider.getWigoRestClient().getListOfMessagesForStatus(statusDto);
-        } catch (IOException e) {
+        } catch (HttpClientErrorException e) {
             e.printStackTrace();
             listener.loadMessagesConnectionError(statusDto);
             this.cancel(true);

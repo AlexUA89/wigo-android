@@ -7,6 +7,8 @@ import com.google.android.gms.maps.model.LatLngBounds;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.StatusDto;
 
+import org.springframework.web.client.HttpClientErrorException;
+
 import java.io.IOException;
 import java.util.List;
 
@@ -56,7 +58,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
         try {
             statuses = ContextProvider.getWigoRestClient()
                     .getStatusesListFromServer(curScreen.northeast.latitude, curScreen.southwest.latitude, curScreen.northeast.longitude, curScreen.southwest.longitude);
-        } catch (IOException e) {
+        } catch (HttpClientErrorException e) {
             e.printStackTrace();
             listener.loadMapStateseConnectionError(curScreen);
             this.cancel(true);

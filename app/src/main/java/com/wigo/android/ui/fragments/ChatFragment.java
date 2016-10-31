@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -41,6 +42,8 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     private StatusDto status;
     private EditText msg = null;
     private ChatMessagesAdapter adapter = null;
+    private ListView messagesList = null;
+    private ScrollView scrollView = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -58,6 +61,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         }
         View fragmentView = inflater.inflate(R.layout.chat_fragment, container, false);
         initParameters(getArguments());
+        initView(fragmentView);
         return fragmentView;
     }
 
@@ -76,8 +80,9 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     }
 
     private void initView(View fragmentView) {
+        scrollView = (ScrollView) fragmentView.findViewById(R.id.chat_fragment_scroll_view);
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
-        ListView messagesList = (ListView) fragmentView.findViewById(R.id.listView);
+        messagesList = (ListView) fragmentView.findViewById(R.id.listView);
         adapter = new ChatMessagesAdapter();
         messagesList.setAdapter(adapter);
         TextView statusName = (TextView) fragmentView.findViewById(R.id.status_name);
@@ -114,13 +119,14 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     @Override
     public void onResume() {
         super.onResume();
-        initView(this.getView());
         LoadMessageFroStatusTask.loadData(this, status);
     }
 
     @Override
     public void loadMessagesDone(List<MessageDto> messages) {
         adapter.mergMessageArray(messages);
+        messagesList.setSelection(adapter.getCount() - 1);
+        scrollView.scrollTo(0, 0);
     }
 
     @Override
@@ -133,6 +139,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
                 Toast.makeText(ContextProvider.getAppContext(), "Message have sent", Toast.LENGTH_SHORT).show();// display toast
             }
         });
+        messagesList.setSelection(adapter.getCount() - 1);
     }
 
     @Override

@@ -42,10 +42,10 @@ dependencies {
     compile 'com.android.support:design:23.1.0'
     compile 'com.google.android.gms:play-services:8.3.0'
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
-    compile 'com.loopj.android:android-async-http:1.4.9'
     compile 'javax.websocket:javax.websocket-api:1.1'
     compile 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.12'
 //    compile 'javax.validation:validation-api:1.0.0.GA'
+    compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
     compile(
             [group: 'com.fasterxml.jackson.core', name: 'jackson-core', version: '2.4.5'],
             [group: 'com.fasterxml.jackson.core', name: 'jackson-annotations', version: '2.4.5'],

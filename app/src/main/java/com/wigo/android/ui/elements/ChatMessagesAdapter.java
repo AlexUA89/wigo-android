@@ -1,6 +1,7 @@
 package com.wigo.android.ui.elements;
 
 import android.content.Context;
+import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -14,6 +15,7 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.MessageDto;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -54,16 +56,21 @@ public class ChatMessagesAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         // используем созданные, но не используемые view
         View view = convertView;
-        if (view == null) {
+        if (convertView == null) {
             view = lInflater.inflate(R.layout.chat_list_item, parent, false);
         }
-        ((TextView) view.findViewById(R.id.chat_list_item_message_text)).setText(messagesArray.get(position).getText());
-
-        ((LinearLayout) view.findViewById(R.id.chat_list_item_message_text_container)).setGravity(Gravity.START);
         if (isMessageFromMe(messagesArray.get(position))) {
-            ((LinearLayout) view.findViewById(R.id.chat_list_item_message_text_container)).setGravity(Gravity.END);
+            ((LinearLayout) view.findViewById(R.id.chat_list_item_message_container)).setGravity(Gravity.END);
+            view.findViewById(R.id.chat_list_item_message_text_container).setBackground(ContextCompat.getDrawable(ContextProvider.getAppContext(), R.drawable.chat_item_from_me_bg));
+        } else {
+            ((LinearLayout) view.findViewById(R.id.chat_list_item_message_container)).setGravity(Gravity.START);
+            view.findViewById(R.id.chat_list_item_message_text_container).setBackground(ContextCompat.getDrawable(ContextProvider.getAppContext(), R.drawable.chat_item_not_from_me_bg));
         }
-        return view;
+
+        ((TextView) view.findViewById(R.id.chat_list_item_message_text)).setText(messagesArray.get(position).getText());
+        ((TextView) view.findViewById(R.id.chat_list_item_name_date)).setText("Alex UA89 " + new Date());
+        convertView = view;
+        return convertView;
     }
 
     public void mergMessageArray(List<MessageDto> messagesArray) {

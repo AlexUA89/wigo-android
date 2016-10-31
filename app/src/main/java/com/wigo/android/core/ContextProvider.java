@@ -5,7 +5,6 @@ import android.content.Context;
 
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
-import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wigo.android.core.server.requestapi.WigoRestClient;
 
@@ -43,11 +42,8 @@ public class ContextProvider extends Application {
         return getInstance().getApplicationContext();
     }
 
-    synchronized public static ObjectMapper getObjectMapper(){
-        if(objectMapper == null){
-            objectMapper = new ObjectMapper();
-        }
-        return objectMapper;
+    synchronized public static ObjectMapper getObjectMapper() {
+        return getWigoRestClient().getObjectMapper();
     }
 
     public static void setInstance(ContextProvider instance) {
@@ -55,6 +51,9 @@ public class ContextProvider extends Application {
     }
 
     public static WigoRestClient getWigoRestClient() {
+        if (wigoRestClient == null) {
+            wigoRestClient = new WigoRestClient();
+        }
         return wigoRestClient;
     }
 

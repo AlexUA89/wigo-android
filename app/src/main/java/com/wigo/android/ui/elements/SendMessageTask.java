@@ -6,6 +6,8 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 
+import org.springframework.web.client.HttpClientErrorException;
+
 import java.io.IOException;
 
 /**
@@ -31,7 +33,7 @@ public class SendMessageTask extends AsyncTask<Void, Void, Void> {
                 listener.sendMessageConnectionError(messageDto, statusDto);
                 this.cancel(true);
             }
-        } catch (IOException e) {
+        } catch (HttpClientErrorException e) {
             e.printStackTrace();
             listener.sendMessageConnectionError(messageDto, statusDto);
         }
