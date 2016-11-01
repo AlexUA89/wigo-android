@@ -14,6 +14,10 @@ import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
+import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -50,6 +54,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private View view;
     private GoogleMap mMap;
+    private MultiAutoCompleteTextView autoCompleteTextView;
 
     private HashMap<LatLng, StatusDto> statuses = new HashMap<>();
 
@@ -61,28 +66,53 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = null;
         try {
             view = inflater.inflate(R.layout.map_fragment, container, false);
         } catch (InflateException e) {
         /* map is already there, just return view as it is */
         }
-        return view;
+        if (view != null) {
+            this.view = view;
+        }
+        initView(this.view);
+        return this.view;
     }
+
+    private void initView(View fragmentView) {
+        autoCompleteTextView = (MultiAutoCompleteTextView) fragmentView.findViewById(R.id.map_hashtags_text_view);
+        final String[] tags = {
+                "Anderson", "Anna", "Duncan", "Fuller",
+                "Cotman", "Lawson", "Chapman",
+                "Godwin", "Bush", "Gateman"};
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.map_tags_list_item, tags);
+        autoCompleteTextView.setAdapter(adapter);
+        autoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
+        autoCompleteTextView.setThreshold(1);
+
+        autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                System.out.print("Selectet "+ position + " id "+id);
+            }
+        });
+    }
+
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
         mapFragment.getMapAsync(this);
-
     }
+
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         if (mMap == null) {
-            onFragmentCreated(googleMap);
+            onMapCreated(googleMap);
         } else {
-            onFragmentOpened(googleMap);
+            onMapOpened(googleMap);
         }
     }
 
@@ -110,7 +140,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         Toast.makeText(ContextProvider.getAppContext(), marker.getTitle() + " " + status.getId(), Toast.LENGTH_SHORT).show();// display toast
     }
 
-    private void onFragmentCreated(GoogleMap googleMap) {
+    private void onMapCreated(GoogleMap googleMap) {
         //seting listeners
         mMap = googleMap;
         mMap.setOnMapClickListener(this);
@@ -144,7 +174,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.setMyLocationEnabled(true);
     }
 
-    private void onFragmentOpened(GoogleMap googleMap) {
+    private void onMapOpened(GoogleMap googleMap) {
 
     }
 

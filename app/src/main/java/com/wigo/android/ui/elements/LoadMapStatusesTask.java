@@ -22,7 +22,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
     private List<StatusDto> statuses;
     private static LoadMapStatusesTask task;
     private static Handler handler;
-    private static final long TIME_DELAY = 1000;
+    private static final long TIME_DELAY = 100;
 
     public static void loadData(final LoadMapStatusesTaskListener listener, final LatLngBounds curScreen) {
         if (handler != null) {
