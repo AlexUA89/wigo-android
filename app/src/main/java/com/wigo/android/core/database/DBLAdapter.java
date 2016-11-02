@@ -4,7 +4,7 @@ import android.database.Cursor;
 
 import com.wigo.android.core.AppLog;
 import com.wigo.android.core.database.datas.DBStorable;
-import com.wigo.android.core.database.datas.Message;
+import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.database.listener.DBDeleteListener;
 import com.wigo.android.core.database.listener.DBInsertListener;
 import com.wigo.android.core.database.listener.DBUpdateListener;
@@ -230,7 +230,7 @@ public class DBLAdapter extends Database {
     private static HashMap<Integer, List<DBDeleteListener>> deleteListeners = new HashMap<Integer, List<DBDeleteListener>>();
     private static HashMap<Integer, List<DBUpdateListener>> updateListeners = new HashMap<Integer, List<DBUpdateListener>>();
     private static int[] typeIDs = new int[]{
-            Message.TypeID
+            Status.TypeID
     };
 
     static {

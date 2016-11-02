@@ -142,7 +142,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(ContextProvider.getAppContext(), "Message have sent", Toast.LENGTH_SHORT).show();// display toast
+                Toast.makeText(ContextProvider.getAppContext(), "Status have sent", Toast.LENGTH_SHORT).show();// display toast
             }
         });
         messagesList.setSelection(adapter.getCount() - 1);

@@ -6,10 +6,12 @@ import android.database.sqlite.SQLiteDatabase;
 import com.wigo.android.core.AppLog;
 import com.wigo.android.core.database.constants.Tables;
 import com.wigo.android.core.database.datas.DBStorable;
-import com.wigo.android.core.database.datas.Message;
+import com.wigo.android.core.database.datas.Status;
 
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -94,20 +96,20 @@ class DBAdapter extends Database {
     }
 
     @Override
-    public int deleteDBStorableByType(int typeID, long rowID) {
+    public int deleteDBStorableByType(int typeID, UUID rowID) {
         Object[] tableInfo = getTableInfo(typeID);
         return db.delete((String) tableInfo[0], "" + tableInfo[1] + " = " + rowID, null);
     }
 
     @Override
     public int deleteDBStorable(DBStorable data) {
-        return deleteDBStorableByType(data.getTypeID(), data.getRowID());
+        return deleteDBStorableByType(data.getTypeID(), data.getId());
     }
 
     @Override
     public boolean updateDBStorable(DBStorable data) {
         Object[] tableInfo = getTableInfo(data.getTypeID());
-        int temp = db.update((String) tableInfo[0], data.getContentValues(), "" + tableInfo[1] + " = " + data.getRowID(), null);
+        int temp = db.update((String) tableInfo[0], data.getContentValues(), "" + tableInfo[1] + " = " + data.getId(), null);
         if (temp < 1) {
             return false;
         }
@@ -124,7 +126,7 @@ class DBAdapter extends Database {
     }
 
     @Override
-    public DBStorable selectDBStorableByTypeAndId(int typeId, long dbstorableId) {
+    public DBStorable selectDBStorableByTypeAndId(int typeId, UUID dbstorableId) {
         Object[] tableInfo = getTableInfo(typeId);
         DBStorable result = null;
         Cursor c = null;
@@ -140,8 +142,12 @@ class DBAdapter extends Database {
         DBStorable result = null;
         try {
             switch (typeId) {
-                case Message.TypeID:
-                    result = new Message(c);
+                case Status.TypeID:
+                    try {
+                        result = new Status(c);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
                     break;
                 default:
                     throw new IllegalArgumentException("there is not any type with this id" + typeId);
@@ -165,9 +171,9 @@ class DBAdapter extends Database {
         Object[] result = new Object[5];
         try {
             switch (typeId) {
-                case Message.TypeID:
-                    result[0] = Tables.MESSAGES.TABLE_NAME;
-                    result[1] = Tables.MESSAGES.ID;
+                case Status.TypeID:
+                    result[0] = Tables.STATUS_TABLE.TABLE_NAME;
+                    result[1] = Tables.STATUS_TABLE.ID;
                     break;
                 default:
                     throw new IllegalArgumentException("there is not any type with this id" + typeId);

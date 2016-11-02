@@ -3,6 +3,8 @@ package com.wigo.android.core.database.datas;
 import android.content.ContentValues;
 import android.os.Parcelable;
 
+import java.util.UUID;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Oleksii Khom
@@ -12,13 +14,11 @@ import android.os.Parcelable;
  */
 public abstract class DBStorable implements Parcelable, Cloneable {
 
-    public abstract long getRowID();
+    public abstract UUID getId();
 
     public abstract int getTypeID();
 
     public abstract ContentValues getContentValues();
-
-    public abstract String toJsonString();
 
     @Override
     public abstract Object clone() throws CloneNotSupportedException;

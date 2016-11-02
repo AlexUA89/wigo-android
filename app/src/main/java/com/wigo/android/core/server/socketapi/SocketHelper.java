@@ -68,7 +68,7 @@ public class SocketHelper {
                 public void run() {
                     if (checkConnection()) {
                         clientEndPoint.sendMessage(msg);
-                        AppLog.D(TAG, "Message have sent: " + msg);
+                        AppLog.D(TAG, "Status have sent: " + msg);
                     } else {
                         AppLog.D(TAG, "Can not open connection");
                     }

@@ -1,5 +1,7 @@
 package com.wigo.android.core.database.constants;
 
+import java.util.UUID;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Oleksii Khom
@@ -9,6 +11,6 @@ package com.wigo.android.core.database.constants;
  */
 public class DBConstants {
 
-    public static long DEFAULT_ROW_ID = -1l;
+    public static UUID DEFAULT_ROW_ID = null;
 
 }

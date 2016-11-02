@@ -52,7 +52,7 @@ final class WebsocketClientEndpoint {
     }
 
     /**
-     * Callback hook for Message Events. This method will be invoked when a client send a message.
+     * Callback hook for Status Events. This method will be invoked when a client send a message.
      *
      * @param message The text message
      */
@@ -72,7 +72,7 @@ final class WebsocketClientEndpoint {
     }
 
     /**
-     * Message handler.
+     * Status handler.
      *
      * @author Jiji_Sasidharan
      */

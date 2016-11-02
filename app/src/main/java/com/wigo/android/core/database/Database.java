@@ -9,6 +9,7 @@ import com.wigo.android.core.database.listener.DBInsertListener;
 import com.wigo.android.core.database.listener.DBUpdateListener;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created with IntelliJ IDEA.
@@ -27,7 +28,7 @@ public abstract class Database {
 
     public abstract List<Long> insertNewDBStorables(List<DBStorable> listDBStorable);
 
-    public abstract int deleteDBStorableByType(int typeID, long rowID);
+    public abstract int deleteDBStorableByType(int typeID, UUID rowID);
 
     public abstract int deleteDBStorable(DBStorable data);
 
@@ -35,7 +36,7 @@ public abstract class Database {
 
     public abstract Cursor selectAllDBStorablesByType(int typeId);
 
-    public abstract DBStorable selectDBStorableByTypeAndId(int typeId, long dbstorableId);
+    public abstract DBStorable selectDBStorableByTypeAndId(int typeId, UUID dbstorableId);
 
     public abstract DBStorable parseFromCursor(Cursor c, int typeId);
 

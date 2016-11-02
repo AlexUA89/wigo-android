@@ -10,45 +10,20 @@ package com.wigo.android.core.database.constants;
 public final class Tables {
 
     public static interface Table {
-        public static final String ID = "_id";
+        public static final String ID = "id";
     }
 
-    public static final class EVENTS_TABLE implements Table {
-        public static String TABLE_NAME = "events_table";
-        public static String EVENT_NAME = "name";
-        public static String DESCRIPTION = "description";
-        public static String IMAGE_URI = "image_uri";
-        public static String XCOORD = "xcoord";
-        public static String YCOORD = "ycoord";
-        public static String TIME_START = "time_start";
-        public static String TIME_END = "time_end";
+    public static final class STATUS_TABLE implements Table {
+        public static String TABLE_NAME = "status_table";
         public static String USER_ID = "user_id";
-        public static String CATEGORY = "category";
-    }
-
-    public static final class FRIENDS implements Table {
-        public static String TABLE_NAME = "friends_table";
-        public static String ID = "friend_id";
+        public static String LATITUDE = "latitude";
+        public static String LONGTITUDE = "longitude";
         public static String NAME = "name";
-        public static String EMAIL = "email";
-    }
-
-    public static final class MESSAGES implements Table {
-        public static String TABLE_NAME = "messages_table";
-        public static String MESSAGE = "message";
-        public static String XCOORD = "xcoord";
-        public static String YCOORD = "ycoord";
-        public static String TO_USER_ID = "to_user_id";
-        public static String CHAT_GROUP_ID = "chat_group_id";
-        public static String USER_ID = "user_id";
-        public static String USER_NAME = "user_name";
-        public static String TIME = "time";
-        public static String SERVER_ID = "server_id";
-    }
-
-    public static final class GROUPS implements Table {
-        public static String TABLE_NAME = "groups_table";
-        public static String NAME = "name";
+        public static String TEXT = "text";
+        public static String START_DATE = "start_date";
+        public static String END_DATE = "end_date";
+        public static String KIND = "kind";
+        public static String LAST_OPEN_DATE = "last_open_date";
     }
 
 }
