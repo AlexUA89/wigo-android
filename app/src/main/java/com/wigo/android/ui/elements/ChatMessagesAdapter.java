@@ -12,11 +12,13 @@ import android.widget.TextView;
 
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by AlexUA89 on 10/28/2016.
@@ -25,8 +27,10 @@ public class ChatMessagesAdapter extends BaseAdapter {
 
     private List<MessageDto> messagesArray = new ArrayList<>();
     private LayoutInflater lInflater;
+    private UUID myUserId = null;
 
     public ChatMessagesAdapter() {
+        myUserId = UUID.fromString(SharedPrefHelper.getUserId(null));
         lInflater = (LayoutInflater) ContextProvider.getAppContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -68,7 +72,7 @@ public class ChatMessagesAdapter extends BaseAdapter {
         }
 
         ((TextView) view.findViewById(R.id.chat_list_item_message_text)).setText(messagesArray.get(position).getText());
-        ((TextView) view.findViewById(R.id.chat_list_item_name_date)).setText("Alex UA89 " + new Date());
+        ((TextView) view.findViewById(R.id.chat_list_item_name_date)).setText(messagesArray.get(position).getNickname() + " " + messagesArray.get(position).getCreated());
         convertView = view;
         return convertView;
     }
@@ -87,7 +91,7 @@ public class ChatMessagesAdapter extends BaseAdapter {
     }
 
     private boolean isMessageFromMe(MessageDto message) {
-        return Math.round(Math.random()) == 1l;
+        return message.getUserId().equals(myUserId);
     }
 
 

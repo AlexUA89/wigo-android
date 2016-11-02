@@ -8,6 +8,7 @@ import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.FaceBookUserInfoDto;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.WigoUserInfoResponseDto;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -21,6 +22,7 @@ import org.springframework.web.client.RestTemplate;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 
@@ -48,6 +50,16 @@ public class WigoRestClient {
         return response.getBody();
     }
 
+    public WigoUserInfoResponseDto getUserInfoFromWigo(String faceBookToken) {
+        String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
+        String requestUrl = serverUrl + "/api/login";
+        HashMap<String, String> requestBody = new HashMap<>();
+        requestBody.put("fbToken", faceBookToken);
+        HttpEntity<HashMap<String, String>> request = new HttpEntity(requestBody, getHeaders());
+        ResponseEntity<WigoUserInfoResponseDto> response = client.exchange(requestUrl, HttpMethod.POST, request, WigoUserInfoResponseDto.class, request);
+        return response.getBody();
+    }
+
     public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude) {
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl
@@ -69,7 +81,15 @@ public class WigoRestClient {
         return new ArrayList<>(Arrays.asList(response.getBody()));
     }
 
-    public boolean sendMessage(StatusDto statusDto, MessageDto messageDto){
+    public List<String> getAllHashTags() {
+        String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
+        String requestUrl = serverUrl + "/api/hashtags?prefix=&limit=1000";
+        HttpEntity request = new HttpEntity(getHeaders());
+        ResponseEntity<String[]> response = client.exchange(requestUrl, HttpMethod.GET, request, String[].class);
+        return new ArrayList<>(Arrays.asList(response.getBody()));
+    }
+
+    public boolean sendMessage(StatusDto statusDto, MessageDto messageDto) {
         Objects.requireNonNull(messageDto);
         Objects.requireNonNull(statusDto);
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);

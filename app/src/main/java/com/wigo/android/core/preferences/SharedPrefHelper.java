@@ -51,16 +51,16 @@ public class SharedPrefHelper {
         return getSHP().getString(SPConstants.NAME, defaultName);
     }
 
-    public static void setEmail(String email) {
-        getEditor().putString(SPConstants.EMAIL, email).commit();
+    public static void setUserNickName(String nickName) {
+        getEditor().putString(SPConstants.NICK_NAME, nickName).commit();
+    }
+
+    public static String getUserNickName(String defaultNickName) {
+        return getSHP().getString(SPConstants.NICK_NAME, defaultNickName);
     }
 
     public static void setFacebookTooken(String token) {
         getEditor().putString(SPConstants.FACEBOOK_TOKEN, token).commit();
-    }
-
-    public static String getEmail(String defaultEmail) {
-        return getSHP().getString(SPConstants.EMAIL, defaultEmail);
     }
 
     public static String getFacebookTooken(String defaultToken) {
@@ -80,8 +80,8 @@ public class SharedPrefHelper {
         getEditor().putString(SPConstants.USER_ID, userId).commit();
     }
 
-    public static String getUserId(String defaultUserName) {
-        return getSHP().getString(SPConstants.USER_ID, defaultUserName);
+    public static String getUserId(String defaultUserId) {
+        return getSHP().getString(SPConstants.USER_ID, defaultUserId);
     }
 
     public static void setXLocal(Double coord) {

@@ -36,6 +36,7 @@ public class SendMessageTask extends AsyncTask<Void, Void, Void> {
         } catch (HttpClientErrorException e) {
             e.printStackTrace();
             listener.sendMessageConnectionError(messageDto, statusDto);
+            this.cancel(true);
         }
         return null;
     }

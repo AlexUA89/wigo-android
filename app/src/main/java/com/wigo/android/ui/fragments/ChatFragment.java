@@ -17,6 +17,7 @@ import android.widget.Toast;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
@@ -28,6 +29,7 @@ import com.wigo.android.ui.base.BaseTextWatcher;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -90,11 +92,11 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         TextView statusHashtags = (TextView) fragmentView.findViewById(R.id.status_hashtags);
         statusName.setVisibility(View.VISIBLE);
         statusName.setText(status.getName());
-        if(StatusKind.event.toString().equals(status.getKind())){
+        if (StatusKind.event.toString().equals(status.getKind())) {
             statusText.setVisibility(View.VISIBLE);
             statusText.setText(status.getText());
         }
-        if(status.getHashtags()!=null){
+        if (status.getHashtags() != null) {
             statusHashtags.setVisibility(View.VISIBLE);
             statusHashtags.setText(status.getHashtags().toString());
         }
@@ -103,7 +105,11 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                MessageDto messageDto = new MessageDto(UUID.randomUUID(), UUID.fromString("3465aed1-18dd-4b83-b337-0298dd59793a"), msg.getText().toString(), null);
+                String userId = SharedPrefHelper.getUserId(null);
+                if (userId == null) {
+                    //TODO throw correct exception
+                }
+                MessageDto messageDto = new MessageDto(UUID.randomUUID(), UUID.fromString(userId), msg.getText().toString(), new Date().toString(), SharedPrefHelper.getUserNickName(""));
                 new SendMessageTask(messageDto, status, that).execute();
             }
         });
@@ -181,7 +187,6 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             }
         });
     }
-
 
 
 }

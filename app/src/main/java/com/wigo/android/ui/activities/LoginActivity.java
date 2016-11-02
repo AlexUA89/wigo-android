@@ -17,6 +17,7 @@ import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.FaceBookUserInfoDto;
+import com.wigo.android.core.server.dto.WigoUserInfoResponseDto;
 import com.wigo.android.ui.MainActivity;
 
 import java.io.IOException;
@@ -121,11 +122,11 @@ public class LoginActivity extends Activity {
             @Override
             public void run() {
                 if (token != null) {
-                    FaceBookUserInfoDto userInfoDto = null;
-                    userInfoDto = ContextProvider.getWigoRestClient().getUserInfoFromFacebook(token);
-                    SharedPrefHelper.setEmail(userInfoDto.getEmail());
-                    SharedPrefHelper.setUserName(userInfoDto.getName());
-                    SharedPrefHelper.setToken(token);
+                    WigoUserInfoResponseDto wigoUserInfoResponseDto = ContextProvider.getWigoRestClient().getUserInfoFromWigo(token);
+                    SharedPrefHelper.setUserName(wigoUserInfoResponseDto.getUser().getName());
+                    SharedPrefHelper.setUserNickName(wigoUserInfoResponseDto.getUser().getNickname());
+                    SharedPrefHelper.setUserId(wigoUserInfoResponseDto.getUser().getId().toString());
+                    SharedPrefHelper.setToken(wigoUserInfoResponseDto.getToken());
                     startMainActivity();
                 }
             }

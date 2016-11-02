@@ -6,6 +6,7 @@ import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
@@ -38,6 +39,8 @@ import com.wigo.android.core.utils.BitmapUtils;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.elements.LoadMapStatusesTask;
 
+import org.springframework.web.client.HttpClientErrorException;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -55,7 +58,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private View view;
     private GoogleMap mMap;
     private MultiAutoCompleteTextView autoCompleteTextView;
-
+    private List<String> tags;
     private HashMap<LatLng, StatusDto> statuses = new HashMap<>();
 
     @Override
@@ -81,21 +84,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void initView(View fragmentView) {
         autoCompleteTextView = (MultiAutoCompleteTextView) fragmentView.findViewById(R.id.map_hashtags_text_view);
-        final String[] tags = {
-                "Anderson", "Anna", "Duncan", "Fuller",
-                "Cotman", "Lawson", "Chapman",
-                "Godwin", "Bush", "Gateman"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.map_tags_list_item, tags);
-        autoCompleteTextView.setAdapter(adapter);
         autoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-        autoCompleteTextView.setThreshold(1);
-
+        autoCompleteTextView.setThreshold(2);
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                System.out.print("Selectet "+ position + " id "+id);
+                System.out.print("Selectet " + position + " id " + id);
             }
         });
+        new LoadTags().execute();
     }
 
 
@@ -228,5 +225,26 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.clear();
         this.statuses.clear();
         onCameraChange(null);
+    }
+
+    private class LoadTags extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                tags = ContextProvider.getWigoRestClient().getAllHashTags();
+            } catch (HttpClientErrorException e) {
+                Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+                this.cancel(true);
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            ArrayAdapter<String> adapter = new ArrayAdapter<>(getActivity(), R.layout.map_tags_list_item, tags);
+            autoCompleteTextView.setAdapter(adapter);
+            adapter.notifyDataSetChanged();
+            super.onPostExecute(aVoid);
+        }
     }
 }

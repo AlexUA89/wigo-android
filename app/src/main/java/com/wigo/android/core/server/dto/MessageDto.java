@@ -18,14 +18,18 @@ public class MessageDto extends Dto {
     @NonNull
     private String created;
 
+    @NonNull
+    private String nickname;
+
     public MessageDto() {
     }
 
-    public MessageDto(@NonNull UUID id, @NonNull UUID userId, @NonNull String text, @NonNull String created) {
+    public MessageDto(@NonNull UUID id, @NonNull UUID userId, @NonNull String text, @NonNull String created, @NonNull String nickname) {
         this.id = id;
         this.userId = userId;
         this.text = text;
         this.created = created;
+        this.nickname = nickname;
     }
 
     @NonNull
@@ -62,5 +66,14 @@ public class MessageDto extends Dto {
 
     public void setCreated(@NonNull String created) {
         this.created = created;
+    }
+
+    @NonNull
+    public String getNickname() {
+        return nickname;
+    }
+
+    public void setNickname(@NonNull String nickname) {
+        this.nickname = nickname;
     }
 }

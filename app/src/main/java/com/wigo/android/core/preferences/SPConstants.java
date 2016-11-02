@@ -17,6 +17,8 @@ class SPConstants {
 
     public static final String NAME = "name";
 
+    public static final String NICK_NAME = "nick_name";
+
     public static final String EMAIL = "email";
 
     public static final String USER_ID = "userId";
