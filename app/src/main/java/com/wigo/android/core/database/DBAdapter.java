@@ -96,20 +96,20 @@ class DBAdapter extends Database {
     }
 
     @Override
-    public int deleteDBStorableByType(int typeID, UUID rowID) {
+    public int deleteDBStorableByType(int typeID, long rowID) {
         Object[] tableInfo = getTableInfo(typeID);
         return db.delete((String) tableInfo[0], "" + tableInfo[1] + " = " + rowID, null);
     }
 
     @Override
     public int deleteDBStorable(DBStorable data) {
-        return deleteDBStorableByType(data.getTypeID(), data.getId());
+        return deleteDBStorableByType(data.getTypeID(), data.getLocalId());
     }
 
     @Override
     public boolean updateDBStorable(DBStorable data) {
         Object[] tableInfo = getTableInfo(data.getTypeID());
-        int temp = db.update((String) tableInfo[0], data.getContentValues(), "" + tableInfo[1] + " = " + data.getId(), null);
+        int temp = db.update((String) tableInfo[0], data.getContentValues(), "" + tableInfo[1] + " = " + data.getLocalId(), null);
         if (temp < 1) {
             return false;
         }
@@ -126,13 +126,33 @@ class DBAdapter extends Database {
     }
 
     @Override
-    public DBStorable selectDBStorableByTypeAndId(int typeId, UUID dbstorableId) {
+    public Cursor selectAllLastActiveStatuses() {
+        Object[] tableInfo = getTableInfo(Status.TypeID);
+        Cursor c = null;
+        c = db.rawQuery("SELECT * FROM " + tableInfo[0] + " ORDER BY " + Tables.STATUS_TABLE.LAST_OPEN_DATE + " DESC", null);
+        return c;
+    }
+
+    @Override
+    public DBStorable selectDBStorableByTypeAndId(int typeId, long dbstorableId) {
         Object[] tableInfo = getTableInfo(typeId);
         DBStorable result = null;
         Cursor c = null;
         c = db.rawQuery("SELECT * FROM " + tableInfo[0] + " WHERE " + tableInfo[1] + " = " + dbstorableId + ";", null);
         if (c.moveToFirst()) {
             result = parseFromCursor(c, typeId);
+        }
+        return result;
+    }
+
+    @Override
+    public Status selectStatusServerById(UUID serverId) {
+        Object[] tableInfo = getTableInfo(Status.TypeID);
+        Cursor c = null;
+        Status result = null;
+        c = db.rawQuery("SELECT * FROM " + tableInfo[0] + " WHERE id = '" + serverId + "';", null);
+        if (c.moveToFirst()) {
+            result = (Status) parseFromCursor(c, Status.TypeID);
         }
         return result;
     }
@@ -173,7 +193,7 @@ class DBAdapter extends Database {
             switch (typeId) {
                 case Status.TypeID:
                     result[0] = Tables.STATUS_TABLE.TABLE_NAME;
-                    result[1] = Tables.STATUS_TABLE.ID;
+                    result[1] = Tables.STATUS_TABLE.LOCAL_ID;
                     break;
                 default:
                     throw new IllegalArgumentException("there is not any type with this id" + typeId);

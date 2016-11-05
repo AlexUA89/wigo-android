@@ -21,7 +21,7 @@ public class Status extends DBStorable {
 
     public static final int TypeID = 1;
     private static final String TAG = Status.class.getCanonicalName();
-    private UUID id = DBConstants.DEFAULT_ROW_ID;
+    private UUID id;
     private UUID userId;
     private double latitude;
     private double longitude;
@@ -32,9 +32,16 @@ public class Status extends DBStorable {
     private String kind;
     private Date lastOpenDate;
 
-    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, Date startDate, Date endDate, String kind, Date lastOpenDate) {
+    public Status(long localId, UUID id, UUID userId, double latitude, double longitude, String name, String text, Date startDate, Date endDate, String kind, Date lastOpenDate) {
+        if (localId < DBStorable.DEFAULT_ROW_ID) {
+            throw new IllegalArgumentException("localId can not be " + localId);
+        }
+        this.localId = localId;
+        if (id == null) {
+            throw new IllegalArgumentException("id can not be " + id);
+        }
         this.id = id;
-        if (userId == DBConstants.DEFAULT_ROW_ID) {
+        if (userId == null) {
             throw new IllegalArgumentException("userId can not be " + userId);
         }
         this.userId = userId;
@@ -51,20 +58,21 @@ public class Status extends DBStorable {
         this.lastOpenDate = lastOpenDate;
     }
 
-    public Status(UUID userId, double latitude, double longitude, String name, String text, Date startDate, Date endDate, String kind, Date lastOpenDate) {
-        this(null, userId, latitude, longitude, name, text, startDate, endDate, kind, lastOpenDate);
+    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, Date startDate, Date endDate, String kind, Date lastOpenDate) {
+        this(DBStorable.DEFAULT_ROW_ID, id, userId, latitude, longitude, name, text, startDate, endDate, kind, lastOpenDate);
     }
 
     public Status(Status status) {
-        this(status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getStartDate(), status.getEndDate(), status.getKind(), status.getLastOpenDate());
+        this(status.getLocalId(), status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getStartDate(), status.getEndDate(), status.getKind(), status.getLastOpenDate());
     }
 
     public Status(Parcel in) {
-        this(UUID.fromString(in.readString()), UUID.fromString(in.readString()), in.readDouble(), in.readDouble(), in.readString(), in.readString(), (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), (java.util.Date) in.readSerializable());
+        this(in.readLong(), UUID.fromString(in.readString()), UUID.fromString(in.readString()), in.readDouble(), in.readDouble(), in.readString(), in.readString(), (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), (java.util.Date) in.readSerializable());
     }
 
     public Status(Cursor c) throws ParseException {
-        this(UUID.fromString(c.getString(c.getColumnIndex(Tables.STATUS_TABLE.ID))),
+        this(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.LOCAL_ID)),
+                UUID.fromString(c.getString(c.getColumnIndex(Tables.STATUS_TABLE.ID))),
                 UUID.fromString(c.getString(c.getColumnIndex(Tables.STATUS_TABLE.USER_ID))),
                 c.getDouble(c.getColumnIndex(Tables.STATUS_TABLE.LATITUDE)),
                 c.getDouble(c.getColumnIndex(Tables.STATUS_TABLE.LONGTITUDE)),
@@ -77,11 +85,6 @@ public class Status extends DBStorable {
     }
 
     @Override
-    public UUID getId() {
-        return this.id;
-    }
-
-    @Override
     public int getTypeID() {
         return TypeID;
     }
@@ -89,6 +92,7 @@ public class Status extends DBStorable {
     @Override
     public ContentValues getContentValues() {
         ContentValues values = new ContentValues();
+        values.put(Tables.STATUS_TABLE.ID, id.toString());
         values.put(Tables.STATUS_TABLE.USER_ID, userId.toString());
         values.put(Tables.STATUS_TABLE.LATITUDE, latitude);
         values.put(Tables.STATUS_TABLE.LONGTITUDE, longitude);
@@ -117,6 +121,7 @@ public class Status extends DBStorable {
 
     @Override
     public void writeToParcel(Parcel dest, int flags) {
+        dest.writeLong(localId);
         dest.writeString(id.toString());
         dest.writeString(userId.toString());
         dest.writeDouble(latitude);
@@ -223,5 +228,13 @@ public class Status extends DBStorable {
 
     public void setLastOpenDate(Date lastOpenDate) {
         this.lastOpenDate = lastOpenDate;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public void setId(UUID id) {
+        this.id = id;
     }
 }

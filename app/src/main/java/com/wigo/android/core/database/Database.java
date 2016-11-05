@@ -4,6 +4,7 @@ import android.database.Cursor;
 
 
 import com.wigo.android.core.database.datas.DBStorable;
+import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.database.listener.DBDeleteListener;
 import com.wigo.android.core.database.listener.DBInsertListener;
 import com.wigo.android.core.database.listener.DBUpdateListener;
@@ -28,7 +29,7 @@ public abstract class Database {
 
     public abstract List<Long> insertNewDBStorables(List<DBStorable> listDBStorable);
 
-    public abstract int deleteDBStorableByType(int typeID, UUID rowID);
+    public abstract int deleteDBStorableByType(int typeID, long rowID);
 
     public abstract int deleteDBStorable(DBStorable data);
 
@@ -36,7 +37,11 @@ public abstract class Database {
 
     public abstract Cursor selectAllDBStorablesByType(int typeId);
 
-    public abstract DBStorable selectDBStorableByTypeAndId(int typeId, UUID dbstorableId);
+    public abstract Cursor selectAllLastActiveStatuses();
+
+    public abstract DBStorable selectDBStorableByTypeAndId(int typeId, long dbstorableId);
+
+    public abstract Status selectStatusServerById(UUID serverId);
 
     public abstract DBStorable parseFromCursor(Cursor c, int typeId);
 

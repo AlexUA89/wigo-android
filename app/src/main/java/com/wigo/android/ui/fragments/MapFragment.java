@@ -35,6 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.core.utils.BitmapUtils;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.elements.LoadMapStatusesTask;
@@ -184,7 +185,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
         for (StatusDto status : newStatuses) {
             LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
-            newMarkers.add(new MarkerOptions().position(pos).icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS))).title(status.getName()));
+            MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
+            if(StatusKind.event.toString().equals(status.getKind())){
+                marker.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS)));
+            } else {
+                marker.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.chat, SCALE_FOR_MAP_ITEMS)));
+            }
+            newMarkers.add(marker);
             this.statuses.put(pos, status);
         }
         for (MarkerOptions marker : newMarkers) {

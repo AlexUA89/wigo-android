@@ -11,6 +11,5 @@ import java.util.UUID;
  */
 public class DBConstants {
 
-    public static UUID DEFAULT_ROW_ID = null;
 
 }

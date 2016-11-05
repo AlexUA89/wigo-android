@@ -2,6 +2,8 @@ package com.wigo.android.core.database.listener;
 
 import com.wigo.android.core.database.datas.DBStorable;
 
+import java.util.UUID;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Oleksii Khom

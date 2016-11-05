@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -161,8 +162,18 @@ public class DBLAdapter extends Database {
     }
 
     @Override
+    public Cursor selectAllLastActiveStatuses() {
+        return dbAdapter.selectAllLastActiveStatuses();
+    }
+
+    @Override
     public DBStorable selectDBStorableByTypeAndId(int typeId, long dbstorableId) {
         return dbAdapter.selectDBStorableByTypeAndId(typeId, dbstorableId);
+    }
+
+    @Override
+    public Status selectStatusServerById(UUID serverId) {
+        return dbAdapter.selectStatusServerById(serverId);
     }
 
     @Override

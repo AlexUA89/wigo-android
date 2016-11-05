@@ -17,6 +17,10 @@ import android.widget.Toast;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.database.DBManager;
+import com.wigo.android.core.database.Database;
+import com.wigo.android.core.database.datas.DBStorable;
+import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
@@ -42,6 +46,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
 
     private Button send = null;
     private StatusDto status;
+    private Status statusDb;
     private EditText msg = null;
     private ChatMessagesAdapter adapter = null;
     private ListView messagesList = null;
@@ -82,6 +87,14 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     }
 
     private void initView(View fragmentView) {
+        Database db = DBManager.getDatabase();
+        db.open();
+        statusDb = db.selectStatusServerById(status.getId());
+        db.close();
+        if (statusDb == null) {
+            statusDb = new Status(DBStorable.DEFAULT_ROW_ID, status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(),
+                    status.getStartDate(), status.getEndDate(), status.getKind(), new Date());
+        }
         scrollView = (ScrollView) fragmentView.findViewById(R.id.chat_fragment_scroll_view);
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
         messagesList = (ListView) fragmentView.findViewById(R.id.listView);
@@ -109,7 +122,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
                 if (userId == null) {
                     //TODO throw correct exception
                 }
-                MessageDto messageDto = new MessageDto(UUID.randomUUID(), UUID.fromString(userId), msg.getText().toString(), new Date().toString(), SharedPrefHelper.getUserNickName(""));
+                MessageDto messageDto = new MessageDto(UUID.randomUUID(), UUID.fromString(userId), msg.getText().toString(), null, SharedPrefHelper.getUserNickName(""));
                 new SendMessageTask(messageDto, status, that).execute();
             }
         });
@@ -138,6 +151,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     @Override
     public void sendMessageDone(MessageDto message, StatusDto statusDto) {
         adapter.mergMessageArray(Collections.singletonList(message));
+        message.setCreated(new Date().toString());
         msg.setText("");
         getActivity().runOnUiThread(new Runnable() {
             @Override
@@ -146,6 +160,15 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             }
         });
         messagesList.setSelection(adapter.getCount() - 1);
+        statusDb.setLastOpenDate(new Date());
+        Database db = DBManager.getDatabase();
+        db.open();
+        if (statusDb.getLocalId() != DBStorable.DEFAULT_ROW_ID) {
+            db.updateDBStorable(statusDb);
+        } else {
+            statusDb.setLocalId(db.insertNewDBStorable(statusDb));
+        }
+        db.close();
     }
 
     @Override

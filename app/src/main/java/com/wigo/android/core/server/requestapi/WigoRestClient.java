@@ -103,7 +103,7 @@ public class WigoRestClient {
         String token = SharedPrefHelper.getToken(null);
         HttpHeaders headers = new HttpHeaders();
         if (token != null) {
-            headers.set("token", token);
+            headers.set("Authorization", "bearer " + token);
         }
         return headers;
     }

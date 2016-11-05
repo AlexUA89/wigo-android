@@ -10,11 +10,12 @@ package com.wigo.android.core.database.constants;
 public final class Tables {
 
     public static interface Table {
-        public static final String ID = "id";
+        public static final String LOCAL_ID = "local_id";
     }
 
     public static final class STATUS_TABLE implements Table {
         public static String TABLE_NAME = "status_table";
+        public static String ID = "id";
         public static String USER_ID = "user_id";
         public static String LATITUDE = "latitude";
         public static String LONGTITUDE = "longitude";

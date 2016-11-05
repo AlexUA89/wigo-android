@@ -17,7 +17,8 @@ public final class CreateDatabase {
 
 
     public static final String CreateSQLScriptMessageProviders = "CREATE TABLE IF NOT EXISTS " + Tables.STATUS_TABLE.TABLE_NAME + " ( "
-            + Tables.STATUS_TABLE.ID + " TEXT PRIMARY KEY NOT NULL, "
+            + Tables.STATUS_TABLE.LOCAL_ID + " INTEGER PRIMARY KEY NOT NULL, "
+            + Tables.STATUS_TABLE.ID + " TEXT NOT NULL, "
             + Tables.STATUS_TABLE.USER_ID + " TEXT NOT NULL, "
             + Tables.STATUS_TABLE.LATITUDE + " REAL, "
             + Tables.STATUS_TABLE.LONGTITUDE + " REAL, "

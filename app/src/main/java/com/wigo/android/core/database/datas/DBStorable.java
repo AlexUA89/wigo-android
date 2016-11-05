@@ -14,7 +14,17 @@ import java.util.UUID;
  */
 public abstract class DBStorable implements Parcelable, Cloneable {
 
-    public abstract UUID getId();
+    public static final long DEFAULT_ROW_ID = -1l;
+
+    protected long localId = DBStorable.DEFAULT_ROW_ID;
+
+    public long getLocalId() {
+        return localId;
+    }
+
+    public void setLocalId(long localId) {
+        this.localId = localId;
+    }
 
     public abstract int getTypeID();
 
