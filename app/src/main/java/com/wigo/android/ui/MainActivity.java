@@ -17,7 +17,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
+import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.requestapi.WigoRestClient;
 import com.wigo.android.ui.fragments.ChatFragment;
 import com.wigo.android.ui.fragments.MapFragment;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
@@ -31,7 +33,7 @@ public class MainActivity extends FragmentActivity {
     private ListView mDrawerList;
     private MapFragment mapFragment;
     private ChatFragment chatFragment;
-
+    private MainActivity mainActivity;
     private NavDrawerListAdapter adapter;
 
     private ActionBarDrawerToggle mDrawerToggle;
@@ -39,6 +41,7 @@ public class MainActivity extends FragmentActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        mainActivity = this;
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.main_activity);
 
@@ -78,7 +81,7 @@ public class MainActivity extends FragmentActivity {
         };
         mDrawerLayout.setDrawerListener(mDrawerToggle);
 
-        if(mapFragment == null) {
+        if (mapFragment == null) {
 //            fragment = new MapFragment();
             mapFragment = new MapFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mapFragment).commit();
@@ -88,16 +91,33 @@ public class MainActivity extends FragmentActivity {
 
     /**
      * Slide menu item click listener
-     * */
+     */
     private class SlideMenuClickListener implements
             ListView.OnItemClickListener {
         @Override
-        public void onItemClick(AdapterView<?> parent, View view, int position,
+        public void onItemClick(AdapterView<?> parent, View view, final int position,
                                 long id) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    Status status = (Status) adapter.getItem(position);
+                    StatusDto statusDto = ContextProvider.getWigoRestClient().getStatusById(status.getId());
+                    if (statusDto != null) {
+                        openChatFragment(statusDto);
+                    } else {
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ContextProvider.getAppContext(), "Can not find such event on server", Toast.LENGTH_SHORT).show();// display toast
+                            }
+                        });
+                    }
 //            mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
-            openMapFragment();
-            // display view for selected nav drawer item
+//            openMapFragment();
+                    // display view for selected nav drawer item
 //            displayView(position);
+                }
+            }).start();
             mDrawerLayout.closeDrawer(mDrawerList);
         }
     }
@@ -146,7 +166,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void openChatFragment(StatusDto statusDto) {
-        if(chatFragment == null) {
+        if (chatFragment == null) {
             chatFragment = new ChatFragment();
             Bundle args = new Bundle();
             try {
@@ -159,13 +179,13 @@ public class MainActivity extends FragmentActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();
     }
 
-    public void openMapFragment(){
+    public void openMapFragment() {
         //deleting chat fragment
-        if(chatFragment!=null){
+        if (chatFragment != null) {
             getSupportFragmentManager().beginTransaction().remove(getSupportFragmentManager().findFragmentById(R.id.fragment_container)).commit();
             chatFragment = null;
         }
-        if(mapFragment == null) {
+        if (mapFragment == null) {
             mapFragment = new MapFragment();
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mapFragment, MapFragment.FRAGMENT_TAG).addToBackStack(null).commit();
@@ -174,6 +194,10 @@ public class MainActivity extends FragmentActivity {
 
     @Override
     public void onBackPressed() {
-
+        if (mapFragment == null || !mapFragment.isVisible()) {
+            openMapFragment();
+        } else {
+            finish();
+        }
     }
 }

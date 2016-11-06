@@ -211,5 +211,4 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         });
     }
 
-
 }

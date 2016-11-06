@@ -19,12 +19,12 @@ import org.springframework.http.converter.json.MappingJackson2HttpMessageConvert
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 
 /**
@@ -70,6 +70,20 @@ public class WigoRestClient {
         HttpEntity request = new HttpEntity(getHeaders());
         ResponseEntity<StatusDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusDto[].class);
         return Arrays.asList(response.getBody());
+    }
+
+    public StatusDto getStatusById(UUID statusId) {
+        StatusDto result = null;
+        String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
+        String requestUrl = serverUrl + "/api/status/" + statusId + "/";
+        HttpEntity request = new HttpEntity(getHeaders());
+        try {
+            ResponseEntity<StatusDto> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusDto.class);
+            result = response.getBody();
+        } catch (HttpClientErrorException e){
+            e.printStackTrace();
+        }
+        return result;
     }
 
     public List<MessageDto> getListOfMessagesForStatus(StatusDto statusDto) {
