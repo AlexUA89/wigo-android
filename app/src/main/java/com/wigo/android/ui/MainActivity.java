@@ -68,13 +68,13 @@ public class MainActivity extends FragmentActivity {
                 R.string.app_name // nav drawer close - description for accessibility
         ) {
             public void onDrawerClosed(View view) {
-                getActionBar().setTitle("1");
+//                getActionBar().setTitle(chatFragment.getStatus().getName());
                 // calling onPrepareOptionsMenu() to show action bar icons
                 invalidateOptionsMenu();
             }
 
             public void onDrawerOpened(View drawerView) {
-                getActionBar().setTitle("2");
+//                getActionBar().setTitle("Menu");
                 // calling onPrepareOptionsMenu() to hide action bar icons
                 invalidateOptionsMenu();
             }
@@ -165,9 +165,15 @@ public class MainActivity extends FragmentActivity {
         mDrawerToggle.syncState();
     }
 
-    public void openChatFragment(StatusDto statusDto) {
-        if (chatFragment == null) {
+    public void openChatFragment(final StatusDto statusDto) {
+        if (chatFragment == null || !chatFragment.getStatus().equals(statusDto)) {
             chatFragment = new ChatFragment();
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    getActionBar().setTitle(statusDto.getName());
+                }
+            });
             Bundle args = new Bundle();
             try {
                 args.putString(ChatFragment.STATUS_DTO, ContextProvider.getObjectMapper().writeValueAsString(statusDto));
@@ -189,7 +195,13 @@ public class MainActivity extends FragmentActivity {
             mapFragment = new MapFragment();
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, mapFragment, MapFragment.FRAGMENT_TAG).addToBackStack(null).commit();
-
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                mDrawerList.clearChoices();
+                getActionBar().setTitle(R.string.app_name);
+            }
+        });
     }
 
     @Override
@@ -198,6 +210,16 @@ public class MainActivity extends FragmentActivity {
             openMapFragment();
         } else {
             finish();
+        }
+    }
+
+    public void updateMenuList(){
+        try {
+            adapter.updateMenuItems();
+            mDrawerList.clearChoices();
+            mDrawerList.setItemChecked(0, true);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
     }
 }

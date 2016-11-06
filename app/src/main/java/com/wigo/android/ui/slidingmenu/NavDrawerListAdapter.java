@@ -32,6 +32,10 @@ public class NavDrawerListAdapter extends BaseAdapter {
     private List<Status> statuses = new ArrayList<>();
 
     public NavDrawerListAdapter() throws ParseException {
+        loadData();
+    }
+
+    private void loadData() throws ParseException {
         Database db = DBManager.getDatabase();
         db.open();
         Cursor c = db.selectAllLastActiveStatuses();
@@ -42,6 +46,12 @@ public class NavDrawerListAdapter extends BaseAdapter {
             }
         }
         db.close();
+    }
+
+    public void updateMenuItems() throws ParseException {
+        statuses.clear();
+        loadData();
+        notifyDataSetChanged();
     }
 
     @Override

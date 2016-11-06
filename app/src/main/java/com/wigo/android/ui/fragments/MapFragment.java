@@ -102,6 +102,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 System.out.print("Selectet " + position + " id " + id);
             }
         });
+        autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                autoCompleteTextView.showDropDown();
+            }
+        });
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

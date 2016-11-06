@@ -2,7 +2,7 @@
     <string name="server_url">http://46.101.106.144:8080/wigo-server</string>
 
     <string name="app_name">WIGO</string>
-    <string name="action_settings">Settings</string>
+    <string name="action_settings">Save database to SD card</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="drawer_open">Slider Menu Opened</string>

@@ -25,6 +25,7 @@ import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
+import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.elements.ChatMessagesAdapter;
 import com.wigo.android.ui.elements.LoadMessageFroStatusTask;
 import com.wigo.android.ui.elements.SendMessageTask;
@@ -169,6 +170,13 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             statusDb.setLocalId(db.insertNewDBStorable(statusDb));
         }
         db.close();
+        ((MainActivity) getActivity()).updateMenuList();
+    }
+
+    @Override
+    public void onDestroy() {
+        LoadMessageFroStatusTask.cancel();
+        super.onDestroy();
     }
 
     @Override
@@ -211,4 +219,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         });
     }
 
+    public StatusDto getStatus() {
+        return status;
+    }
 }

@@ -16,7 +16,7 @@ import java.util.Objects;
  * Created by AlexUA89 on 10/25/2016.
  */
 
-public class LoadMessageFroStatusTask  extends AsyncTask<Void, Void, Void> {
+public class LoadMessageFroStatusTask extends AsyncTask<Void, Void, Void> {
 
     private static LoadMessageFroStatusTask task;
 
@@ -34,6 +34,13 @@ public class LoadMessageFroStatusTask  extends AsyncTask<Void, Void, Void> {
         }
         task = new LoadMessageFroStatusTask(listener, statusDto);
         task.execute();
+    }
+
+    public static void cancel() {
+        if (task != null) {
+            task.listener = null;
+            task.cancel();
+        }
     }
 
     private LoadMessageFroStatusTask(LoadMessagesForStatusTaskListener listener, StatusDto statusDto) {
