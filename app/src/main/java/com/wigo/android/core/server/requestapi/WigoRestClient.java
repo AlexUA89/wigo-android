@@ -1,6 +1,8 @@
 package com.wigo.android.core.server.requestapi;
 
 
+import android.text.TextUtils;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
@@ -16,6 +18,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -60,13 +63,16 @@ public class WigoRestClient {
         return response.getBody();
     }
 
-    public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude) {
+    public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude, List<String> tags) {
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl
                 + "/api/status?startLatitude=" + Math.min(startLatitude, endLatitude)
                 + "&endLatitude=" + Math.max(startLatitude, endLatitude)
                 + "&startLongitude=" + Math.min(startLongitude, endLongitude)
                 + "&endLongitude=" + Math.max(startLongitude, endLongitude);
+        if(!tags.isEmpty()){
+            requestUrl = requestUrl + "&hashtags=" + TextUtils.join(",", tags);
+        }
         HttpEntity request = new HttpEntity(getHeaders());
         ResponseEntity<StatusDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusDto[].class);
         return Arrays.asList(response.getBody());
@@ -80,7 +86,7 @@ public class WigoRestClient {
         try {
             ResponseEntity<StatusDto> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusDto.class);
             result = response.getBody();
-        } catch (HttpClientErrorException e){
+        } catch (HttpClientErrorException e) {
             e.printStackTrace();
         }
         return result;

@@ -11,6 +11,8 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
+import android.widget.Button;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
@@ -34,6 +37,7 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.core.utils.BitmapUtils;
@@ -43,6 +47,7 @@ import com.wigo.android.ui.elements.LoadMapStatusesTask;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 
@@ -59,6 +64,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private View view;
     private GoogleMap mMap;
     private MultiAutoCompleteTextView autoCompleteTextView;
+    private Button filterButton;
     private List<String> tags;
     private HashMap<LatLng, StatusDto> statuses = new HashMap<>();
 
@@ -84,16 +90,25 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void initView(View fragmentView) {
+        filterButton = (Button) fragmentView.findViewById(R.id.map_hashtags_filter_button);
         autoCompleteTextView = (MultiAutoCompleteTextView) fragmentView.findViewById(R.id.map_hashtags_text_view);
         autoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
-        autoCompleteTextView.setThreshold(2);
+        autoCompleteTextView.setThreshold(0);
+        autoCompleteTextView.setText(SharedPrefHelper.getTagSearch(""));
+        new LoadTags().execute();
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 System.out.print("Selectet " + position + " id " + id);
             }
         });
-        new LoadTags().execute();
+        filterButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                refreshMap();
+                SharedPrefHelper.setTagSearch(autoCompleteTextView.getText().toString());
+            }
+        });
     }
 
 
@@ -128,7 +143,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //request for all markers
         LatLngBounds curScreen = mMap.getProjection()
                 .getVisibleRegion().latLngBounds;
-        LoadMapStatusesTask.loadData(this, curScreen);
+        LoadMapStatusesTask.loadData(this, curScreen, getTagsFromText(autoCompleteTextView.getText().toString()));
     }
 
     @Override
@@ -186,7 +201,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         for (StatusDto status : newStatuses) {
             LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
             MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
-            if(StatusKind.event.toString().equals(status.getKind())){
+            if (StatusKind.event.toString().equals(status.getKind())) {
                 marker.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS)));
             } else {
                 marker.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.chat, SCALE_FOR_MAP_ITEMS)));
@@ -253,5 +268,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             adapter.notifyDataSetChanged();
             super.onPostExecute(aVoid);
         }
+    }
+
+    private List<String> getTagsFromText(String text) {
+        List<String> res = new ArrayList<>();
+        for (String s : text.split(", ")) {
+            if (!s.isEmpty()) {
+                res.add(s);
+            }
+        }
+        return res;
     }
 }

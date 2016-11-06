@@ -35,4 +35,6 @@ class SPConstants {
 
     public static final String FACEBOOK_TOKEN = "FACEBOOK_TOKEN";
 
+    public static final String TAGS_SEARCH = "TAGS_SEARCH";
+
 }

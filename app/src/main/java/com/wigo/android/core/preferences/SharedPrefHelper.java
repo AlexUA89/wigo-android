@@ -84,6 +84,14 @@ public class SharedPrefHelper {
         return getSHP().getString(SPConstants.USER_ID, defaultUserId);
     }
 
+    public static String getTagSearch(String defaulSearch) {
+        return getSHP().getString(SPConstants.TAGS_SEARCH, defaulSearch);
+    }
+
+    public static void setTagSearch(String tagSearch) {
+        getEditor().putString(SPConstants.TAGS_SEARCH, tagSearch).commit();
+    }
+
     public static void setXLocal(Double coord) {
         if (coord != null) {
             getEditor().putString(SPConstants.X_LOCAL, coord.toString());
