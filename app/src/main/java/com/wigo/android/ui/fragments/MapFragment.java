@@ -29,6 +29,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
@@ -67,6 +68,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private Button filterButton;
     private List<String> tags;
     private HashMap<LatLng, StatusDto> statuses = new HashMap<>();
+    private BitmapDescriptor eventBitmap;
+    private BitmapDescriptor chatBitmap;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -90,6 +93,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void initView(View fragmentView) {
+        eventBitmap = BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS));
+        chatBitmap = BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.chat, SCALE_FOR_MAP_ITEMS));
         filterButton = (Button) fragmentView.findViewById(R.id.map_hashtags_filter_button);
         autoCompleteTextView = (MultiAutoCompleteTextView) fragmentView.findViewById(R.id.map_hashtags_text_view);
         autoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
@@ -184,13 +189,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             } else {
                 location = new LatLng(l.getLatitude(), l.getLongitude());
             }
+            mMap.setMyLocationEnabled(true);
         }
         mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
 
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
         googleMap.moveCamera(zoom);
 
-        mMap.setMyLocationEnabled(true);
     }
 
     private void onMapOpened(GoogleMap googleMap) {
@@ -208,9 +213,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
             MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
             if (StatusKind.event.toString().equals(status.getKind())) {
-                marker.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS)));
+                marker.icon(eventBitmap);
             } else {
-                marker.icon(BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.chat, SCALE_FOR_MAP_ITEMS)));
+                marker.icon(chatBitmap);
             }
             newMarkers.add(marker);
             this.statuses.put(pos, status);

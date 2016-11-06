@@ -3,6 +3,7 @@
 
     <string name="app_name">WIGO</string>
     <string name="action_settings">Save database to SD card</string>
+    <string name="crash_toast_text">Error, we sent report to developers</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="drawer_open">Slider Menu Opened</string>

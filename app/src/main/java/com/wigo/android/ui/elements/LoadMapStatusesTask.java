@@ -24,7 +24,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
     private List<String> tags = new ArrayList<>();
     private static LoadMapStatusesTask task;
     private static Handler handler;
-    private static final long TIME_DELAY = 100;
+    private static final long TIME_DELAY = 1000;
 
     public static void loadData(final LoadMapStatusesTaskListener listener, final LatLngBounds curScreen, final List<String> tags) {
         if (handler != null) {

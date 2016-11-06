@@ -6,7 +6,12 @@ import android.content.Context;
 import com.facebook.FacebookSdk;
 import com.facebook.appevents.AppEventsLogger;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wigo.android.R;
 import com.wigo.android.core.server.requestapi.WigoRestClient;
+
+import org.acra.ACRA;
+import org.acra.ReportingInteractionMode;
+import org.acra.annotation.ReportsCrashes;
 
 /**
  * Created with IntelliJ IDEA.
@@ -15,6 +20,10 @@ import com.wigo.android.core.server.requestapi.WigoRestClient;
  * Time: 13:04
  * To change this template use File | Settings | File Templates.
  */
+@ReportsCrashes(formKey = "", // will not be used
+        mailTo = "alexua89@gmail.com",
+        mode = ReportingInteractionMode.TOAST,
+        resToastText = R.string.crash_toast_text)
 public class ContextProvider extends Application {
 
     private static ContextProvider instance;
@@ -25,6 +34,7 @@ public class ContextProvider extends Application {
 
     @Override
     public void onCreate() {
+        ACRA.init(this);
         super.onCreate();
         instance = this;
         //facebook initialization

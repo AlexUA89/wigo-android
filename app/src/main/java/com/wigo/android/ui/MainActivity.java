@@ -1,7 +1,9 @@
 package com.wigo.android.ui;
 
+import android.Manifest;
 import android.content.res.TypedArray;
 import android.os.Bundle;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -42,6 +44,7 @@ public class MainActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         mainActivity = this;
+        requestPermissions();
         getWindow().requestFeature(Window.FEATURE_ACTION_BAR);
         setContentView(R.layout.main_activity);
 
@@ -213,7 +216,7 @@ public class MainActivity extends FragmentActivity {
         }
     }
 
-    public void updateMenuList(){
+    public void updateMenuList() {
         try {
             adapter.updateMenuItems();
             mDrawerList.clearChoices();
@@ -221,5 +224,10 @@ public class MainActivity extends FragmentActivity {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    private void requestPermissions() {
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
     }
 }

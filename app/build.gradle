@@ -9,7 +9,7 @@ android {
         minSdkVersion 21
         targetSdkVersion 23
         versionCode 1
-        versionName "1.0"
+        versionName "0.1"
         multiDexEnabled true
     }
     buildTypes {
@@ -44,6 +44,7 @@ dependencies {
     compile 'com.facebook.android:facebook-android-sdk:[4,5)'
     compile 'javax.websocket:javax.websocket-api:1.1'
     compile 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.12'
+    compile 'ch.acra:acra:4.5.0'
 //    compile 'javax.validation:validation-api:1.0.0.GA'
     compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
     compile(
