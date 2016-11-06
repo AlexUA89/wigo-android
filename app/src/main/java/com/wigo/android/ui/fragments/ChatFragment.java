@@ -1,6 +1,7 @@
 package com.wigo.android.ui.fragments;
 
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
 import android.text.Editable;
 import android.view.LayoutInflater;
@@ -36,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.UUID;
 
 public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.LoadMessagesForStatusTaskListener, SendMessageTask.SendMessageListener {
@@ -52,6 +55,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     private ChatMessagesAdapter adapter = null;
     private ListView messagesList = null;
     private ScrollView scrollView = null;
+    private Timer timer = null;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -123,7 +127,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
                 if (userId == null) {
                     //TODO throw correct exception
                 }
-                MessageDto messageDto = new MessageDto(UUID.randomUUID(), UUID.fromString(userId), msg.getText().toString(), null, SharedPrefHelper.getUserNickName(""));
+                MessageDto messageDto = new MessageDto(null, UUID.fromString(userId), msg.getText().toString(), null, SharedPrefHelper.getUserNickName(""));
                 new SendMessageTask(messageDto, status, that).execute();
             }
         });
@@ -139,14 +143,28 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     @Override
     public void onResume() {
         super.onResume();
-        LoadMessageFroStatusTask.loadData(this, status);
+        final ChatFragment that = this;
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                LoadMessageFroStatusTask.loadData(that, status);
+            }
+
+        }, 0, 5000);
+    }
+
+    @Override
+    public void onPause() {
+        timer.cancel();
+        timer = null;
+        super.onPause();
     }
 
     @Override
     public void loadMessagesDone(List<MessageDto> messages) {
         adapter.mergMessageArray(messages);
         messagesList.setSelection(adapter.getCount() - 1);
-        scrollView.scrollTo(0, 0);
     }
 
     @Override

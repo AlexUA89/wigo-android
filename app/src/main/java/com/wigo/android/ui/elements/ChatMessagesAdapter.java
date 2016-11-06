@@ -78,7 +78,18 @@ public class ChatMessagesAdapter extends BaseAdapter {
     }
 
     public void mergMessageArray(List<MessageDto> messagesArray) {
-        this.messagesArray.addAll(messagesArray);
+        for (MessageDto newMessage : messagesArray) {
+            boolean alreadyExist = false;
+            for (MessageDto oldMessage : this.messagesArray) {
+                if (oldMessage.getId().equals(newMessage.getId())) {
+                    alreadyExist = true;
+                    break;
+                }
+            }
+            if (!alreadyExist) {
+                this.messagesArray.add(newMessage);
+            }
+        }
         this.notifyDataSetChanged();
     }
 

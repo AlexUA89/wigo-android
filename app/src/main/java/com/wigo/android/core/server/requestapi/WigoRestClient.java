@@ -70,7 +70,7 @@ public class WigoRestClient {
                 + "&endLatitude=" + Math.max(startLatitude, endLatitude)
                 + "&startLongitude=" + Math.min(startLongitude, endLongitude)
                 + "&endLongitude=" + Math.max(startLongitude, endLongitude);
-        if(!tags.isEmpty()){
+        if (!tags.isEmpty()) {
             requestUrl = requestUrl + "&hashtags=" + TextUtils.join(",", tags);
         }
         HttpEntity request = new HttpEntity(getHeaders());
@@ -109,14 +109,14 @@ public class WigoRestClient {
         return new ArrayList<>(Arrays.asList(response.getBody()));
     }
 
-    public boolean sendMessage(StatusDto statusDto, MessageDto messageDto) {
+    public UUID sendMessage(StatusDto statusDto, MessageDto messageDto) {
         Objects.requireNonNull(messageDto);
         Objects.requireNonNull(statusDto);
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl + "/api/status/" + statusDto.getId() + "/messages";
         HttpEntity<MessageDto> request = new HttpEntity(messageDto, getHeaders());
-        ResponseEntity response = client.exchange(requestUrl, HttpMethod.POST, request, Object.class, messageDto);
-        return HttpStatus.OK.equals(response.getStatusCode());
+        ResponseEntity<UUID> response = client.exchange(requestUrl, HttpMethod.POST, request, UUID.class, messageDto);
+        return response.getBody();
     }
 
     private HttpHeaders getHeaders() {

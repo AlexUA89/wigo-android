@@ -167,7 +167,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         mMap.setOnInfoWindowClickListener(this);
         mMap.setOnCameraChangeListener(this);
 
-        mMap.setMapType(GoogleMap.MAP_TYPE_HYBRID);
+        mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //define my last location
         LocationManager mLocationManager = (LocationManager) ContextProvider.getAppContext().getSystemService(Context.LOCATION_SERVICE);

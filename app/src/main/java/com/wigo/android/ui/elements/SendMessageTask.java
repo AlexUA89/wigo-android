@@ -9,6 +9,7 @@ import com.wigo.android.core.server.dto.StatusDto;
 import org.springframework.web.client.HttpClientErrorException;
 
 import java.io.IOException;
+import java.util.UUID;
 
 /**
  * Created by AlexUA89 on 10/25/2016.
@@ -29,8 +30,9 @@ public class SendMessageTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            if (!ContextProvider.getWigoRestClient().sendMessage(statusDto, messageDto)) {
-                listener.sendMessageConnectionError(messageDto, statusDto);
+            UUID newMessageId = ContextProvider.getWigoRestClient().sendMessage(statusDto, messageDto);
+            messageDto.setId(newMessageId);
+            if (newMessageId == null) {
                 this.cancel(true);
             }
         } catch (HttpClientErrorException e) {
