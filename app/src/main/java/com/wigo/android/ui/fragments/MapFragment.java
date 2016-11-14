@@ -8,6 +8,7 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
@@ -49,8 +50,10 @@ import org.springframework.web.client.HttpClientErrorException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Created by olkh on 11/13/2015.
@@ -67,7 +70,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private MultiAutoCompleteTextView autoCompleteTextView;
     private Button filterButton;
     private List<String> tags;
-    private HashMap<LatLng, StatusDto> statuses = new HashMap<>();
+    private HashMap<UUID, StatusDto> statuses = new HashMap<>();
+    private HashMap<String, UUID> markers = new HashMap<>();
     private BitmapDescriptor eventBitmap;
     private BitmapDescriptor chatBitmap;
 
@@ -159,9 +163,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onInfoWindowClick(Marker marker) {
-        StatusDto status = statuses.get(marker.getPosition());
+        StatusDto status = statuses.get(markers.get(marker.getId()));
         ((MainActivity) getActivity()).openChatFragment(status);
-        Toast.makeText(ContextProvider.getAppContext(), marker.getTitle() + " " + status.getId(), Toast.LENGTH_SHORT).show();// display toast
+        Toast.makeText(ContextProvider.getAppContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();// display toast
     }
 
     private void onMapCreated(GoogleMap googleMap) {
@@ -204,24 +208,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void loadMapStatusesDone(List<StatusDto> statuses) {
-        List<StatusDto> newStatuses = new ArrayList<>();
-        List<MarkerOptions> newMarkers = new ArrayList<>();
         for (StatusDto status : statuses) {
-            if (!alreadyHaveThisStatus(status)) newStatuses.add(status);
-        }
-        for (StatusDto status : newStatuses) {
-            LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
-            MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
-            if (StatusKind.event.toString().equals(status.getKind())) {
-                marker.icon(eventBitmap);
-            } else {
-                marker.icon(chatBitmap);
+            if (!this.statuses.keySet().contains(status.getId())) {
+                LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
+                MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
+                if (StatusKind.event.toString().equals(status.getKind())) {
+                    marker.icon(eventBitmap);
+                } else {
+                    marker.icon(chatBitmap);
+                }
+                StatusDto posTemp = this.statuses.put(status.getId(), status);
+                UUID postMarker = this.markers.put(mMap.addMarker(marker).getId(), status.getId());
+                if (posTemp != null || postMarker != null) {
+                    System.out.print("asd");
+                }
+
             }
-            newMarkers.add(marker);
-            this.statuses.put(pos, status);
-        }
-        for (MarkerOptions marker : newMarkers) {
-            mMap.addMarker(marker);
         }
     }
 
@@ -245,20 +247,18 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         });
     }
 
-    private boolean alreadyHaveThisStatus(StatusDto newStatus) {
-        for (StatusDto status : statuses.values()) {
-            if (status.getId().equals(newStatus.getId())) {
-                return true;
-            }
-        }
-        return false;
-    }
-
     private void refreshMap() {
         mMap.clear();
         this.statuses.clear();
         onCameraChange(null);
     }
+
+    public Comparator<StatusDto> comp = new Comparator<StatusDto>() {
+        @Override
+        public int compare(StatusDto lhs, StatusDto rhs) {
+            return lhs.getName().compareTo(rhs.getName());
+        }
+    };
 
     private class LoadTags extends AsyncTask<Void, Void, Void> {
         @Override

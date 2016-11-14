@@ -114,7 +114,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             statusText.setVisibility(View.VISIBLE);
             statusText.setText(status.getText());
         }
-        if (status.getHashtags() != null) {
+        if (status.getHashtags() != null && !status.getHashtags().isEmpty()) {
             statusHashtags.setVisibility(View.VISIBLE);
             statusHashtags.setText(status.getHashtags().toString());
         }

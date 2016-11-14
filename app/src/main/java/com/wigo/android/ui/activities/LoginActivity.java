@@ -89,7 +89,8 @@ public class LoginActivity extends Activity {
             protected void onCurrentAccessTokenChanged(
                     AccessToken oldAccessToken,
                     AccessToken currentAccessToken) {
-                Toast.makeText(ContextProvider.getAppContext(), "TOKEN", Toast.LENGTH_LONG).show();
+//                Toast.makeText(ContextProvider.getAppContext(), "TOKEN", Toast.LENGTH_LONG).show();
+                System.out.println("TOKEN IS "+currentAccessToken);
             }
         };
 
