@@ -24,6 +24,7 @@ public final class CreateDatabase {
             + Tables.STATUS_TABLE.LONGTITUDE + " REAL, "
             + Tables.STATUS_TABLE.NAME + " TEXT, "
             + Tables.STATUS_TABLE.TEXT + " TEXT, "
+            + Tables.STATUS_TABLE.URL + " URL, "
             + Tables.STATUS_TABLE.START_DATE + " INTEGER NOT NULL, "
             + Tables.STATUS_TABLE.END_DATE + " INTEGER NOT NULL, "
             + Tables.STATUS_TABLE.LAST_OPEN_DATE + " INTEGER NOT NULL, "

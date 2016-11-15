@@ -1,5 +1,6 @@
 package com.wigo.android.ui.fragments;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
@@ -97,7 +98,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         statusDb = db.selectStatusServerById(status.getId());
         db.close();
         if (statusDb == null) {
-            statusDb = new Status(DBStorable.DEFAULT_ROW_ID, status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(),
+            statusDb = new Status(DBStorable.DEFAULT_ROW_ID, status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
                     status.getStartDate(), status.getEndDate(), status.getKind(), new Date());
         }
         scrollView = (ScrollView) fragmentView.findViewById(R.id.chat_fragment_scroll_view);
@@ -113,6 +114,14 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         if (StatusKind.event.toString().equals(status.getKind())) {
             statusText.setVisibility(View.VISIBLE);
             statusText.setText(status.getText());
+            ((TextView) fragmentView.findViewById(R.id.from_text)).setText(status.getStartDate().toString());
+            ((TextView) fragmentView.findViewById(R.id.to_text)).setText(status.getEndDate().toString());
+            fragmentView.findViewById(R.id.from_container).setVisibility(View.VISIBLE);
+            fragmentView.findViewById(R.id.to_container).setVisibility(View.VISIBLE);
+            if (status.getUrl() != null && !status.getUrl().isEmpty()) {
+                ((TextView) fragmentView.findViewById(R.id.url_text)).setText(status.getUrl());
+                fragmentView.findViewById(R.id.url_container).setVisibility(View.VISIBLE);
+            }
         }
         if (status.getHashtags() != null && !status.getHashtags().isEmpty()) {
             statusHashtags.setVisibility(View.VISIBLE);
@@ -138,6 +147,23 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
                 send.setEnabled(!msg.getText().toString().isEmpty());
             }
         });
+    }
+
+    public void onShareButtonClick() {
+        if (status.getUrl() == null || status.getUrl().isEmpty()) {
+            getActivity().runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(ContextProvider.getAppContext(), "Event or chat has no URL to share", Toast.LENGTH_LONG).show();// display toast
+                }
+            });
+            return;
+        }
+        Intent sendIntent = new Intent();
+        sendIntent.setAction(Intent.ACTION_SEND);
+        sendIntent.putExtra(Intent.EXTRA_TEXT, getResources().getString(R.string.share_event_text) + status.getUrl());
+        sendIntent.setType("text/plain");
+        startActivity(Intent.createChooser(sendIntent, getResources().getText(R.string.send_to)));
     }
 
     @Override

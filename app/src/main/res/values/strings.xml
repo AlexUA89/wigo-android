@@ -2,7 +2,8 @@
     <string name="server_url">http://46.101.106.144:8080/wigo-server</string>
 
     <string name="app_name">WIGO</string>
-    <string name="action_settings">Save database to SD card</string>
+    <string name="save_database_to_sd">Save database to SD card</string>
+    <string name="share_menu_item">Share event</string>
     <string name="crash_toast_text">Error, we sent report to developers</string>
 
     <string name="hello_world">Hello world!</string>
@@ -14,5 +15,8 @@
 
     <string name="facebook_app_id">303606623329436</string>
     <string name="filter_button_text">Filter</string>
+
+    <string name="share_event_text">Very interesting event: </string>
+    <string name="send_to">Send to ... </string>
 
 </resources>

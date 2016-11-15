@@ -1,8 +1,5 @@
 package com.wigo.android.core.server.dto;
 
-import com.wigo.android.core.database.datas.Status;
-
-import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +18,7 @@ public class StatusDto extends Dto {
     private Date startDate;
     private Date endDate;
     private String kind;
+    private String url;
     private List<String> hashtags;
 
     public String getKind() {
@@ -101,6 +99,14 @@ public class StatusDto extends Dto {
 
     public void setHashtags(List<String> hashtags) {
         this.hashtags = hashtags;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     @Override

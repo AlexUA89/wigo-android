@@ -27,6 +27,44 @@
                     android:visibility="gone"
                     android:layout_margin="@dimen/activity_vertical_margin"
                     android:textStyle="bold"/>
+                <LinearLayout
+                    android:id="@+id/from_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_weight="1"
+                        android:text="From"
+                        android:textColor="@color/counter_text_bg"/>
+                    <TextView
+                        android:id="@+id/from_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_weight="1"/>
+                </LinearLayout>
+                <LinearLayout
+                    android:id="@+id/to_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_weight="1"
+                        android:text="To"
+                        android:textColor="@color/counter_text_bg"/>
+                    <TextView
+                        android:id="@+id/to_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_weight="1"/>
+                </LinearLayout>
 
                 <TextView
                     android:id="@+id/status_desc"
@@ -41,7 +79,25 @@
                     android:layout_margin="@dimen/activity_vertical_margin"
                     android:visibility="gone"/>
 
-
+                <LinearLayout
+                    android:id="@+id/url_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_weight="1"
+                        android:text="URL:"
+                        android:textColor="@color/counter_text_bg"/>
+                    <TextView
+                        android:id="@+id/url_text"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_margin="@dimen/activity_vertical_margin"
+                        android:layout_weight="1"/>
+                </LinearLayout>
             </LinearLayout>
 
             <ListView

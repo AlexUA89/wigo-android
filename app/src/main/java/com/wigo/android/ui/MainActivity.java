@@ -15,6 +15,7 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
@@ -37,6 +38,7 @@ public class MainActivity extends FragmentActivity {
     private ChatFragment chatFragment;
     private MainActivity mainActivity;
     private NavDrawerListAdapter adapter;
+    private Menu menu;
 
     private ActionBarDrawerToggle mDrawerToggle;
 
@@ -129,6 +131,8 @@ public class MainActivity extends FragmentActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        this.menu = menu;
+        menu.findItem(R.id.share_menu_item).setVisible(false);
         return true;
     }
 
@@ -144,13 +148,18 @@ public class MainActivity extends FragmentActivity {
         }
 
         //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
+        if (id == R.id.save_database_to_sd) {
             DBManager.saveDBonSDCard();
 //            MapFragment mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
 //            if(mapFragment!=null){
 //                getSupportFragmentManager().beginTransaction().remove(mapFragment).commit();
 //            }
 //            return true;
+        }
+        if (id == R.id.share_menu_item) {
+            if (chatFragment != null) {
+                chatFragment.onShareButtonClick();
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -186,6 +195,7 @@ public class MainActivity extends FragmentActivity {
             chatFragment.setArguments(args);
         }
         getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();
+        menu.findItem(R.id.share_menu_item).setVisible(true);
     }
 
     public void openMapFragment() {
@@ -205,6 +215,7 @@ public class MainActivity extends FragmentActivity {
                 getActionBar().setTitle(R.string.app_name);
             }
         });
+        menu.findItem(R.id.share_menu_item).setVisible(false);
     }
 
     @Override

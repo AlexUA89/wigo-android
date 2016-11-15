@@ -30,9 +30,10 @@ public class Status extends DBStorable {
     private Date startDate;
     private Date endDate;
     private String kind;
+    private String url;
     private Date lastOpenDate;
 
-    public Status(long localId, UUID id, UUID userId, double latitude, double longitude, String name, String text, Date startDate, Date endDate, String kind, Date lastOpenDate) {
+    public Status(long localId, UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, Date lastOpenDate) {
         if (localId < DBStorable.DEFAULT_ROW_ID) {
             throw new IllegalArgumentException("localId can not be " + localId);
         }
@@ -49,6 +50,7 @@ public class Status extends DBStorable {
         this.longitude = longitude;
         this.name = name;
         this.text = text;
+        this.url = url;
         if (startDate == null) throw new IllegalArgumentException("startDate can not be null");
         this.startDate = startDate;
         if (endDate == null) throw new IllegalArgumentException("endDate can not be null");
@@ -58,16 +60,16 @@ public class Status extends DBStorable {
         this.lastOpenDate = lastOpenDate;
     }
 
-    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, Date startDate, Date endDate, String kind, Date lastOpenDate) {
-        this(DBStorable.DEFAULT_ROW_ID, id, userId, latitude, longitude, name, text, startDate, endDate, kind, lastOpenDate);
+    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, Date lastOpenDate) {
+        this(DBStorable.DEFAULT_ROW_ID, id, userId, latitude, longitude, name, text, url, startDate, endDate, kind, lastOpenDate);
     }
 
     public Status(Status status) {
-        this(status.getLocalId(), status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getStartDate(), status.getEndDate(), status.getKind(), status.getLastOpenDate());
+        this(status.getLocalId(), status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(), status.getStartDate(), status.getEndDate(), status.getKind(), status.getLastOpenDate());
     }
 
     public Status(Parcel in) {
-        this(in.readLong(), UUID.fromString(in.readString()), UUID.fromString(in.readString()), in.readDouble(), in.readDouble(), in.readString(), in.readString(), (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), (java.util.Date) in.readSerializable());
+        this(in.readLong(), UUID.fromString(in.readString()), UUID.fromString(in.readString()), in.readDouble(), in.readDouble(), in.readString(), in.readString(), in.readString(), (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), (java.util.Date) in.readSerializable());
     }
 
     public Status(Cursor c) throws ParseException {
@@ -78,6 +80,7 @@ public class Status extends DBStorable {
                 c.getDouble(c.getColumnIndex(Tables.STATUS_TABLE.LONGTITUDE)),
                 c.getString(c.getColumnIndex(Tables.STATUS_TABLE.NAME)),
                 c.getString(c.getColumnIndex(Tables.STATUS_TABLE.TEXT)),
+                c.getString(c.getColumnIndex(Tables.STATUS_TABLE.URL)),
                 new Date(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.START_DATE))),
                 new Date(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.END_DATE))),
                 c.getString(c.getColumnIndex(Tables.STATUS_TABLE.KIND)),
@@ -98,6 +101,7 @@ public class Status extends DBStorable {
         values.put(Tables.STATUS_TABLE.LONGTITUDE, longitude);
         values.put(Tables.STATUS_TABLE.NAME, name);
         values.put(Tables.STATUS_TABLE.TEXT, text);
+        values.put(Tables.STATUS_TABLE.URL, url);
         values.put(Tables.STATUS_TABLE.START_DATE, startDate.getTime());
         values.put(Tables.STATUS_TABLE.END_DATE, endDate.getTime());
         values.put(Tables.STATUS_TABLE.KIND, kind);
@@ -128,6 +132,7 @@ public class Status extends DBStorable {
         dest.writeDouble(longitude);
         dest.writeString(name);
         dest.writeString(text);
+        dest.writeString(url);
         dest.writeSerializable(startDate);
         dest.writeSerializable(endDate);
         dest.writeString(kind);
@@ -236,5 +241,13 @@ public class Status extends DBStorable {
 
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 }

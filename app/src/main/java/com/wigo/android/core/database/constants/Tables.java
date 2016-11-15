@@ -24,6 +24,7 @@ public final class Tables {
         public static String START_DATE = "start_date";
         public static String END_DATE = "end_date";
         public static String KIND = "kind";
+        public static String URL = "url";
         public static String LAST_OPEN_DATE = "last_open_date";
     }
 
