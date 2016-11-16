@@ -11,6 +11,7 @@ import com.wigo.android.core.server.dto.FaceBookUserInfoDto;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.WigoUserInfoResponseDto;
+import com.wigo.android.core.utils.DateUtils;
 
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -24,6 +25,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -63,13 +65,18 @@ public class WigoRestClient {
         return response.getBody();
     }
 
-    public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude, List<String> tags) {
+    public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude, List<String> tags, Calendar fromDate, Calendar toDate, String searchText) {
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl
                 + "/api/status?startLatitude=" + Math.min(startLatitude, endLatitude)
                 + "&endLatitude=" + Math.max(startLatitude, endLatitude)
                 + "&startLongitude=" + Math.min(startLongitude, endLongitude)
-                + "&endLongitude=" + Math.max(startLongitude, endLongitude);
+                + "&endLongitude=" + Math.max(startLongitude, endLongitude)
+                + "&startDate=" + DateUtils.dateToString(fromDate)
+                + "&endDate=" + DateUtils.dateToString(toDate);
+        if (searchText != null && !searchText.isEmpty()) {
+            requestUrl += "&search=" + searchText;
+        }
         if (!tags.isEmpty()) {
             requestUrl = requestUrl + "&hashtags=" + TextUtils.join(",", tags);
         }

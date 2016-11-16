@@ -223,7 +223,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //request for all markers
         LatLngBounds curScreen = mMap.getProjection()
                 .getVisibleRegion().latLngBounds;
-        LoadMapStatusesTask.loadData(this, curScreen, getTagsFromText(autoCompleteTextView.getText().toString()));
+        LoadMapStatusesTask.loadData(this, curScreen, getTagsFromText(autoCompleteTextView.getText().toString()), fromDate,toDate, textSearch.getText().toString());
     }
 
     @Override
