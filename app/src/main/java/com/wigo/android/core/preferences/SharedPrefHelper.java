@@ -8,6 +8,9 @@ import android.text.TextUtils;
 import com.wigo.android.core.AppLog;
 import com.wigo.android.core.ContextProvider;
 
+import java.util.Calendar;
+import java.util.Date;
+
 /**
  * Created with IntelliJ IDEA.
  * User: Алексей
@@ -90,6 +93,42 @@ public class SharedPrefHelper {
 
     public static void setTagSearch(String tagSearch) {
         getEditor().putString(SPConstants.TAGS_SEARCH, tagSearch).commit();
+    }
+
+    public static String getTextSearch(String defaulTextSearch) {
+        return getSHP().getString(SPConstants.TEXT_SEARCH, defaulTextSearch);
+    }
+
+    public static void setTextSearch(String textSearch) {
+        getEditor().putString(SPConstants.TEXT_SEARCH, textSearch).commit();
+    }
+
+    public static Calendar getFromDateSearch(Calendar defaulDateSearch) {
+        long result = getSHP().getLong(SPConstants.FROM_DATE_SEARCH, -1);
+        if (result != -1) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(result);
+            return calendar;
+        }
+        return defaulDateSearch;
+    }
+
+    public static void setFromDateSearch(Calendar dateSearch) {
+        getEditor().putLong(SPConstants.FROM_DATE_SEARCH, dateSearch.getTimeInMillis()).commit();
+    }
+
+    public static Calendar getToDateSearch(Calendar defaulDateSearch) {
+        long result = getSHP().getLong(SPConstants.TO_DATE_SEARCH, -1);
+        if (result != -1) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(result);
+            return calendar;
+        }
+        return defaulDateSearch;
+    }
+
+    public static void setToDateSearch(Calendar dateSearch) {
+        getEditor().putLong(SPConstants.TO_DATE_SEARCH, dateSearch.getTimeInMillis()).commit();
     }
 
     public static void setXLocal(Double coord) {

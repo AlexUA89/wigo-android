@@ -37,4 +37,10 @@ class SPConstants {
 
     public static final String TAGS_SEARCH = "TAGS_SEARCH";
 
+    public static final String FROM_DATE_SEARCH = "FROM_DATE_SEARCH";
+
+    public static final String TO_DATE_SEARCH = "TO_DATE_SEARCH";
+
+    public static final String TEXT_SEARCH = "TEXT_SEARCH";
+
 }

@@ -1,6 +1,7 @@
 package com.wigo.android.ui.fragments;
 
 import android.Manifest;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
@@ -22,6 +23,8 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
+import android.widget.DatePicker;
+import android.widget.EditText;
 import android.widget.MultiAutoCompleteTextView;
 import android.widget.Toast;
 
@@ -48,9 +51,13 @@ import com.wigo.android.ui.elements.LoadMapStatusesTask;
 
 import org.springframework.web.client.HttpClientErrorException;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Calendar;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -68,12 +75,16 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private View view;
     private GoogleMap mMap;
     private MultiAutoCompleteTextView autoCompleteTextView;
+    private EditText textSearch;
     private Button filterButton;
     private List<String> tags;
+    private Calendar fromDate, toDate;
     private HashMap<UUID, StatusDto> statuses = new HashMap<>();
     private HashMap<String, UUID> markers = new HashMap<>();
     private BitmapDescriptor eventBitmap;
     private BitmapDescriptor chatBitmap;
+    private Button fromDateButton;
+    private Button toDateButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -100,30 +111,84 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         eventBitmap = BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS));
         chatBitmap = BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.chat, SCALE_FOR_MAP_ITEMS));
         filterButton = (Button) fragmentView.findViewById(R.id.map_hashtags_filter_button);
+        fromDateButton = (Button) fragmentView.findViewById(R.id.from_date_button);
+        toDateButton = (Button) fragmentView.findViewById(R.id.to_date_button);
+        textSearch = (EditText) fragmentView.findViewById(R.id.text_search_field);
         autoCompleteTextView = (MultiAutoCompleteTextView) fragmentView.findViewById(R.id.map_hashtags_text_view);
         autoCompleteTextView.setTokenizer(new MultiAutoCompleteTextView.CommaTokenizer());
         autoCompleteTextView.setThreshold(0);
+
         autoCompleteTextView.setText(SharedPrefHelper.getTagSearch(""));
+        fromDate = SharedPrefHelper.getFromDateSearch(Calendar.getInstance());
+        Calendar c = Calendar.getInstance();
+        c.setTimeInMillis(fromDate.getTimeInMillis());
+        c.add(Calendar.DATE, 1);
+        toDate = SharedPrefHelper.getToDateSearch(c);
         new LoadTags().execute();
+
         autoCompleteTextView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 System.out.print("Selectet " + position + " id " + id);
             }
         });
-        autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
+        autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
-            public void onClick(View v) {
-                autoCompleteTextView.showDropDown();
+            public void onFocusChange(View v, boolean hasFocus) {
+                if(hasFocus) {
+                    autoCompleteTextView.showDropDown();
+                }
             }
         });
         filterButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                refreshMap();
                 SharedPrefHelper.setTagSearch(autoCompleteTextView.getText().toString());
+                SharedPrefHelper.setTextSearch(textSearch.getText().toString());
+                SharedPrefHelper.setFromDateSearch(fromDate);
+                SharedPrefHelper.setToDateSearch(toDate);
+                refreshMap();
             }
         });
+        redrawDateButtons();
+        fromDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        fromDate.set(Calendar.YEAR,year);
+                        fromDate.set(Calendar.MONTH,monthOfYear);
+                        fromDate.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                        redrawDateButtons();
+                    }
+                }, fromDate.get(Calendar.YEAR), fromDate.get(Calendar.MONTH), fromDate.get(Calendar.DAY_OF_MONTH));
+                dialog.getDatePicker().setMaxDate(toDate.getTimeInMillis());
+                dialog.show();
+            }
+        });
+        toDateButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
+                    @Override
+                    public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
+                        toDate.set(Calendar.YEAR,year);
+                        toDate.set(Calendar.MONTH,monthOfYear);
+                        toDate.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                        redrawDateButtons();
+                    }
+                }, toDate.get(Calendar.YEAR), toDate.get(Calendar.MONTH), toDate.get(Calendar.DAY_OF_MONTH));
+                dialog.getDatePicker().setMinDate(fromDate.getTimeInMillis());
+                dialog.show();
+            }
+        });
+    }
+
+    private void redrawDateButtons() {
+        SimpleDateFormat format = new SimpleDateFormat("dd-MM-yyyy");
+        fromDateButton.setText("From: " + format.format(fromDate.getTime()));
+        toDateButton.setText("To: " + format.format(toDate.getTime()));
     }
 
 
