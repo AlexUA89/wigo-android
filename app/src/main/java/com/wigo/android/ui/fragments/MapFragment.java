@@ -135,9 +135,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         autoCompleteTextView.setOnFocusChangeListener(new View.OnFocusChangeListener() {
             @Override
             public void onFocusChange(View v, boolean hasFocus) {
-                if(hasFocus) {
+                if (hasFocus) {
                     autoCompleteTextView.showDropDown();
                 }
+            }
+        });
+        autoCompleteTextView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                autoCompleteTextView.showDropDown();
             }
         });
         filterButton.setOnClickListener(new View.OnClickListener() {
@@ -157,9 +163,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        fromDate.set(Calendar.YEAR,year);
-                        fromDate.set(Calendar.MONTH,monthOfYear);
-                        fromDate.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                        fromDate.set(Calendar.YEAR, year);
+                        fromDate.set(Calendar.MONTH, monthOfYear);
+                        fromDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                         redrawDateButtons();
                     }
                 }, fromDate.get(Calendar.YEAR), fromDate.get(Calendar.MONTH), fromDate.get(Calendar.DAY_OF_MONTH));
@@ -173,9 +179,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        toDate.set(Calendar.YEAR,year);
-                        toDate.set(Calendar.MONTH,monthOfYear);
-                        toDate.set(Calendar.DAY_OF_MONTH,dayOfMonth);
+                        toDate.set(Calendar.YEAR, year);
+                        toDate.set(Calendar.MONTH, monthOfYear);
+                        toDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
                         redrawDateButtons();
                     }
                 }, toDate.get(Calendar.YEAR), toDate.get(Calendar.MONTH), toDate.get(Calendar.DAY_OF_MONTH));
@@ -223,7 +229,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //request for all markers
         LatLngBounds curScreen = mMap.getProjection()
                 .getVisibleRegion().latLngBounds;
-        LoadMapStatusesTask.loadData(this, curScreen, getTagsFromText(autoCompleteTextView.getText().toString()), fromDate,toDate, textSearch.getText().toString());
+        LoadMapStatusesTask.loadData(this, curScreen, getTagsFromText(autoCompleteTextView.getText().toString()), fromDate, toDate, textSearch.getText().toString());
     }
 
     @Override
