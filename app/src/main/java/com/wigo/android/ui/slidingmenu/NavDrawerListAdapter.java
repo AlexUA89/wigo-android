@@ -89,7 +89,7 @@ public class NavDrawerListAdapter extends BaseAdapter {
         if (StatusKind.chat.toString().equals(statuses.get(position).getKind())) {
             imgIcon.setImageResource(R.mipmap.chat);
         } else {
-            imgIcon.setImageResource(R.mipmap.event);
+            imgIcon.setImageResource(R.mipmap.other);
         }
         txtCount.setVisibility(View.GONE);
         return convertView;

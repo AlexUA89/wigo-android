@@ -4,6 +4,7 @@ import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -78,6 +79,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private EditText textSearch;
     private Button filterButton;
     private List<String> tags;
+    private HashMap<String, BitmapDescriptor> imagesBitmaps = new HashMap<>();
     private Calendar fromDate, toDate;
     private HashMap<UUID, StatusDto> statuses = new HashMap<>();
     private HashMap<String, UUID> markers = new HashMap<>();
@@ -108,8 +110,32 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void initView(View fragmentView) {
-        eventBitmap = BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.event, SCALE_FOR_MAP_ITEMS));
+        eventBitmap = BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.other, SCALE_FOR_MAP_ITEMS));
         chatBitmap = BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.chat, SCALE_FOR_MAP_ITEMS));
+        imagesBitmaps.put("DINING_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.dinning_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("IT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.it, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("FESTIVAL_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.festival_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("COMEDY_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.comedy_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("FITNESS", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.fitness, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("SHOPPING", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.shopping, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("RELIGIOUS_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.religious_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("FOOD_TASTING", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.food_tasting, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("VOLUNTEERING", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.volunteering, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("BOOK_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.book_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("MOVIE_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.movie_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("DANCE_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.dance_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("NIGHTLIFE", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.nightlife, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("ART_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.art_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("SPORTS_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.sports_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("THEATER_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.theater_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("CONFERENCE_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.conference_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("FAMILY_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.family_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("OTHER", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.other, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("MEETUP", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.meetup, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("LECTURE", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.lecture, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("MUSIC_EVENT", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.music_event, SCALE_FOR_MAP_ITEMS)));
+        imagesBitmaps.put("WORKSHOP", BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.workshop, SCALE_FOR_MAP_ITEMS)));
+
         filterButton = (Button) fragmentView.findViewById(R.id.map_hashtags_filter_button);
         fromDateButton = (Button) fragmentView.findViewById(R.id.from_date_button);
         toDateButton = (Button) fragmentView.findViewById(R.id.to_date_button);
@@ -217,6 +243,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapClick(LatLng point) {
+        Toast.makeText(ContextProvider.getAppContext(), "Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы", Toast.LENGTH_SHORT).show();// display toast
     }
 
     @Override
@@ -284,7 +311,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
                 MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
                 if (StatusKind.event.toString().equals(status.getKind())) {
-                    marker.icon(eventBitmap);
+                    BitmapDescriptor bitmap = eventBitmap;
+                    if (!status.getHashtags().isEmpty() && imagesBitmaps.get(status.getHashtags().get(0)) != null) {
+                        bitmap = imagesBitmaps.get(status.getHashtags().get(0));
+                    }
+                    marker.icon(bitmap);
                 } else {
                     marker.icon(chatBitmap);
                 }
