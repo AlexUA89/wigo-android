@@ -19,4 +19,6 @@
     <string name="share_event_text">Very interesting event: </string>
     <string name="send_to">Send to ... </string>
 
+    <string name="category_activity_title">Choose categories</string>
+
 </resources>

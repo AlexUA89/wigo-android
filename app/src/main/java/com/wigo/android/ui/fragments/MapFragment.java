@@ -3,6 +3,7 @@ package com.wigo.android.ui.fragments;
 import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
@@ -39,6 +40,7 @@ import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.ui.MainActivity;
+import com.wigo.android.ui.activities.CategoryActivity;
 import com.wigo.android.ui.elements.CategoriesProvider;
 import com.wigo.android.ui.elements.LoadMapStatusesTask;
 
@@ -63,7 +65,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private GoogleMap mMap;
     private EditText textSearch;
     private Button categoryButton;
-    private List<String> tags;
     private HashMap<String, BitmapDescriptor> imagesBitmaps = new HashMap<>();
     private Calendar fromDate, toDate;
     private HashMap<UUID, StatusDto> statuses = new HashMap<>();
@@ -97,12 +98,19 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private void initView(View fragmentView) {
         eventBitmap = CategoriesProvider.getDefaultEventImage();
         chatBitmap = CategoriesProvider.getDefaultEventImage();
-        imagesBitmaps = CategoriesProvider.getMapOfCategoriesAndImages();
+        imagesBitmaps = CategoriesProvider.getMapOfCategoriesAndImagesForMap();
 
         categoryButton = (Button) fragmentView.findViewById(R.id.map_hashtags_filter_button);
         fromDateButton = (Button) fragmentView.findViewById(R.id.from_date_button);
         toDateButton = (Button) fragmentView.findViewById(R.id.to_date_button);
         textSearch = (EditText) fragmentView.findViewById(R.id.text_search_field);
+        categoryButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(ContextProvider.getAppContext(), CategoryActivity.class);
+                startActivity(intent);
+            }
+        });
         textSearch.addTextChangedListener(new TextWatcher() {
             @Override
             public void beforeTextChanged(CharSequence s, int start, int count, int after) {

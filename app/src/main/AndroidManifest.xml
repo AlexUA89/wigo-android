@@ -66,6 +66,12 @@
             </intent-filter>
         </activity>
 
+        <activity
+            android:name="com.wigo.android.ui.activities.CategoryActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog"
+            android:screenOrientation="portrait">
+        </activity>
+
 
         //Receivers
         <receiver android:name="com.wigo.android.core.service.OnBootReceiver">
