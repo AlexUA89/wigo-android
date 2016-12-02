@@ -20,6 +20,7 @@ public class StatusDto extends Dto {
     private String kind;
     private String url;
     private List<String> hashtags;
+    private String category;
 
     public String getKind() {
         return kind;
@@ -107,6 +108,14 @@ public class StatusDto extends Dto {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
     }
 
     @Override

@@ -14,7 +14,7 @@
     <string name="desc_list_item_icon">Item Icon</string>
 
     <string name="facebook_app_id">303606623329436</string>
-    <string name="filter_button_text">Filter</string>
+    <string name="category_button_text">Cat.</string>
 
     <string name="share_event_text">Very interesting event: </string>
     <string name="send_to">Send to ... </string>
