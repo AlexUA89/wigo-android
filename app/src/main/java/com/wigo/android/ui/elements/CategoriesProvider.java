@@ -5,12 +5,13 @@ import android.graphics.Bitmap;
 import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.wigo.android.R;
+import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.utils.BitmapUtils;
 
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Created by AlexUA89 on 12/2/2016.
@@ -21,8 +22,8 @@ public class CategoriesProvider {
     private static final float SCALE_FOR_MAP_ITEMS = 2f;
     private static HashMap<String, Bitmap> bitmapHashMap;
 
-    public static List<String> getListOfCategories() {
-        return Collections.emptyList();
+    public static Set<String> getListOfCategories() {
+        return new HashSet<>(getMapOfCategoriesAndImages().keySet());
     }
 
     public static HashMap<String, BitmapDescriptor> getMapOfCategoriesAndImagesForMap() {
@@ -70,5 +71,30 @@ public class CategoriesProvider {
 
     public static BitmapDescriptor getDefaultEventImage() {
         return BitmapDescriptorFactory.fromBitmap(BitmapUtils.getScaledBitmap(R.mipmap.other, SCALE_FOR_MAP_ITEMS));
+    }
+
+    public static Set<String> getChoosenCategories() {
+        Set<String> choosedCategpries = SharedPrefHelper.getCategoriesSearch(null);
+        if (choosedCategpries == null) return getListOfCategories();
+        Set<String> latestCat = getListOfCategories();
+        Set<String> merged = new HashSet<>();
+        for (String category : choosedCategpries) {
+            if (latestCat.contains(category)) {
+                merged.add(category);
+            }
+        }
+        return merged;
+    }
+
+    public static void setChoosenCategories(Set<String> choosedCategpries) {
+        if(choosedCategpries==null) return;
+        Set<String> latestCat = getListOfCategories();
+        Set<String> merged = new HashSet<>();
+        for (String category : choosedCategpries) {
+            if (latestCat.contains(category)) {
+                merged.add(category);
+            }
+        }
+        SharedPrefHelper.setCategoriesSearch(merged);
     }
 }

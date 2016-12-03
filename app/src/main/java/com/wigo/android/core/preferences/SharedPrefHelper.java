@@ -1,7 +1,7 @@
 package com.wigo.android.core.preferences;
 
 import android.content.SharedPreferences;
-import android.content.SharedPreferences.*;
+import android.content.SharedPreferences.Editor;
 import android.preference.PreferenceManager;
 import android.text.TextUtils;
 
@@ -9,7 +9,7 @@ import com.wigo.android.core.AppLog;
 import com.wigo.android.core.ContextProvider;
 
 import java.util.Calendar;
-import java.util.Date;
+import java.util.Set;
 
 /**
  * Created with IntelliJ IDEA.
@@ -101,6 +101,14 @@ public class SharedPrefHelper {
 
     public static void setTextSearch(String textSearch) {
         getEditor().putString(SPConstants.TEXT_SEARCH, textSearch).commit();
+    }
+
+    public static Set<String> getCategoriesSearch(Set<String> defaulCategoriesSearch) {
+        return getSHP().getStringSet(SPConstants.CATEGORIES, defaulCategoriesSearch);
+    }
+
+    public static void setCategoriesSearch(Set<String> categoriesSearch) {
+        getEditor().putStringSet(SPConstants.CATEGORIES, categoriesSearch).commit();
     }
 
     public static Calendar getFromDateSearch(Calendar defaulDateSearch) {

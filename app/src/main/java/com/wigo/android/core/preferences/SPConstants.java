@@ -43,4 +43,6 @@ class SPConstants {
 
     public static final String TEXT_SEARCH = "TEXT_SEARCH";
 
+    public static final String CATEGORIES = "CATEGORIES";
+
 }

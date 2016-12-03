@@ -60,6 +60,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
     private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
     private static final float DEFAULT_ZOOM = 14;
+    private static final int PICK_CATEGORIES = 1;
 
     private View view;
     private GoogleMap mMap;
@@ -107,8 +108,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(ContextProvider.getAppContext(), CategoryActivity.class);
-                startActivity(intent);
+                Intent pickContactIntent = new Intent(ContextProvider.getAppContext(), CategoryActivity.class);
+                startActivityForResult(pickContactIntent, PICK_CATEGORIES);
             }
         });
         textSearch.addTextChangedListener(new TextWatcher() {
@@ -196,7 +197,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapClick(LatLng point) {
-        Toast.makeText(ContextProvider.getAppContext(), "Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы-Ы", Toast.LENGTH_SHORT).show();// display toast
     }
 
     @Override
@@ -209,7 +209,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //request for all markers
         LatLngBounds curScreen = mMap.getProjection()
                 .getVisibleRegion().latLngBounds;
-        LoadMapStatusesTask.loadData(this, curScreen, Collections.EMPTY_LIST, fromDate, toDate, textSearch.getText().toString());
+        LoadMapStatusesTask.loadData(this, curScreen, Collections.EMPTY_LIST, CategoriesProvider.getChoosenCategories(), fromDate, toDate, textSearch.getText().toString());
     }
 
     @Override
@@ -319,5 +319,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         SharedPrefHelper.setTextSearch(textSearch.getText().toString());
         SharedPrefHelper.setFromDateSearch(fromDate);
         SharedPrefHelper.setToDateSearch(toDate);
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        if (requestCode == PICK_CATEGORIES && resultCode == getActivity().RESULT_OK) {
+            refreshMap();
+        }
+        super.onActivityResult(requestCode, resultCode, data);
     }
 }

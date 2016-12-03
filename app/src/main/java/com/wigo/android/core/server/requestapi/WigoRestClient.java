@@ -16,10 +16,8 @@ import com.wigo.android.core.utils.DateUtils;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
-import org.springframework.util.StringUtils;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
@@ -29,6 +27,7 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 import java.util.UUID;
 
 
@@ -65,7 +64,7 @@ public class WigoRestClient {
         return response.getBody();
     }
 
-    public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude, List<String> tags, Calendar fromDate, Calendar toDate, String searchText) {
+    public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude, List<String> tags, Set<String> categories, Calendar fromDate, Calendar toDate, String searchText) {
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl
                 + "/api/status?startLatitude=" + Math.min(startLatitude, endLatitude)
@@ -79,6 +78,9 @@ public class WigoRestClient {
         }
         if (!tags.isEmpty()) {
             requestUrl = requestUrl + "&hashtags=" + TextUtils.join(",", tags);
+        }
+        if (categories != null && !categories.isEmpty()) {
+            requestUrl = requestUrl + "&categories=" + TextUtils.join(",", categories);
         }
         HttpEntity request = new HttpEntity(getHeaders());
         ResponseEntity<StatusDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusDto[].class);
