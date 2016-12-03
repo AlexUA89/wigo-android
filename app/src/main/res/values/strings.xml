@@ -19,6 +19,13 @@
     <string name="share_event_text">Very interesting event: </string>
     <string name="send_to">Send to ... </string>
 
+    <!-- Category activity -->
     <string name="category_activity_title">Choose categories</string>
+
+    <!-- Create status activity -->
+    <string name="create_status_title">Create new chat on map</string>
+    <string name="create_status_new_chat_name">Chat name:</string>
+    <string name="create_status_empty_name">Please enter name for new chat</string>
+    <string name="create_status_connection_error">Can not create status</string>
 
 </resources>

@@ -41,9 +41,11 @@ import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.activities.CategoryActivity;
+import com.wigo.android.ui.activities.CreateStatusActivity;
 import com.wigo.android.ui.elements.CategoriesProvider;
 import com.wigo.android.ui.elements.LoadMapStatusesTask;
 
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
@@ -61,6 +63,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
     private static final float DEFAULT_ZOOM = 14;
     private static final int PICK_CATEGORIES = 1;
+    private static final int CREATE_STATUS = 2;
 
     private View view;
     private GoogleMap mMap;
@@ -201,6 +204,9 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void onMapLongClick(LatLng point) {
+        Intent createStatus = new Intent(ContextProvider.getAppContext(), CreateStatusActivity.class);
+        createStatus.putExtra(CreateStatusActivity.POINT, point);
+        startActivityForResult(createStatus, CREATE_STATUS);
     }
 
 
@@ -325,6 +331,14 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         if (requestCode == PICK_CATEGORIES && resultCode == getActivity().RESULT_OK) {
             refreshMap();
+        }
+        if(requestCode == CREATE_STATUS && resultCode == getActivity().RESULT_OK){
+            try {
+                StatusDto statusDto = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateStatusActivity.CREATED_STATUS), StatusDto.class);
+                ((MainActivity)getActivity()).openChatFragment(statusDto);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
         super.onActivityResult(requestCode, resultCode, data);
     }

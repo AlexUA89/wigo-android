@@ -52,7 +52,7 @@
 
             <!--<intent-filter>-->
                 <!--<action android:name="android.intent.action.MAIN" />-->
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+                <!--<category_activity android:name="android.intent.category_activity.LAUNCHER" />-->
             <!--</intent-filter>-->
         </activity>
 
@@ -68,6 +68,12 @@
 
         <activity
             android:name="com.wigo.android.ui.activities.CategoryActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog"
+            android:screenOrientation="portrait">
+        </activity>
+
+        <activity
+            android:name="com.wigo.android.ui.activities.CreateStatusActivity"
             android:theme="@android:style/Theme.Holo.Light.Dialog"
             android:screenOrientation="portrait">
         </activity>

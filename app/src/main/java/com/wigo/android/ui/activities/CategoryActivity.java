@@ -37,7 +37,7 @@ public class CategoryActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.category);
+        setContentView(R.layout.category_activity);
         setTitle(getString(R.string.category_activity_title));
 
         categoriesWithImages.putAll(CategoriesProvider.getMapOfCategoriesAndImages());

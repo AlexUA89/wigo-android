@@ -10,6 +10,7 @@ import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.FaceBookUserInfoDto;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.core.server.dto.WigoUserInfoResponseDto;
 import com.wigo.android.core.utils.DateUtils;
 
@@ -126,6 +127,17 @@ public class WigoRestClient {
         HttpEntity<MessageDto> request = new HttpEntity(messageDto, getHeaders());
         ResponseEntity<UUID> response = client.exchange(requestUrl, HttpMethod.POST, request, UUID.class, messageDto);
         return response.getBody();
+    }
+
+    public StatusDto createNewChat(StatusDto statusDto) {
+        Objects.requireNonNull(statusDto);
+        statusDto.setKind(StatusKind.chat.toString());
+        String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
+        String requestUrl = serverUrl + "/api/status/";
+        HttpEntity<StatusDto> request = new HttpEntity(statusDto, getHeaders());
+        ResponseEntity<UUID> response = client.exchange(requestUrl, HttpMethod.POST, request, UUID.class, statusDto);
+        statusDto.setId(response.getBody());
+        return statusDto;
     }
 
     private HttpHeaders getHeaders() {
