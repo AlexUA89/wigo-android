@@ -1,7 +1,6 @@
 package com.wigo.android.ui;
 
 import android.Manifest;
-import android.content.res.TypedArray;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -15,20 +14,17 @@ import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.Toast;
 
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.server.dto.StatusDto;
-import com.wigo.android.core.server.requestapi.WigoRestClient;
 import com.wigo.android.ui.fragments.ChatFragment;
 import com.wigo.android.ui.fragments.MapFragment;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
 
 import java.text.ParseException;
-import java.util.ArrayList;
 
 public class MainActivity extends FragmentActivity {
 
@@ -178,24 +174,29 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void openChatFragment(final StatusDto statusDto) {
-        if (chatFragment == null || !chatFragment.getStatus().equals(statusDto)) {
-            chatFragment = new ChatFragment();
-            runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    getActionBar().setTitle(statusDto.getName());
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (chatFragment == null || !chatFragment.getStatus().equals(statusDto)) {
+                    chatFragment = new ChatFragment();
+                    runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            getActionBar().setTitle(statusDto.getName());
+                        }
+                    });
+                    Bundle args = new Bundle();
+                    try {
+                        args.putString(ChatFragment.STATUS_DTO, ContextProvider.getObjectMapper().writeValueAsString(statusDto));
+                    } catch (JsonProcessingException e) {
+                        e.printStackTrace();
+                    }
+                    chatFragment.setArguments(args);
                 }
-            });
-            Bundle args = new Bundle();
-            try {
-                args.putString(ChatFragment.STATUS_DTO, ContextProvider.getObjectMapper().writeValueAsString(statusDto));
-            } catch (JsonProcessingException e) {
-                e.printStackTrace();
+                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();
+                menu.findItem(R.id.share_menu_item).setVisible(true);
             }
-            chatFragment.setArguments(args);
-        }
-        getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();
-        menu.findItem(R.id.share_menu_item).setVisible(true);
+        });
     }
 
     public void openMapFragment() {
