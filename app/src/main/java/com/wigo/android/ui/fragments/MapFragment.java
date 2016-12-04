@@ -36,6 +36,10 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.database.DBManager;
+import com.wigo.android.core.database.Database;
+import com.wigo.android.core.database.datas.DBStorable;
+import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
@@ -50,6 +54,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -101,7 +106,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     private void initView(View fragmentView) {
         eventBitmap = CategoriesProvider.getDefaultEventImage();
-        chatBitmap = CategoriesProvider.getDefaultEventImage();
+        chatBitmap = CategoriesProvider.getDefaultChatImage();
         imagesBitmaps = CategoriesProvider.getMapOfCategoriesAndImagesForMap();
 
         categoryButton = (Button) fragmentView.findViewById(R.id.map_hashtags_filter_button);
@@ -334,8 +339,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
         if(requestCode == CREATE_STATUS && resultCode == getActivity().RESULT_OK){
             try {
-                StatusDto statusDto = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateStatusActivity.CREATED_STATUS), StatusDto.class);
-                ((MainActivity)getActivity()).openChatFragment(statusDto);
+                StatusDto status = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateStatusActivity.CREATED_STATUS), StatusDto.class);
+                Database db = DBManager.getDatabase();
+                db.open();
+                Status statusDb = new Status(DBStorable.DEFAULT_ROW_ID, status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
+                        status.getStartDate(), status.getEndDate(), status.getKind(), new Date());
+                statusDb.setLocalId(db.insertNewDBStorable(statusDb));
+                db.close();
+                ((MainActivity) getActivity()).updateMenuList();
+                ((MainActivity)getActivity()).openChatFragment(status);
             } catch (IOException e) {
                 e.printStackTrace();
             }

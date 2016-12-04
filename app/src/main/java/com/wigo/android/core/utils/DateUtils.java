@@ -13,20 +13,23 @@ import java.util.TimeZone;
 
 public class DateUtils {
 
-    public static String dateToString(Calendar calendar) {
-        Date date = calendar.getTime();
-        TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
-        df.setTimeZone(tz);
-        return df.format(date);
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+
+    public static String calendarToString(Calendar calendar) {
+        return dateToString(calendar.getTime());
     }
 
     public static Calendar dateFromString(String dateString) throws ParseException {
         TimeZone tz = TimeZone.getTimeZone("UTC");
-        DateFormat df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'"); // Quoted "Z" to indicate UTC, no timezone offset
-        df.setTimeZone(tz);
+        DATE_FORMAT.setTimeZone(tz);
         Calendar result = Calendar.getInstance();
-        result.setTime(df.parse(dateString));
+        result.setTime(DATE_FORMAT.parse(dateString));
         return result;
+    }
+
+    public static String dateToString(Date date) {
+        TimeZone tz = TimeZone.getTimeZone("UTC");
+        DATE_FORMAT.setTimeZone(tz);
+        return DATE_FORMAT.format(date);
     }
 }

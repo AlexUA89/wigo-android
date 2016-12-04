@@ -77,7 +77,7 @@ public class CreateStatusActivity extends Activity {
         Calendar fromDate = Calendar.getInstance();
         Calendar c = Calendar.getInstance();
         c.setTimeInMillis(fromDate.getTimeInMillis());
-        c.add(Calendar.DATE, 1);
+        c.add(Calendar.DAY_OF_MONTH, 1);
         Calendar toDate = SharedPrefHelper.getToDateSearch(c);
         newStatus.setStartDate(fromDate.getTime());
         newStatus.setEndDate(toDate.getTime());

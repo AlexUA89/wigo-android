@@ -3,7 +3,6 @@ package com.wigo.android.core.server.requestapi;
 
 import android.text.TextUtils;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.preferences.SharedPrefHelper;
@@ -38,13 +37,12 @@ import java.util.UUID;
 public class WigoRestClient {
 
     private RestTemplate client;
-    private ObjectMapper mapper;
 
     public WigoRestClient() {
         client = new RestTemplate();
         MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-        mapper = converter.getObjectMapper();
-        client.getMessageConverters().add(converter);
+        converter.setObjectMapper(ContextProvider.getObjectMapper());
+        client.getMessageConverters().add(0, converter);
     }
 
     public FaceBookUserInfoDto getUserInfoFromFacebook(String faceBookToken) {
@@ -72,8 +70,8 @@ public class WigoRestClient {
                 + "&endLatitude=" + Math.max(startLatitude, endLatitude)
                 + "&startLongitude=" + Math.min(startLongitude, endLongitude)
                 + "&endLongitude=" + Math.max(startLongitude, endLongitude)
-                + "&startDate=" + DateUtils.dateToString(fromDate)
-                + "&endDate=" + DateUtils.dateToString(toDate);
+                + "&startDate=" + DateUtils.calendarToString(fromDate)
+                + "&endDate=" + DateUtils.calendarToString(toDate);
         if (searchText != null && !searchText.isEmpty()) {
             requestUrl += "&search=" + searchText;
         }
@@ -147,10 +145,6 @@ public class WigoRestClient {
             headers.set("Authorization", "bearer " + token);
         }
         return headers;
-    }
-
-    public ObjectMapper getObjectMapper() {
-        return mapper;
     }
 
 }
