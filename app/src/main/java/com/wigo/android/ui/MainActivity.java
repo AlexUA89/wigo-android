@@ -1,6 +1,7 @@
 package com.wigo.android.ui;
 
 import android.Manifest;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentActivity;
@@ -86,6 +87,9 @@ public class MainActivity extends FragmentActivity {
 //            fragment = new MapFragment();
             mapFragment = new MapFragment();
             getSupportFragmentManager().beginTransaction().add(R.id.fragment_container, mapFragment).commit();
+        }
+        if (getIntent().getAction() != null && getIntent().getData() != null) {
+            handleUri(getIntent().getData());
         }
 
     }
@@ -241,5 +245,9 @@ public class MainActivity extends FragmentActivity {
     private void requestPermissions() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION}, 1);
+    }
+
+    private void handleUri(Uri data) {
+        System.out.println("OPPENED URI !!!!!!!!!!!!!!!!!!!!!!!!!!!! " + data);
     }
 }
