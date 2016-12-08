@@ -3,12 +3,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
+
     <ScrollView
+        android:id="@+id/chat_fragment_scroll_view"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:layout_weight="1"
-        android:id="@+id/chat_fragment_scroll_view"
         android:fillViewport="true">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -23,92 +25,121 @@
                     android:id="@+id/status_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:textAlignment="center"
-                    android:visibility="gone"
                     android:layout_margin="@dimen/activity_vertical_margin"
-                    android:textStyle="bold"/>
+                    android:textAlignment="center"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
                 <LinearLayout
                     android:id="@+id/from_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
                         android:layout_weight="1"
                         android:text="From"
-                        android:textColor="@color/counter_text_bg"/>
+                        android:textColor="@color/counter_text_bg" />
+
                     <TextView
                         android:id="@+id/from_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
                 </LinearLayout>
+
                 <LinearLayout
                     android:id="@+id/to_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
                         android:layout_weight="1"
                         android:text="To"
-                        android:textColor="@color/counter_text_bg"/>
+                        android:textColor="@color/counter_text_bg" />
+
                     <TextView
                         android:id="@+id/to_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
                 </LinearLayout>
+
+                <HorizontalScrollView
+                    android:id="@+id/chat_fragment_image_scroll_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:fillViewport="true"
+                    android:visibility="gone">
+                    <LinearLayout
+                        android:id="@+id/chat_fragment_image_layout"
+                        android:layout_width="match_parent"
+                        android:orientation="horizontal"
+                        android:layout_height="match_parent"/>
+                    <!--<ImageView-->
+                        <!--android:id="@+id/status_image"-->
+                        <!--android:layout_width="match_parent"-->
+                        <!--android:layout_height="wrap_content"-->
+                        <!--android:visibility="gone" />-->
+                </HorizontalScrollView>
+
 
                 <TextView
                     android:id="@+id/status_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/activity_vertical_margin"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
+
                 <TextView
                     android:id="@+id/status_hashtags"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/activity_vertical_margin"
-                    android:visibility="gone"/>
+                    android:visibility="gone" />
 
                 <LinearLayout
                     android:id="@+id/url_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:visibility="gone">
+
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
                         android:layout_weight="1"
                         android:text="URL:"
-                        android:textColor="@color/counter_text_bg"/>
+                        android:textColor="@color/counter_text_bg" />
+
                     <TextView
                         android:id="@+id/url_text"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
-                        android:layout_weight="1"/>
+                        android:layout_weight="1" />
                 </LinearLayout>
             </LinearLayout>
 
             <ListView
-                android:layout_margin="@dimen/activity_vertical_margin"
                 android:id="@+id/listView"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:nestedScrollingEnabled="true"
+                android:layout_margin="@dimen/activity_vertical_margin"
                 android:layout_weight="1"
                 android:divider="@null"
-                android:dividerHeight="0dp"/>
+                android:dividerHeight="0dp"
+                android:nestedScrollingEnabled="true" />
 
             <LinearLayout
                 android:layout_width="match_parent"

@@ -25,6 +25,9 @@ public final class Tables {
         public static String END_DATE = "end_date";
         public static String KIND = "kind";
         public static String URL = "url";
+        public static String CATEGORY = "category";
+        public static String HASHTAGS = "hashtags";
+        public static String IMAGES = "images";
         public static String LAST_OPEN_DATE = "last_open_date";
     }
 

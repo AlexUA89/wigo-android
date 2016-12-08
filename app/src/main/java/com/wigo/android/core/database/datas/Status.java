@@ -3,21 +3,20 @@ package com.wigo.android.core.database.datas;
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.os.Parcel;
-import android.text.TextUtils;
 
-import com.wigo.android.core.AppLog;
-import com.wigo.android.core.database.constants.DBConstants;
 import com.wigo.android.core.database.constants.Tables;
-import com.wigo.android.core.server.dto.StatusKind;
-import com.wigo.android.core.utils.DateUtils;
+import com.wigo.android.ui.elements.CategoriesProvider;
 
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class Status extends DBStorable {
+
+    private static final String SPLITER = " ";
 
     public static final int TypeID = 1;
     private static final String TAG = Status.class.getCanonicalName();
@@ -32,8 +31,11 @@ public class Status extends DBStorable {
     private String kind;
     private String url;
     private Date lastOpenDate;
+    private List<String> hashtags;
+    private String category;
+    private List<String> images;
 
-    public Status(long localId, UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, Date lastOpenDate) {
+    private Status(long localId, UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, String category, List<String> hashtags, List<String> images, Date lastOpenDate) {
         if (localId < DBStorable.DEFAULT_ROW_ID) {
             throw new IllegalArgumentException("localId can not be " + localId);
         }
@@ -58,18 +60,26 @@ public class Status extends DBStorable {
         if (kind == null) throw new IllegalArgumentException("kind can not be null");
         this.kind = kind;
         this.lastOpenDate = lastOpenDate;
+        this.category = CategoriesProvider.OTHER;
+        if (category != null) this.category = category;
+        this.hashtags = new ArrayList<>();
+        if (hashtags != null) this.hashtags = hashtags;
+        this.images = new ArrayList<>();
+        if (images != null) this.images = images;
     }
 
-    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, Date lastOpenDate) {
-        this(DBStorable.DEFAULT_ROW_ID, id, userId, latitude, longitude, name, text, url, startDate, endDate, kind, lastOpenDate);
+    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, String category, List<String> hashtags, List<String> images, Date lastOpenDate) {
+        this(DBStorable.DEFAULT_ROW_ID, id, userId, latitude, longitude, name, text, url, startDate, endDate, kind, category, hashtags, images, lastOpenDate);
     }
 
     public Status(Status status) {
-        this(status.getLocalId(), status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(), status.getStartDate(), status.getEndDate(), status.getKind(), status.getLastOpenDate());
+        this(status.getLocalId(), status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
+                status.getStartDate(), status.getEndDate(), status.getKind(), status.getCategory(), status.getHashtags(), status.getImages(), status.getLastOpenDate());
     }
 
     public Status(Parcel in) {
-        this(in.readLong(), UUID.fromString(in.readString()), UUID.fromString(in.readString()), in.readDouble(), in.readDouble(), in.readString(), in.readString(), in.readString(), (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), (java.util.Date) in.readSerializable());
+        this(in.readLong(), UUID.fromString(in.readString()), UUID.fromString(in.readString()), in.readDouble(), in.readDouble(), in.readString(), in.readString(), in.readString(),
+                (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), in.readString(), splitString(in.readString()), splitString(in.readString()), (java.util.Date) in.readSerializable());
     }
 
     public Status(Cursor c) throws ParseException {
@@ -84,6 +94,9 @@ public class Status extends DBStorable {
                 new Date(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.START_DATE))),
                 new Date(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.END_DATE))),
                 c.getString(c.getColumnIndex(Tables.STATUS_TABLE.KIND)),
+                c.getString(c.getColumnIndex(Tables.STATUS_TABLE.CATEGORY)),
+                splitString(c.getString(c.getColumnIndex(Tables.STATUS_TABLE.HASHTAGS))),
+                splitString(c.getString(c.getColumnIndex(Tables.STATUS_TABLE.IMAGES))),
                 new Date(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.LAST_OPEN_DATE))));
     }
 
@@ -105,6 +118,9 @@ public class Status extends DBStorable {
         values.put(Tables.STATUS_TABLE.START_DATE, startDate.getTime());
         values.put(Tables.STATUS_TABLE.END_DATE, endDate.getTime());
         values.put(Tables.STATUS_TABLE.KIND, kind);
+        values.put(Tables.STATUS_TABLE.CATEGORY, category);
+        values.put(Tables.STATUS_TABLE.HASHTAGS, listToString(hashtags));
+        values.put(Tables.STATUS_TABLE.IMAGES, listToString(images));
         if (lastOpenDate == null) {
             values.put(Tables.STATUS_TABLE.LAST_OPEN_DATE, new Date().getTime());
         } else {
@@ -136,6 +152,9 @@ public class Status extends DBStorable {
         dest.writeSerializable(startDate);
         dest.writeSerializable(endDate);
         dest.writeString(kind);
+        dest.writeString(category);
+        dest.writeString(listToString(hashtags));
+        dest.writeString(listToString(images));
         dest.writeSerializable(lastOpenDate);
     }
 
@@ -249,5 +268,44 @@ public class Status extends DBStorable {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public List<String> getHashtags() {
+        return hashtags;
+    }
+
+    public void setHashtags(List<String> hashtags) {
+        this.hashtags = hashtags;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
+    }
+
+    private static String listToString(List<String> list) {
+        StringBuilder r = new StringBuilder();
+        for (int i = 0; i < list.size(); i++) {
+            r.append(list.get(i));
+            if (i < list.size() - 1) {
+                r.append(SPLITER);
+            }
+        }
+        return r.toString();
+    }
+
+    private static List<String> splitString(String string) {
+        return Arrays.asList(string.split(SPLITER));
     }
 }

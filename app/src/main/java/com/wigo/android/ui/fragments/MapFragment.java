@@ -38,7 +38,6 @@ import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.database.Database;
-import com.wigo.android.core.database.datas.DBStorable;
 import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
@@ -151,6 +150,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         fromDate.set(Calendar.YEAR, year);
                         fromDate.set(Calendar.MONTH, monthOfYear);
                         fromDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        SharedPrefHelper.setFromDateSearch(fromDate);
                         redrawDateButtons();
                         refreshMap();
                     }
@@ -169,6 +169,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                         toDate.set(Calendar.YEAR, year);
                         toDate.set(Calendar.MONTH, monthOfYear);
                         toDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        SharedPrefHelper.setToDateSearch(toDate);
                         redrawDateButtons();
                         refreshMap();
                     }
@@ -342,8 +343,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 StatusDto status = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateStatusActivity.CREATED_STATUS), StatusDto.class);
                 Database db = DBManager.getDatabase();
                 db.open();
-                Status statusDb = new Status(DBStorable.DEFAULT_ROW_ID, status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
-                        status.getStartDate(), status.getEndDate(), status.getKind(), new Date());
+                Status statusDb = new Status(status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
+                        status.getStartDate(), status.getEndDate(), status.getKind(), status.getCategory(), status.getHashtags(), status.getImages(), new Date());
                 statusDb.setLocalId(db.insertNewDBStorable(statusDb));
                 db.close();
                 ((MainActivity) getActivity()).updateMenuList();

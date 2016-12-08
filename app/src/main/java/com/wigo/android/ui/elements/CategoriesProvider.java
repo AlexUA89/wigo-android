@@ -21,6 +21,7 @@ public class CategoriesProvider {
 
     private static final float SCALE_FOR_MAP_ITEMS = 2f;
     private static HashMap<String, Bitmap> bitmapHashMap;
+    public static final String OTHER = "OTHER";
 
     public static Set<String> getListOfCategories() {
         return new HashSet<>(getMapOfCategoriesAndImages().keySet());
@@ -55,11 +56,11 @@ public class CategoriesProvider {
         imagesBitmaps.put("THEATER_EVENT", BitmapUtils.getScaledBitmap(R.mipmap.theater_event, SCALE_FOR_MAP_ITEMS));
         imagesBitmaps.put("CONFERENCE_EVENT", BitmapUtils.getScaledBitmap(R.mipmap.conference_event, SCALE_FOR_MAP_ITEMS));
         imagesBitmaps.put("FAMILY_EVENT", BitmapUtils.getScaledBitmap(R.mipmap.family_event, SCALE_FOR_MAP_ITEMS));
-        imagesBitmaps.put("OTHER", BitmapUtils.getScaledBitmap(R.mipmap.other, SCALE_FOR_MAP_ITEMS));
         imagesBitmaps.put("MEETUP", BitmapUtils.getScaledBitmap(R.mipmap.meetup, SCALE_FOR_MAP_ITEMS));
         imagesBitmaps.put("LECTURE", BitmapUtils.getScaledBitmap(R.mipmap.lecture, SCALE_FOR_MAP_ITEMS));
         imagesBitmaps.put("MUSIC_EVENT", BitmapUtils.getScaledBitmap(R.mipmap.music_event, SCALE_FOR_MAP_ITEMS));
         imagesBitmaps.put("WORKSHOP", BitmapUtils.getScaledBitmap(R.mipmap.workshop, SCALE_FOR_MAP_ITEMS));
+        imagesBitmaps.put(OTHER, BitmapUtils.getScaledBitmap(R.mipmap.other, SCALE_FOR_MAP_ITEMS));
         bitmapHashMap = imagesBitmaps;
         return imagesBitmaps;
     }

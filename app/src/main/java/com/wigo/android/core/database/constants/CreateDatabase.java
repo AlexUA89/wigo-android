@@ -28,6 +28,9 @@ public final class CreateDatabase {
             + Tables.STATUS_TABLE.START_DATE + " INTEGER NOT NULL, "
             + Tables.STATUS_TABLE.END_DATE + " INTEGER NOT NULL, "
             + Tables.STATUS_TABLE.LAST_OPEN_DATE + " INTEGER NOT NULL, "
+            + Tables.STATUS_TABLE.CATEGORY + " TEXT NOT NULL, "
+            + Tables.STATUS_TABLE.HASHTAGS + " TEXT NOT NULL, "
+            + Tables.STATUS_TABLE.IMAGES + " TEXT NOT NULL, "
             + Tables.STATUS_TABLE.KIND + " TEXT NOT NULL);";
 
 }

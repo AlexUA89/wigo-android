@@ -1,5 +1,6 @@
 package com.wigo.android.core.server.dto;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.UUID;
@@ -21,6 +22,7 @@ public class StatusDto extends Dto {
     private String url;
     private List<String> hashtags;
     private String category;
+    private List<String> images = new ArrayList<>();
 
     public String getKind() {
         return kind;
@@ -116,6 +118,14 @@ public class StatusDto extends Dto {
 
     public void setCategory(String category) {
         this.category = category;
+    }
+
+    public List<String> getImages() {
+        return images;
+    }
+
+    public void setImages(List<String> images) {
+        this.images = images;
     }
 
     @Override

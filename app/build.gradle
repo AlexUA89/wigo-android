@@ -45,6 +45,8 @@ dependencies {
     compile 'javax.websocket:javax.websocket-api:1.1'
     compile 'org.glassfish.tyrus:tyrus-container-grizzly-client:1.12'
     compile 'ch.acra:acra:4.5.0'
+    compile group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-joda', version: '2.0.2'
+    compile group:'com.squareup.picasso', name:'picasso', version:'2.5.2'
 //    compile 'javax.validation:validation-api:1.0.0.GA'
     compile 'org.springframework.android:spring-android-rest-template:2.0.0.M3'
     compile(

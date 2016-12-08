@@ -2,21 +2,23 @@ package com.wigo.android.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.CountDownTimer;
 import android.support.v4.app.Fragment;
+import android.support.v4.view.ViewPager;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.squareup.picasso.Picasso;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
@@ -28,13 +30,12 @@ import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.ui.MainActivity;
+import com.wigo.android.ui.base.BaseTextWatcher;
 import com.wigo.android.ui.elements.ChatMessagesAdapter;
 import com.wigo.android.ui.elements.LoadMessageFroStatusTask;
 import com.wigo.android.ui.elements.SendMessageTask;
-import com.wigo.android.ui.base.BaseTextWatcher;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -57,6 +58,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     private ListView messagesList = null;
     private ScrollView scrollView = null;
     private Timer timer = null;
+    private static ViewPager mPager;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -98,8 +100,8 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         statusDb = db.selectStatusServerById(status.getId());
         db.close();
         if (statusDb == null) {
-            statusDb = new Status(DBStorable.DEFAULT_ROW_ID, status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
-                    status.getStartDate(), status.getEndDate(), status.getKind(), new Date());
+            statusDb = new Status(status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
+                    status.getStartDate(), status.getEndDate(), status.getKind(), status.getCategory(), status.getHashtags(), status.getImages(), new Date());
         }
         scrollView = (ScrollView) fragmentView.findViewById(R.id.chat_fragment_scroll_view);
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
@@ -121,6 +123,15 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             if (status.getUrl() != null && !status.getUrl().isEmpty()) {
                 ((TextView) fragmentView.findViewById(R.id.url_text)).setText(status.getUrl());
                 fragmentView.findViewById(R.id.url_container).setVisibility(View.VISIBLE);
+            }
+            if (!status.getImages().isEmpty()) {
+                fragmentView.findViewById(R.id.chat_fragment_image_scroll_view).setVisibility(View.VISIBLE);
+                LinearLayout horizontalScrollView = (LinearLayout) fragmentView.findViewById(R.id.chat_fragment_image_layout);
+                for (int i = 0; i < status.getImages().size(); i++) {
+                    ImageView image = new ImageView(getActivity());
+                    Picasso.with(getActivity()).load(status.getImages().get(i)).into(image);
+                    horizontalScrollView.addView(image);
+                }
             }
         }
         if (status.getHashtags() != null && !status.getHashtags().isEmpty()) {
