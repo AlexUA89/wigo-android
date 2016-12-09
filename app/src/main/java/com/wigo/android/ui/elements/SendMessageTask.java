@@ -5,10 +5,8 @@ import android.os.AsyncTask;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.requestapi.errors.WigoException;
 
-import org.springframework.web.client.HttpClientErrorException;
-
-import java.io.IOException;
 import java.util.UUID;
 
 /**
@@ -35,9 +33,9 @@ public class SendMessageTask extends AsyncTask<Void, Void, Void> {
             if (newMessageId == null) {
                 this.cancel(true);
             }
-        } catch (HttpClientErrorException e) {
+        } catch (WigoException e) {
             e.printStackTrace();
-            listener.sendMessageConnectionError(messageDto, statusDto);
+            listener.sendMessageConnectionError(messageDto, statusDto, e);
             this.cancel(true);
         }
         return null;
@@ -60,6 +58,6 @@ public class SendMessageTask extends AsyncTask<Void, Void, Void> {
 
         void sendMessageTimeoutError(MessageDto message, StatusDto statusDto);
 
-        void sendMessageConnectionError(MessageDto message, StatusDto statusDto);
+        void sendMessageConnectionError(MessageDto message, StatusDto statusDto, WigoException e);
     }
 }

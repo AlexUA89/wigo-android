@@ -21,6 +21,7 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.fragments.ChatFragment;
 import com.wigo.android.ui.fragments.MapFragment;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
@@ -106,21 +107,27 @@ public class MainActivity extends FragmentActivity {
                 @Override
                 public void run() {
                     Status status = (Status) adapter.getItem(position);
-                    StatusDto statusDto = ContextProvider.getWigoRestClient().getStatusById(status.getId());
-                    if (statusDto != null) {
-                        openChatFragment(statusDto);
-                    } else {
+                    StatusDto statusDto = null;
+                    try {
+                        statusDto = ContextProvider.getWigoRestClient().getStatusById(status.getId());
+                        if (statusDto != null) {
+                            openChatFragment(statusDto);
+                        } else {
+                            mainActivity.runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(ContextProvider.getAppContext(), "Can not find such event on server", Toast.LENGTH_SHORT).show();// display toast
+                                }
+                            });
+                        }
+                    } catch (final WigoException e) {
                         mainActivity.runOnUiThread(new Runnable() {
                             @Override
                             public void run() {
-                                Toast.makeText(ContextProvider.getAppContext(), "Can not find such event on server", Toast.LENGTH_SHORT).show();// display toast
+                                Toast.makeText(ContextProvider.getAppContext(), "Can not connect to server: " + e.getMessage(), Toast.LENGTH_SHORT).show();// display toast
                             }
                         });
                     }
-//            mapFragment = (MapFragment) getSupportFragmentManager().findFragmentByTag(MapFragment.FRAGMENT_TAG);
-//            openMapFragment();
-                    // display view for selected nav drawer item
-//            displayView(position);
                 }
             }).start();
             mDrawerLayout.closeDrawer(mDrawerList);

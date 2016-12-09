@@ -9,7 +9,6 @@ import com.wigo.android.R;
 import com.wigo.android.core.server.requestapi.WigoObjectMapper;
 import com.wigo.android.core.server.requestapi.WigoRestClient;
 
-import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
 
@@ -34,7 +33,7 @@ public class ContextProvider extends Application {
 
     @Override
     public void onCreate() {
-        ACRA.init(this);
+//        ACRA.init(this);
         super.onCreate();
         instance = this;
         //facebook initialization

@@ -42,6 +42,7 @@ import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
+import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.activities.CategoryActivity;
 import com.wigo.android.ui.activities.CreateStatusActivity;
@@ -305,11 +306,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     @Override
-    public void loadMapStateseConnectionError(LatLngBounds curScreen) {
+    public void loadMapStateseConnectionError(LatLngBounds curScreen, final WigoException e) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+                Toast.makeText(ContextProvider.getAppContext(), "Connection error: " + e.getMessage() + ". Try one more time", Toast.LENGTH_SHORT).show();// display toast
             }
         });
     }
@@ -338,7 +339,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (requestCode == PICK_CATEGORIES && resultCode == getActivity().RESULT_OK) {
             refreshMap();
         }
-        if(requestCode == CREATE_STATUS && resultCode == getActivity().RESULT_OK){
+        if (requestCode == CREATE_STATUS && resultCode == getActivity().RESULT_OK) {
             try {
                 StatusDto status = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateStatusActivity.CREATED_STATUS), StatusDto.class);
                 Database db = DBManager.getDatabase();
@@ -348,7 +349,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 statusDb.setLocalId(db.insertNewDBStorable(statusDb));
                 db.close();
                 ((MainActivity) getActivity()).updateMenuList();
-                ((MainActivity)getActivity()).openChatFragment(status);
+                ((MainActivity) getActivity()).openChatFragment(status);
             } catch (IOException e) {
                 e.printStackTrace();
             }

@@ -16,11 +16,8 @@ import com.facebook.login.widget.LoginButton;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.preferences.SharedPrefHelper;
-import com.wigo.android.core.server.dto.FaceBookUserInfoDto;
 import com.wigo.android.core.server.dto.WigoUserInfoResponseDto;
-import com.wigo.android.ui.MainActivity;
-
-import java.io.IOException;
+import com.wigo.android.core.server.requestapi.errors.WigoException;
 
 
 public class LoginActivity extends Activity {
@@ -90,7 +87,7 @@ public class LoginActivity extends Activity {
                     AccessToken oldAccessToken,
                     AccessToken currentAccessToken) {
 //                Toast.makeText(ContextProvider.getAppContext(), "TOKEN", Toast.LENGTH_LONG).show();
-                System.out.println("TOKEN IS "+currentAccessToken);
+                System.out.println("TOKEN IS " + currentAccessToken);
             }
         };
 
@@ -105,12 +102,6 @@ public class LoginActivity extends Activity {
         }
     }
 
-    private void startMainActivity() {
-        Intent intent = new Intent(getApplicationContext(), MainActivity.class);
-        startActivity(intent);
-        finish();
-    }
-
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -123,12 +114,17 @@ public class LoginActivity extends Activity {
             @Override
             public void run() {
                 if (token != null) {
-                    WigoUserInfoResponseDto wigoUserInfoResponseDto = ContextProvider.getWigoRestClient().getUserInfoFromWigo(token);
-                    SharedPrefHelper.setUserName(wigoUserInfoResponseDto.getUser().getName());
-                    SharedPrefHelper.setUserNickName(wigoUserInfoResponseDto.getUser().getNickname());
-                    SharedPrefHelper.setUserId(wigoUserInfoResponseDto.getUser().getId().toString());
-                    SharedPrefHelper.setToken(wigoUserInfoResponseDto.getToken());
-                    startMainActivity();
+                    WigoUserInfoResponseDto wigoUserInfoResponseDto = null;
+                    try {
+                        wigoUserInfoResponseDto = ContextProvider.getWigoRestClient().getUserInfoFromWigo(token);
+                        SharedPrefHelper.setUserName(wigoUserInfoResponseDto.getUser().getName());
+                        SharedPrefHelper.setUserNickName(wigoUserInfoResponseDto.getUser().getNickname());
+                        SharedPrefHelper.setUserId(wigoUserInfoResponseDto.getUser().getId().toString());
+                        SharedPrefHelper.setToken(wigoUserInfoResponseDto.getToken());
+                        finish();
+                    } catch (WigoException requestError) {
+                        Toast.makeText(ContextProvider.getAppContext(), "Can not connect to server: " + requestError.getMessage(), Toast.LENGTH_LONG).show();
+                    }
                 }
             }
         }).start();

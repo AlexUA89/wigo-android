@@ -29,6 +29,7 @@ import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
+import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.base.BaseTextWatcher;
 import com.wigo.android.ui.elements.ChatMessagesAdapter;
@@ -144,10 +145,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             @Override
             public void onClick(View v) {
                 String userId = SharedPrefHelper.getUserId(null);
-                if (userId == null) {
-                    //TODO throw correct exception
-                }
-                MessageDto messageDto = new MessageDto(null, UUID.fromString(userId), msg.getText().toString(), null, SharedPrefHelper.getUserNickName(""));
+                MessageDto messageDto = new MessageDto(null, userId == null ? null : UUID.fromString(userId), msg.getText().toString(), null, SharedPrefHelper.getUserNickName(""));
                 new SendMessageTask(messageDto, status, that).execute();
             }
         });
@@ -245,11 +243,11 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     }
 
     @Override
-    public void loadMessagesConnectionError(StatusDto statusDto) {
+    public void loadMessagesConnectionError(StatusDto statusDto, final WigoException e) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+                Toast.makeText(ContextProvider.getAppContext(), "Connection error: " + e.getMessage() + ". Try one more time", Toast.LENGTH_SHORT).show();// display toast
             }
         });
     }
@@ -265,11 +263,11 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     }
 
     @Override
-    public void sendMessageConnectionError(MessageDto messages, StatusDto statusDto) {
+    public void sendMessageConnectionError(MessageDto messages, StatusDto statusDto, final WigoException e) {
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(ContextProvider.getAppContext(), "Connection error. Try one more time", Toast.LENGTH_SHORT).show();// display toast
+                Toast.makeText(ContextProvider.getAppContext(), "Connection error: " + e.getMessage() + ". Try one more time", Toast.LENGTH_SHORT).show();// display toast
             }
         });
     }

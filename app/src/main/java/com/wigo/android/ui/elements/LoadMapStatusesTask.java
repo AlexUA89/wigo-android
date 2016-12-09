@@ -6,8 +6,7 @@ import android.os.Handler;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.StatusDto;
-
-import org.springframework.web.client.HttpClientErrorException;
+import com.wigo.android.core.server.requestapi.errors.WigoException;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -71,9 +70,9 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
         try {
             statuses = ContextProvider.getWigoRestClient()
                     .getStatusesListFromServer(curScreen.northeast.latitude, curScreen.southwest.latitude, curScreen.northeast.longitude, curScreen.southwest.longitude, tags, categories,  fromDate, toDate, searchString);
-        } catch (HttpClientErrorException e) {
+        } catch (WigoException e) {
             e.printStackTrace();
-            listener.loadMapStateseConnectionError(curScreen);
+            listener.loadMapStateseConnectionError(curScreen, e);
             this.cancel(true);
             return null;
         }
@@ -99,6 +98,6 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
 
         void loadMapStateseTimeoutError(LatLngBounds curScreen);
 
-        void loadMapStateseConnectionError(LatLngBounds curScreen);
+        void loadMapStateseConnectionError(LatLngBounds curScreen, WigoException e);
     }
 }

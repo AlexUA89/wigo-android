@@ -16,8 +16,7 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
-
-import org.springframework.web.client.HttpClientErrorException;
+import com.wigo.android.core.server.requestapi.errors.WigoException;
 
 import java.util.Calendar;
 import java.util.Collections;
@@ -35,7 +34,7 @@ public class CreateStatusActivity extends Activity {
     private EditText editText;
     private LatLng point;
     private StatusDto newStatus;
-    private CreateStatsRequest task;
+    private CreateStatusRequest task;
     private Button okButton, cancelButton;
 
     @Override
@@ -89,7 +88,7 @@ public class CreateStatusActivity extends Activity {
         newStatus.setHashtags(Collections.EMPTY_LIST);
         newStatus.setUserId(UUID.fromString(SharedPrefHelper.getUserId(null)));
 
-        task = new CreateStatsRequest();
+        task = new CreateStatusRequest();
         task.execute();
 
 
@@ -106,7 +105,7 @@ public class CreateStatusActivity extends Activity {
         onCancelButtonPressed();
     }
 
-    class CreateStatsRequest extends AsyncTask<Void, Void, Void> {
+    class CreateStatusRequest extends AsyncTask<Void, Void, Void> {
 
         @Override
         protected void onPreExecute() {
@@ -119,9 +118,9 @@ public class CreateStatusActivity extends Activity {
         protected Void doInBackground(Void... params) {
             try {
                 ContextProvider.getWigoRestClient().createNewChat(newStatus);
-            } catch (HttpClientErrorException e) {
+            } catch (WigoException e) {
                 e.printStackTrace();
-                Toast.makeText(ContextProvider.getAppContext(), ContextProvider.getAppContext().getString(R.string.create_status_connection_error), Toast.LENGTH_SHORT).show();// display toast
+                Toast.makeText(ContextProvider.getAppContext(), ContextProvider.getAppContext().getString(R.string.create_status_connection_error)+ " " + e.getMessage(), Toast.LENGTH_SHORT).show();// display toast
                 this.cancel(true);
                 return null;
             }

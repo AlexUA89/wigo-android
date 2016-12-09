@@ -16,7 +16,6 @@ import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,10 +26,8 @@ public class ChatMessagesAdapter extends BaseAdapter {
 
     private List<MessageDto> messagesArray = new ArrayList<>();
     private LayoutInflater lInflater;
-    private UUID myUserId = null;
 
     public ChatMessagesAdapter() {
-        myUserId = UUID.fromString(SharedPrefHelper.getUserId(null));
         lInflater = (LayoutInflater) ContextProvider.getAppContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -102,8 +99,9 @@ public class ChatMessagesAdapter extends BaseAdapter {
     }
 
     private boolean isMessageFromMe(MessageDto message) {
-        return message.getUserId().equals(myUserId);
+        String userId = SharedPrefHelper.getUserId(null);
+        if (userId == null) return false;
+        return message.getUserId().equals(UUID.fromString(userId));
     }
-
 
 }
