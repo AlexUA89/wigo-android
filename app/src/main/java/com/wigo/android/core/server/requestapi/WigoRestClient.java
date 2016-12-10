@@ -205,15 +205,16 @@ public class WigoRestClient {
         ResponseEntity<UUID> response = null;
         try {
             response = client.exchange(requestUrl, HttpMethod.POST, request, UUID.class, statusDto);
+            statusDto.setId(response.getBody());
+            return statusDto;
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
+                throw new LoginError();
             } else {
                 throw new RequestError(e.getMessage());
             }
         }
-        statusDto.setId(response.getBody());
-        return statusDto;
     }
 
     private HttpHeaders getHeaders() {

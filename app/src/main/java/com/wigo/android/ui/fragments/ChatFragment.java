@@ -106,7 +106,8 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         }
         scrollView = (ScrollView) fragmentView.findViewById(R.id.chat_fragment_scroll_view);
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
-        messagesList = (ListView) fragmentView.findViewById(R.id.listView);
+        messagesList = (ListView) fragmentView.findViewById(R.id.chat_listView);
+        messagesList.setEmptyView(fragmentView.findViewById(R.id.chat_listView_empty));
         adapter = new ChatMessagesAdapter();
         messagesList.setAdapter(adapter);
         TextView statusName = (TextView) fragmentView.findViewById(R.id.status_name);
@@ -140,6 +141,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             statusHashtags.setText(status.getHashtags().toString());
         }
         send = (Button) fragmentView.findViewById(R.id.chat_fragment_send);
+        send.setEnabled(false);
         final ChatFragment that = this;
         send.setOnClickListener(new View.OnClickListener() {
             @Override

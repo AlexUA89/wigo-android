@@ -278,8 +278,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
                 if (StatusKind.event.toString().equals(status.getKind())) {
                     BitmapDescriptor bitmap = eventBitmap;
-                    if (!status.getHashtags().isEmpty() && imagesBitmaps.get(status.getHashtags().get(0)) != null) {
-                        bitmap = imagesBitmaps.get(status.getHashtags().get(0));
+                    if (status.getCategory() != null && imagesBitmaps.get(status.getCategory()) != null) {
+                        bitmap = imagesBitmaps.get(status.getCategory());
                     }
                     marker.icon(bitmap);
                 } else {
@@ -290,7 +290,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 if (posTemp != null || postMarker != null) {
                     System.out.print("asd");
                 }
-
             }
         }
     }

@@ -14,7 +14,7 @@
     <string name="desc_list_item_icon">Item Icon</string>
 
     <string name="facebook_app_id">303606623329436</string>
-    <string name="category_button_text">Cat.</string>
+    <string name="category_button_text">Filter</string>
 
     <string name="share_event_text">Very interesting event: </string>
     <string name="send_to">Send to ... </string>
@@ -27,5 +27,8 @@
     <string name="create_status_new_chat_name">Chat name:</string>
     <string name="create_status_empty_name">Please enter name for new chat</string>
     <string name="create_status_connection_error">Can not create status</string>
+
+    <!-- Chat fragment -->
+    <string name="chat_is_empty">Chat is empty</string>
 
 </resources>

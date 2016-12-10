@@ -21,6 +21,7 @@ import com.wigo.android.core.server.requestapi.errors.WigoException;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.UUID;
+import java.util.concurrent.RunnableFuture;
 
 /**
  * Created by AlexUA89 on 12/3/2016.
@@ -43,11 +44,11 @@ public class CreateStatusActivity extends Activity {
         setContentView(R.layout.create_status_activity);
         setTitle(getString(R.string.create_status_title));
         Bundle b = this.getIntent().getExtras();
-        if(b!=null) point = b.getParcelable(POINT);
+        if (b != null) point = b.getParcelable(POINT);
         editText = (EditText) findViewById(R.id.create_status_edittext);
 
-        okButton = (Button)findViewById(R.id.create_status_ok_button);
-        cancelButton = (Button)findViewById(R.id.create_status_cancel_button);
+        okButton = (Button) findViewById(R.id.create_status_ok_button);
+        cancelButton = (Button) findViewById(R.id.create_status_cancel_button);
 
 
         okButton.setOnClickListener(new View.OnClickListener() {
@@ -67,7 +68,7 @@ public class CreateStatusActivity extends Activity {
 
     private void okButtonPressed() {
         String name = editText.getText().toString();
-        if(name == null || name.isEmpty()) {
+        if (name == null || name.isEmpty()) {
             Toast.makeText(ContextProvider.getAppContext(), ContextProvider.getAppContext().getString(R.string.create_status_empty_name), Toast.LENGTH_SHORT).show();// display toast
             return;
         }
@@ -86,8 +87,10 @@ public class CreateStatusActivity extends Activity {
         newStatus.setText("");
         newStatus.setCategory("OTHER");
         newStatus.setHashtags(Collections.EMPTY_LIST);
-        newStatus.setUserId(UUID.fromString(SharedPrefHelper.getUserId(null)));
-
+        String userId = SharedPrefHelper.getUserId(null);
+        if (userId != null) {
+            newStatus.setUserId(UUID.fromString(userId));
+        }
         task = new CreateStatusRequest();
         task.execute();
 
@@ -118,9 +121,14 @@ public class CreateStatusActivity extends Activity {
         protected Void doInBackground(Void... params) {
             try {
                 ContextProvider.getWigoRestClient().createNewChat(newStatus);
-            } catch (WigoException e) {
+            } catch (final WigoException e) {
                 e.printStackTrace();
-                Toast.makeText(ContextProvider.getAppContext(), ContextProvider.getAppContext().getString(R.string.create_status_connection_error)+ " " + e.getMessage(), Toast.LENGTH_SHORT).show();// display toast
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        Toast.makeText(ContextProvider.getAppContext(), ContextProvider.getAppContext().getString(R.string.create_status_connection_error) + " " + e.getMessage(), Toast.LENGTH_SHORT).show();// display toast
+                    }
+                });
                 this.cancel(true);
                 return null;
             }
