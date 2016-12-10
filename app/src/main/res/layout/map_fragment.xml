@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
-        android:weightSum="5">
+        android:weightSum="4">
         <Button
             android:id="@+id/from_date_button"
             android:layout_width="0dp"
@@ -35,12 +35,14 @@
             android:layout_height="wrap_content"
             android:layout_weight="2"/>
 
-        <Button
-            android:id="@+id/map_hashtags_filter_button"
-            android:layout_width="0dp"
+        <ImageButton
+            android:id="@+id/category_button"
+            android:layout_width="wrap_content"
             android:text="@string/category_button_text"
             android:layout_height="match_parent"
-            android:layout_weight="1"/>
+            android:src="@mipmap/category"
+            android:scaleType="fitCenter"
+            android:gravity="center" />
     </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"

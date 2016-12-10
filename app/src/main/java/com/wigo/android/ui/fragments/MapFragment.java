@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -73,7 +74,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private View view;
     private GoogleMap mMap;
     private EditText textSearch;
-    private Button categoryButton;
+    private ImageButton categoryButton;
     private HashMap<String, BitmapDescriptor> imagesBitmaps = new HashMap<>();
     private Calendar fromDate, toDate;
     private HashMap<UUID, StatusDto> statuses = new HashMap<>();
@@ -109,7 +110,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         chatBitmap = CategoriesProvider.getDefaultChatImage();
         imagesBitmaps = CategoriesProvider.getMapOfCategoriesAndImagesForMap();
 
-        categoryButton = (Button) fragmentView.findViewById(R.id.map_hashtags_filter_button);
+        categoryButton = (ImageButton) fragmentView.findViewById(R.id.category_button);
         fromDateButton = (Button) fragmentView.findViewById(R.id.from_date_button);
         toDateButton = (Button) fragmentView.findViewById(R.id.to_date_button);
         textSearch = (EditText) fragmentView.findViewById(R.id.text_search_field);
