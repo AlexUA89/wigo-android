@@ -2,6 +2,7 @@ package com.wigo.android.ui.fragments;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.ViewPager;
 import android.text.Editable;
@@ -40,8 +41,6 @@ import java.io.IOException;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
 
 public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.LoadMessagesForStatusTaskListener, SendMessageTask.SendMessageListener {
@@ -58,7 +57,8 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     private ChatMessagesAdapter adapter = null;
     private ListView messagesList = null;
     private ScrollView scrollView = null;
-    private Timer timer = null;
+    private Handler handler = null;
+    private Runnable loadMessages = null;
     private static ViewPager mPager;
 
     @Override
@@ -181,20 +181,20 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     public void onResume() {
         super.onResume();
         final ChatFragment that = this;
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
+        handler = new Handler();
+        loadMessages = new Runnable() {
             @Override
             public void run() {
                 LoadMessageFroStatusTask.loadData(that, status);
             }
-
-        }, 0, 5000);
+        };
+        handler.postDelayed(loadMessages, 5000);
     }
 
     @Override
     public void onPause() {
-        timer.cancel();
-        timer = null;
+        handler.removeCallbacks(loadMessages);
+        handler = null;
         super.onPause();
     }
 
@@ -202,6 +202,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     public void loadMessagesDone(List<MessageDto> messages) {
         adapter.mergMessageArray(messages);
         messagesList.setSelection(adapter.getCount() - 1);
+        handler.postDelayed(loadMessages, 5000);
     }
 
     @Override

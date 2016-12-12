@@ -136,9 +136,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
             }
         });
 
-        fromDate = SharedPrefHelper.getFromDateSearch(Calendar.getInstance());
+        fromDate = SharedPrefHelper.getFromDateSearch(null);
         Calendar c = Calendar.getInstance();
-        c.setTimeInMillis(fromDate.getTimeInMillis());
+        if (fromDate == null) {
+            fromDate = Calendar.getInstance();
+            fromDate.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 0, 0, 0);
+        }
+        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 23, 59, 59);
         c.add(Calendar.DATE, 1);
         toDate = SharedPrefHelper.getToDateSearch(c);
         redrawDateButtons();
@@ -149,9 +153,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        fromDate.set(Calendar.YEAR, year);
-                        fromDate.set(Calendar.MONTH, monthOfYear);
-                        fromDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        fromDate.set(year, monthOfYear, dayOfMonth, 0, 0, 0);
                         SharedPrefHelper.setFromDateSearch(fromDate);
                         redrawDateButtons();
                         refreshMap();
@@ -168,9 +170,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 DatePickerDialog dialog = new DatePickerDialog(getActivity(), new DatePickerDialog.OnDateSetListener() {
                     @Override
                     public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
-                        toDate.set(Calendar.YEAR, year);
-                        toDate.set(Calendar.MONTH, monthOfYear);
-                        toDate.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+                        toDate.set(year, monthOfYear, dayOfMonth, 23, 59, 59);
                         SharedPrefHelper.setToDateSearch(toDate);
                         redrawDateButtons();
                         refreshMap();
