@@ -1,6 +1,7 @@
 package com.wigo.android.ui.elements;
 
 import android.content.Context;
+import android.database.Cursor;
 import android.support.v4.content.ContextCompat;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -12,10 +13,18 @@ import android.widget.TextView;
 
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
+import com.wigo.android.core.database.DBManager;
+import com.wigo.android.core.database.Database;
+import com.wigo.android.core.database.datas.DBStorable;
+import com.wigo.android.core.database.datas.Message;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 
+import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,16 +33,31 @@ import java.util.UUID;
  */
 public class ChatMessagesAdapter extends BaseAdapter {
 
-    private List<MessageDto> messagesArray = new ArrayList<>();
+    private List<Message> messagesArray = new ArrayList<>();
     private LayoutInflater lInflater;
+    private UUID statusId;
 
     public ChatMessagesAdapter() {
         lInflater = (LayoutInflater) ContextProvider.getAppContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
 
-    public ChatMessagesAdapter(List<MessageDto> messagesArray) {
-        this.messagesArray = messagesArray;
+    public ChatMessagesAdapter(UUID statusId) {
+        this.statusId = statusId;
+        Database db = DBManager.getDatabase();
+        db.open();
+        Cursor c = db.selectMessagesForStatus(statusId);
+        if (c.moveToFirst()) {
+            while (!c.isAfterLast()) {
+                try {
+                    messagesArray.add(new Message(c));
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
+                c.moveToNext();
+            }
+        }
+        db.close();
         lInflater = (LayoutInflater) ContextProvider.getAppContext()
                 .getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -74,34 +98,56 @@ public class ChatMessagesAdapter extends BaseAdapter {
         return convertView;
     }
 
-    public void mergMessageArray(List<MessageDto> messagesArray) {
-        for (MessageDto newMessage : messagesArray) {
-            boolean alreadyExist = false;
-            for (MessageDto oldMessage : this.messagesArray) {
-                if (oldMessage.getId().equals(newMessage.getId())) {
-                    alreadyExist = true;
-                    break;
+    public void mergMessageArray(List<MessageDto> messages) {
+        List<MessageDto> sortedMessages = new ArrayList<>(messages);
+        Calendar date = getLastMessageDate();
+        List<Message> newMessages = new ArrayList<>();
+        Collections.sort(sortedMessages, new Comparator<MessageDto>() {
+            @Override
+            public int compare(MessageDto lhs, MessageDto rhs) {
+                if (lhs.getCreated().after(rhs.getCreated())) {
+                    return 1;
+                } else {
+                    return -1;
                 }
             }
-            if (!alreadyExist) {
-                this.messagesArray.add(newMessage);
+        });
+        for (MessageDto m : sortedMessages) {
+            if (m.getCreated().after(date.getTime())) {
+                newMessages.add(new Message(m.getId(), m.getUserId(), m.getText(), m.getCreated(), m.getNickname(), statusId));
             }
         }
+        Database db = DBManager.getDatabase();
+        db.open();
+        db.insertNewDBStorables(new ArrayList<DBStorable>(newMessages));
+        db.close();
+        this.messagesArray.addAll(newMessages);
         this.notifyDataSetChanged();
     }
 
-    public List<MessageDto> getMessagesArray() {
+    public List<Message> getMessagesArray() {
         return messagesArray;
     }
 
-    public void setMessagesArray(List<MessageDto> messagesArray) {
+    public void setMessagesArray(List<Message> messagesArray) {
         this.messagesArray = messagesArray;
     }
 
-    private boolean isMessageFromMe(MessageDto message) {
+    private boolean isMessageFromMe(Message message) {
         String userId = SharedPrefHelper.getUserId(null);
         if (userId == null) return false;
         return message.getUserId().equals(UUID.fromString(userId));
+    }
+
+    public Calendar getLastMessageDate() {
+        Calendar calendar = Calendar.getInstance();
+        if (!messagesArray.isEmpty()) {
+            calendar.setTime(messagesArray.get(messagesArray.size() - 1).getCreated());
+            calendar.add(Calendar.MILLISECOND, 1);
+        } else {
+            calendar.roll(Calendar.MONTH, 1);
+        }
+        return calendar;
     }
 
 }

@@ -22,6 +22,7 @@ import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
+import com.wigo.android.ui.elements.LoadMapStatusesTask;
 import com.wigo.android.ui.fragments.ChatFragment;
 import com.wigo.android.ui.fragments.MapFragment;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
@@ -185,6 +186,7 @@ public class MainActivity extends FragmentActivity {
     }
 
     public void openChatFragment(final StatusDto statusDto) {
+        LoadMapStatusesTask.cancel();
         runOnUiThread(new Runnable() {
             @Override
             public void run() {

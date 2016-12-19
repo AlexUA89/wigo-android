@@ -12,8 +12,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
-import android.text.Editable;
-import android.text.TextWatcher;
 import android.view.InflateException;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -29,12 +27,8 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptor;
-import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.model.Marker;
-import com.google.android.gms.maps.model.MarkerOptions;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
@@ -42,28 +36,25 @@ import com.wigo.android.core.database.Database;
 import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
-import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.activities.CategoryActivity;
 import com.wigo.android.ui.activities.CreateStatusActivity;
 import com.wigo.android.ui.elements.CategoriesProvider;
 import com.wigo.android.ui.elements.LoadMapStatusesTask;
+import com.wigo.android.ui.elements.WigoClusterManager;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.UUID;
 
 /**
  * Created by olkh on 11/13/2015.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, GoogleMap.OnInfoWindowClickListener, GoogleMap.OnCameraChangeListener, LoadMapStatusesTask.LoadMapStatusesTaskListener {
+public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener, GoogleMap.OnCameraIdleListener {
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
     private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
@@ -74,15 +65,11 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     private View view;
     private GoogleMap mMap;
     private EditText textSearch;
-    private ImageButton categoryButton;
-    private HashMap<String, BitmapDescriptor> imagesBitmaps = new HashMap<>();
+    private ImageButton categoryButton, searchButton;
     private Calendar fromDate, toDate;
-    private HashMap<UUID, StatusDto> statuses = new HashMap<>();
-    private HashMap<String, UUID> markers = new HashMap<>();
-    private BitmapDescriptor eventBitmap;
-    private BitmapDescriptor chatBitmap;
     private Button fromDateButton;
     private Button toDateButton;
+    private WigoClusterManager mClusterManager;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -106,11 +93,15 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void initView(View fragmentView) {
-        eventBitmap = CategoriesProvider.getDefaultEventImage();
-        chatBitmap = CategoriesProvider.getDefaultChatImage();
-        imagesBitmaps = CategoriesProvider.getMapOfCategoriesAndImagesForMap();
 
         categoryButton = (ImageButton) fragmentView.findViewById(R.id.category_button);
+        searchButton = (ImageButton) fragmentView.findViewById(R.id.map_search_button);
+        fragmentView.findViewById(R.id.map_plus_button).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Toast.makeText(ContextProvider.getAppContext(), "Please, long click on map to create new chat.", Toast.LENGTH_LONG).show();// display toast
+            }
+        });
         fromDateButton = (Button) fragmentView.findViewById(R.id.from_date_button);
         toDateButton = (Button) fragmentView.findViewById(R.id.to_date_button);
         textSearch = (EditText) fragmentView.findViewById(R.id.text_search_field);
@@ -121,21 +112,12 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
                 startActivityForResult(pickContactIntent, PICK_CATEGORIES);
             }
         });
-        textSearch.addTextChangedListener(new TextWatcher() {
+        searchButton.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
+            public void onClick(View v) {
                 refreshMap();
             }
         });
-
         fromDate = SharedPrefHelper.getFromDateSearch(null);
         Calendar c = Calendar.getInstance();
         if (fromDate == null) {
@@ -217,30 +199,22 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         startActivityForResult(createStatus, CREATE_STATUS);
     }
 
-
     @Override
-    public void onCameraChange(CameraPosition cameraPosition) {
+    public void onCameraIdle() {
+        mClusterManager.onCameraIdle();
         //request for all markers
         LatLngBounds curScreen = mMap.getProjection()
                 .getVisibleRegion().latLngBounds;
         LoadMapStatusesTask.loadData(this, curScreen, Collections.EMPTY_LIST, CategoriesProvider.getChoosenCategories(), fromDate, toDate, textSearch.getText().toString());
     }
 
-    @Override
-    public void onInfoWindowClick(Marker marker) {
-        StatusDto status = statuses.get(markers.get(marker.getId()));
-        ((MainActivity) getActivity()).openChatFragment(status);
-        Toast.makeText(ContextProvider.getAppContext(), marker.getTitle(), Toast.LENGTH_SHORT).show();// display toast
-    }
-
     private void onMapCreated(GoogleMap googleMap) {
         //seting listeners
         mMap = googleMap;
+        mClusterManager = new WigoClusterManager(this.getActivity(), mMap);
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
-        mMap.setOnInfoWindowClickListener(this);
-        mMap.setOnCameraChangeListener(this);
-
+        mMap.setOnCameraIdleListener(this);
         mMap.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         //define my last location
@@ -264,7 +238,6 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
         googleMap.moveCamera(zoom);
-
     }
 
     private void onMapOpened(GoogleMap googleMap) {
@@ -273,26 +246,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
 
     @Override
     public void loadMapStatusesDone(List<StatusDto> statuses) {
-        for (StatusDto status : statuses) {
-            if (!this.statuses.keySet().contains(status.getId())) {
-                LatLng pos = new LatLng(status.getLatitude(), status.getLongitude());
-                MarkerOptions marker = new MarkerOptions().position(pos).title(status.getName());
-                if (StatusKind.event.toString().equals(status.getKind())) {
-                    BitmapDescriptor bitmap = eventBitmap;
-                    if (status.getCategory() != null && imagesBitmaps.get(status.getCategory()) != null) {
-                        bitmap = imagesBitmaps.get(status.getCategory());
-                    }
-                    marker.icon(bitmap);
-                } else {
-                    marker.icon(chatBitmap);
-                }
-                StatusDto posTemp = this.statuses.put(status.getId(), status);
-                UUID postMarker = this.markers.put(mMap.addMarker(marker).getId(), status.getId());
-                if (posTemp != null || postMarker != null) {
-                    System.out.print("asd");
-                }
-            }
-        }
+        mClusterManager.addStatuses(statuses);
     }
 
     @Override
@@ -316,22 +270,8 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
     }
 
     private void refreshMap() {
-        mMap.clear();
-        this.statuses.clear();
-        onCameraChange(null);
-    }
-
-    public Comparator<StatusDto> comp = new Comparator<StatusDto>() {
-        @Override
-        public int compare(StatusDto lhs, StatusDto rhs) {
-            return lhs.getName().compareTo(rhs.getName());
-        }
-    };
-
-    private void saveAllFilterInSharedPrferehce() {
-        SharedPrefHelper.setTextSearch(textSearch.getText().toString());
-        SharedPrefHelper.setFromDateSearch(fromDate);
-        SharedPrefHelper.setToDateSearch(toDate);
+        mClusterManager.removeAll();
+        onCameraIdle();
     }
 
     @Override
@@ -356,4 +296,5 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         }
         super.onActivityResult(requestCode, resultCode, data);
     }
+
 }

@@ -16,44 +16,57 @@
         android:layout_height="wrap_content"
         android:orientation="horizontal"
         android:weightSum="4">
+
         <Button
             android:id="@+id/from_date_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"/>
+            android:layout_weight="2" />
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:gravity="center"
             android:layout_marginLeft="3dp"
             android:layout_marginRight="3dp"
-            android:textSize="30dp"
-            android:text="-"/>
+            android:gravity="center"
+            android:text="-"
+            android:textSize="30dp" />
+
         <Button
             android:id="@+id/to_date_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="2"/>
+            android:layout_weight="2" />
 
         <ImageButton
             android:id="@+id/category_button"
             android:layout_width="wrap_content"
-            android:text="@string/category_button_text"
             android:layout_height="match_parent"
-            android:src="@mipmap/category"
+            android:gravity="center"
             android:scaleType="fitCenter"
-            android:gravity="center" />
+            android:src="@mipmap/category" />
     </LinearLayout>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:weightSum="8">
 
+        <ImageButton
+            android:id="@+id/map_search_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:scaleType="fitCenter"
+            android:src="@mipmap/search" />
+
+        <EditText
+            android:id="@+id/text_search_field"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="7" />
     </LinearLayout>
-    <EditText
-        android:id="@+id/text_search_field"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <fragment xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:map="http://schemas.android.com/apk/res-auto"
@@ -62,7 +75,20 @@
         android:name="com.google.android.gms.maps.SupportMapFragment"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:context=".MapsActivity" />
+        tools:context=".MapsActivity">
+
+        <ImageButton
+            android:id="@+id/map_plus_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="right|bottom"
+            android:layout_marginTop="20dp"
+            android:background="@null"
+            android:padding="10dp"
+            android:paddingRight="10dp"
+            android:src="@drawable/plus_button_selector" />
+
+    </fragment>
 
 
 </LinearLayout>

@@ -31,4 +31,14 @@ public final class Tables {
         public static String LAST_OPEN_DATE = "last_open_date";
     }
 
+    public static final class MESSAGE_TABLE implements Table {
+        public static String TABLE_NAME = "message_table";
+        public static String ID = "id";
+        public static String TEXT = "text";
+        public static String USER_ID = "user_id";
+        public static String CREATED = "created";
+        public static String NICKNAME = "nickname";
+        public static String STATUS_ID = "status_id";
+    }
+
 }

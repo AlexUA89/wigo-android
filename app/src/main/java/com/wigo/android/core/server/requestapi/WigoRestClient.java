@@ -25,6 +25,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
@@ -42,7 +43,6 @@ import java.util.UUID;
  */
 public class WigoRestClient {
 
-    
 
     private RestTemplate client;
 
@@ -67,6 +67,8 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
     }
 
@@ -86,6 +88,8 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
     }
 
@@ -118,6 +122,8 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
     }
 
@@ -137,14 +143,17 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
 
     }
 
-    public List<MessageDto> getListOfMessagesForStatus(StatusDto statusDto) throws WigoException {
+    public List<MessageDto> getListOfMessagesForStatus(StatusDto statusDto, Calendar fromDate) throws WigoException {
         Objects.requireNonNull(statusDto);
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
-        String requestUrl = serverUrl + "/api/status/" + statusDto.getId() + "/messages";
+        String requestUrl = serverUrl + "/api/status/" + statusDto.getId() + "/messages"
+                + "?fromDate=" + DateUtils.calendarToString(fromDate);
         HttpEntity request = new HttpEntity(getHeaders());
         try {
             ResponseEntity<MessageDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, MessageDto[].class);
@@ -156,6 +165,8 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
     }
 
@@ -173,6 +184,8 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
     }
 
@@ -193,6 +206,8 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
     }
 
@@ -214,6 +229,8 @@ public class WigoRestClient {
             } else {
                 throw new RequestError(e.getMessage());
             }
+        } catch (ResourceAccessException e) {
+            throw new RequestError(e.getMessage());
         }
     }
 

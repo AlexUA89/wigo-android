@@ -185,7 +185,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         loadMessages = new Runnable() {
             @Override
             public void run() {
-                LoadMessageFroStatusTask.loadData(that, status);
+                LoadMessageFroStatusTask.loadData(that, status, adapter.getLastMessageDate());
             }
         };
         handler.postDelayed(loadMessages, 5000);
@@ -208,12 +208,12 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     @Override
     public void sendMessageDone(MessageDto message, StatusDto statusDto) {
         adapter.mergMessageArray(Collections.singletonList(message));
-        message.setCreated(new Date().toString());
+        message.setCreated(new Date());
         msg.setText("");
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                Toast.makeText(ContextProvider.getAppContext(), "Status have sent", Toast.LENGTH_SHORT).show();// display toast
+                Toast.makeText(ContextProvider.getAppContext(), "Message have sent", Toast.LENGTH_SHORT).show();// display toast
             }
         });
         messagesList.setSelection(adapter.getCount() - 1);

@@ -2,6 +2,7 @@ package com.wigo.android.core.server.dto;
 
 import android.support.annotation.NonNull;
 
+import java.util.Date;
 import java.util.UUID;
 
 public class MessageDto extends Dto {
@@ -16,7 +17,7 @@ public class MessageDto extends Dto {
     private String text;
 
     @NonNull
-    private String created;
+    private Date created;
 
     @NonNull
     private String nickname;
@@ -24,7 +25,7 @@ public class MessageDto extends Dto {
     public MessageDto() {
     }
 
-    public MessageDto(@NonNull UUID id, @NonNull UUID userId, @NonNull String text, @NonNull String created, @NonNull String nickname) {
+    public MessageDto(@NonNull UUID id, @NonNull UUID userId, @NonNull String text, @NonNull Date created, @NonNull String nickname) {
         this.id = id;
         this.userId = userId;
         this.text = text;
@@ -60,11 +61,11 @@ public class MessageDto extends Dto {
     }
 
     @NonNull
-    public String getCreated() {
+    public Date getCreated() {
         return created;
     }
 
-    public void setCreated(@NonNull String created) {
+    public void setCreated(@NonNull Date created) {
         this.created = created;
     }
 

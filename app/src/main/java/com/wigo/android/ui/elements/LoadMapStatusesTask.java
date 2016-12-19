@@ -63,6 +63,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onPreExecute() {
         super.onPreExecute();
+//        SplashActivity.openSplashActivity();
     }
 
     @Override
@@ -83,6 +84,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
     protected void onPostExecute(Void result) {
         super.onPostExecute(result);
         listener.loadMapStatusesDone(statuses);
+//        SplashActivity.closeSplashActivity();
         listener = null;
         task = null;
     }
@@ -90,6 +92,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected void onCancelled(Void aVoid) {
         super.onCancelled(aVoid);
+//        SplashActivity.closeSplashActivity();
         listener = null;
     }
 
@@ -99,5 +102,16 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
         void loadMapStateseTimeoutError(LatLngBounds curScreen);
 
         void loadMapStateseConnectionError(LatLngBounds curScreen, WigoException e);
+    }
+
+    public static void cancel(){
+        if (handler != null) {
+            handler.removeCallbacksAndMessages(null);
+            handler = null;
+        }
+        if (task != null) {
+            task.cancel(true);
+            task = null;
+        }
     }
 }

@@ -6,6 +6,7 @@ import android.database.sqlite.SQLiteDatabase;
 import com.wigo.android.core.AppLog;
 import com.wigo.android.core.database.constants.Tables;
 import com.wigo.android.core.database.datas.DBStorable;
+import com.wigo.android.core.database.datas.Message;
 import com.wigo.android.core.database.datas.Status;
 
 import java.text.ParseException;
@@ -128,9 +129,13 @@ class DBAdapter extends Database {
     @Override
     public Cursor selectAllLastActiveStatuses() {
         Object[] tableInfo = getTableInfo(Status.TypeID);
-        Cursor c = null;
-        c = db.rawQuery("SELECT * FROM " + tableInfo[0] + " ORDER BY " + Tables.STATUS_TABLE.LAST_OPEN_DATE + " DESC", null);
-        return c;
+        return db.rawQuery("SELECT * FROM " + tableInfo[0] + " ORDER BY " + Tables.STATUS_TABLE.LAST_OPEN_DATE + " DESC", null);
+    }
+
+    @Override
+    public Cursor selectMessagesForStatus(UUID statusId) {
+        Object[] tableInfo = getTableInfo(Message.TypeID);
+        return db.rawQuery("SELECT * FROM " + tableInfo[0] + "WHERE " + Tables.MESSAGE_TABLE.STATUS_ID + " = " + statusId + " ORDER BY " + Tables.MESSAGE_TABLE.CREATED + " DESC", null);
     }
 
     @Override
@@ -169,6 +174,13 @@ class DBAdapter extends Database {
                         e.printStackTrace();
                     }
                     break;
+                case Message.TypeID:
+                    try {
+                        result = new Message(c);
+                    } catch (ParseException e) {
+                        e.printStackTrace();
+                    }
+                    break;
                 default:
                     throw new IllegalArgumentException("there is not any type with this id" + typeId);
             }
@@ -194,6 +206,10 @@ class DBAdapter extends Database {
                 case Status.TypeID:
                     result[0] = Tables.STATUS_TABLE.TABLE_NAME;
                     result[1] = Tables.STATUS_TABLE.LOCAL_ID;
+                    break;
+                case Message.TypeID:
+                    result[0] = Tables.MESSAGE_TABLE.TABLE_NAME;
+                    result[1] = Tables.MESSAGE_TABLE.LOCAL_ID;
                     break;
                 default:
                     throw new IllegalArgumentException("there is not any type with this id" + typeId);

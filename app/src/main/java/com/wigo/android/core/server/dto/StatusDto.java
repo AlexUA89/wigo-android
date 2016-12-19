@@ -1,5 +1,9 @@
 package com.wigo.android.core.server.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.maps.android.clustering.ClusterItem;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -8,7 +12,7 @@ import java.util.UUID;
 /**
  * Created by AlexUA89 on 10/13/2016.
  */
-public class StatusDto extends Dto {
+public class StatusDto extends Dto implements ClusterItem{
 
     private UUID id;
     private UUID userId;
@@ -168,5 +172,11 @@ public class StatusDto extends Dto {
         result = 31 * result + (kind != null ? kind.hashCode() : 0);
         result = 31 * result + (hashtags != null ? hashtags.hashCode() : 0);
         return result;
+    }
+
+    @JsonIgnore
+    @Override
+    public LatLng getPosition() {
+       return new LatLng(latitude, longitude);
     }
 }

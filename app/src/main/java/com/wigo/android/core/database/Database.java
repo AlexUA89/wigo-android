@@ -39,6 +39,8 @@ public abstract class Database {
 
     public abstract Cursor selectAllLastActiveStatuses();
 
+    public abstract Cursor selectMessagesForStatus(UUID statusId);
+
     public abstract DBStorable selectDBStorableByTypeAndId(int typeId, long dbstorableId);
 
     public abstract Status selectStatusServerById(UUID serverId);

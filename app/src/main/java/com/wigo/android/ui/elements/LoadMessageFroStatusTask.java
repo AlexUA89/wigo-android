@@ -7,6 +7,7 @@ import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
 
+import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
 
@@ -21,16 +22,17 @@ public class LoadMessageFroStatusTask extends AsyncTask<Void, Void, Void> {
     private LoadMessagesForStatusTaskListener listener;
     private StatusDto statusDto;
     private List<MessageDto> messages;
+    private Calendar fromDate;
 
 
-    public static void loadData(final LoadMessageFroStatusTask.LoadMessagesForStatusTaskListener listener, final StatusDto statusDto) {
+    public static void loadData(final LoadMessageFroStatusTask.LoadMessagesForStatusTaskListener listener, final StatusDto statusDto, final Calendar fromDate) {
         Objects.requireNonNull(statusDto);
         Objects.requireNonNull(listener);
         if (task != null) {
             task.cancel(true);
             task = null;
         }
-        task = new LoadMessageFroStatusTask(listener, statusDto);
+        task = new LoadMessageFroStatusTask(listener, statusDto, fromDate);
         task.execute();
     }
 
@@ -41,15 +43,16 @@ public class LoadMessageFroStatusTask extends AsyncTask<Void, Void, Void> {
         }
     }
 
-    private LoadMessageFroStatusTask(LoadMessagesForStatusTaskListener listener, StatusDto statusDto) {
+    private LoadMessageFroStatusTask(LoadMessagesForStatusTaskListener listener, StatusDto statusDto, Calendar fromDate) {
         this.listener = listener;
         this.statusDto = statusDto;
+        this.fromDate = fromDate;
     }
 
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            messages = ContextProvider.getWigoRestClient().getListOfMessagesForStatus(statusDto);
+            messages = ContextProvider.getWigoRestClient().getListOfMessagesForStatus(statusDto, fromDate);
         } catch (WigoException e) {
             e.printStackTrace();
             listener.loadMessagesConnectionError(statusDto, e);

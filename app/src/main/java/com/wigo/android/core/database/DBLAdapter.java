@@ -167,6 +167,11 @@ public class DBLAdapter extends Database {
     }
 
     @Override
+    public Cursor selectMessagesForStatus(UUID statusId) {
+        return dbAdapter.selectMessagesForStatus(statusId);
+    }
+
+    @Override
     public DBStorable selectDBStorableByTypeAndId(int typeId, long dbstorableId) {
         return dbAdapter.selectDBStorableByTypeAndId(typeId, dbstorableId);
     }
