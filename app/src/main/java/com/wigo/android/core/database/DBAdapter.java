@@ -135,7 +135,7 @@ class DBAdapter extends Database {
     @Override
     public Cursor selectMessagesForStatus(UUID statusId) {
         Object[] tableInfo = getTableInfo(Message.TypeID);
-        return db.rawQuery("SELECT * FROM " + tableInfo[0] + "WHERE " + Tables.MESSAGE_TABLE.STATUS_ID + " = " + statusId + " ORDER BY " + Tables.MESSAGE_TABLE.CREATED + " DESC", null);
+        return db.rawQuery("SELECT * FROM " + tableInfo[0] + " WHERE " + Tables.MESSAGE_TABLE.STATUS_ID + " = '" + statusId + "' ORDER BY " + Tables.MESSAGE_TABLE.CREATED, null);
     }
 
     @Override

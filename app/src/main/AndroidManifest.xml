@@ -2,12 +2,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.wigo.android">
 
-    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-
-
     //Boot receiver
-    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.DEVICE_POWER" />
+    <!--<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+    <!--<uses-permission android:name="android.permission.DEVICE_POWER" />-->
 
 
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
@@ -84,6 +81,12 @@
             android:theme="@android:style/Theme.Holo.Light.Dialog"
             android:screenOrientation="portrait">
 
+        </activity>
+
+        <activity
+            android:name="com.wigo.android.ui.activities.StatusListActivity"
+            android:theme="@android:style/Theme.Holo.Light.Dialog"
+            android:screenOrientation="portrait">
         </activity>
 
         <activity

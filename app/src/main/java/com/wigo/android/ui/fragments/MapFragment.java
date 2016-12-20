@@ -29,6 +29,8 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.maps.android.clustering.Cluster;
+import com.google.maps.android.clustering.ClusterManager;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
@@ -40,12 +42,14 @@ import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.activities.CategoryActivity;
 import com.wigo.android.ui.activities.CreateStatusActivity;
+import com.wigo.android.ui.activities.StatusListActivity;
 import com.wigo.android.ui.elements.CategoriesProvider;
 import com.wigo.android.ui.elements.LoadMapStatusesTask;
 import com.wigo.android.ui.elements.WigoClusterManager;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Date;
@@ -54,13 +58,14 @@ import java.util.List;
 /**
  * Created by olkh on 11/13/2015.
  */
-public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener, GoogleMap.OnCameraIdleListener {
+public class MapFragment extends Fragment implements ClusterManager.OnClusterClickListener<StatusDto>, OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener, GoogleMap.OnCameraIdleListener {
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
     private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
     private static final float DEFAULT_ZOOM = 14;
     private static final int PICK_CATEGORIES = 1;
     private static final int CREATE_STATUS = 2;
+    private static final int PICK_STATUSES = 3;
 
     private View view;
     private GoogleMap mMap;
@@ -212,6 +217,7 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         //seting listeners
         mMap = googleMap;
         mClusterManager = new WigoClusterManager(this.getActivity(), mMap);
+        mClusterManager.setOnClusterClickListener(this);
         mMap.setOnMapClickListener(this);
         mMap.setOnMapLongClickListener(this);
         mMap.setOnCameraIdleListener(this);
@@ -279,6 +285,10 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         if (requestCode == PICK_CATEGORIES && resultCode == getActivity().RESULT_OK) {
             refreshMap();
         }
+        if (requestCode == PICK_STATUSES && resultCode == getActivity().RESULT_OK) {
+            StatusDto status = (StatusDto) data.getExtras().get(StatusListActivity.CHOOSED_STATUS);
+            ((MainActivity) getActivity()).openChatFragment(status);
+        }
         if (requestCode == CREATE_STATUS && resultCode == getActivity().RESULT_OK) {
             try {
                 StatusDto status = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateStatusActivity.CREATED_STATUS), StatusDto.class);
@@ -297,4 +307,13 @@ public class MapFragment extends Fragment implements OnMapReadyCallback, GoogleM
         super.onActivityResult(requestCode, resultCode, data);
     }
 
+    @Override
+    public boolean onClusterClick(Cluster<StatusDto> cluster) {
+        Intent pickStatusIntent = new Intent(ContextProvider.getAppContext(), StatusListActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putSerializable(StatusListActivity.STATUSES, new ArrayList<>(cluster.getItems()));
+        pickStatusIntent.putExtras(bundle);
+        startActivityForResult(pickStatusIntent, PICK_STATUSES);
+        return false;
+    }
 }

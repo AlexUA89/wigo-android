@@ -13,7 +13,7 @@ import java.util.TimeZone;
 
 public class DateUtils {
 
-    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    public static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
 
     public static String calendarToString(Calendar calendar) {
         return dateToString(calendar.getTime());

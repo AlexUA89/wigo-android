@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 
 import com.wigo.android.core.database.constants.Tables;
+import com.wigo.android.core.server.dto.MessageDto;
 
 import java.text.ParseException;
 import java.util.Date;
@@ -26,6 +27,10 @@ public class Message extends DBStorable {
     private String nickname;
     private UUID statusId;
 
+    public Message(MessageDto m, UUID statusId) {
+        this(m.getId(), m.getUserId(), m.getText(), m.getCreated(), m.getNickname(), statusId);
+    }
+
     public Message(long localId, UUID id, UUID userId, String text, Date created, String nickname, UUID statusId) {
         if (localId < DBStorable.DEFAULT_ROW_ID) {
             throw new IllegalArgumentException("localId can not be " + localId);
@@ -40,15 +45,15 @@ public class Message extends DBStorable {
         }
         this.userId = userId;
         this.text = text;
-        if(this.text == null) this.text = "";
+        if (this.text == null) this.text = "";
         if (created == null) throw new IllegalArgumentException("created can not be null");
         this.created = created;
-        if(nickname == null || nickname.isEmpty()){
+        if (nickname == null || nickname.isEmpty()) {
             throw new IllegalArgumentException("nickname can not be null or empty");
         }
         this.nickname = nickname;
         if (statusId == null) {
-            throw new IllegalArgumentException("status can not be " + userId);
+            throw new IllegalArgumentException("status can not be " + statusId);
         }
         this.statusId = statusId;
     }
@@ -57,7 +62,7 @@ public class Message extends DBStorable {
         this(DBStorable.DEFAULT_ROW_ID, id, userId, text, created, nickname, statusId);
     }
 
-    public Message(Message m){
+    public Message(Message m) {
         this(m.getLocalId(), m.getId(), m.getUserId(), m.getText(), m.getCreated(), m.getNickname(), m.getStatusId());
     }
 

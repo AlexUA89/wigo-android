@@ -20,7 +20,7 @@ import java.util.UUID;
  * Created by AlexUA89 on 12/18/2016.
  */
 
-public class WigoClusterManager extends ClusterManager<StatusDto> implements ClusterManager.OnClusterClickListener<StatusDto>, ClusterManager.OnClusterItemClickListener<StatusDto>, ClusterManager.OnClusterInfoWindowClickListener<StatusDto>, ClusterManager.OnClusterItemInfoWindowClickListener<StatusDto> {
+public class WigoClusterManager extends ClusterManager<StatusDto> implements ClusterManager.OnClusterItemClickListener<StatusDto>, ClusterManager.OnClusterInfoWindowClickListener<StatusDto>, ClusterManager.OnClusterItemInfoWindowClickListener<StatusDto> {
 
     private HashMap<UUID, StatusDto> statuses = new HashMap<>();
     private Context context;
@@ -37,7 +37,6 @@ public class WigoClusterManager extends ClusterManager<StatusDto> implements Clu
         });
         map.setOnInfoWindowClickListener(this);
         map.setOnMarkerClickListener(this);
-        this.setOnClusterClickListener(this);
         this.setOnClusterItemClickListener(this);
         this.setOnClusterInfoWindowClickListener(this);
         this.setOnClusterItemInfoWindowClickListener(this);
@@ -62,11 +61,6 @@ public class WigoClusterManager extends ClusterManager<StatusDto> implements Clu
             }
         }
         this.cluster();
-    }
-
-    @Override
-    public boolean onClusterClick(Cluster<StatusDto> cluster) {
-        return false;
     }
 
     @Override

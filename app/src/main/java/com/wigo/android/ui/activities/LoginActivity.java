@@ -30,6 +30,7 @@ public class LoginActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setTitle(getResources().getString(R.string.login_activity_title));
         AccessToken accessToken = AccessToken.getCurrentAccessToken();
 
 //        PackageInfo info;
@@ -90,8 +91,6 @@ public class LoginActivity extends Activity {
                 System.out.println("TOKEN IS " + currentAccessToken);
             }
         };
-
-        setTitle("Please login to WIGO");
     }
 
     @Override

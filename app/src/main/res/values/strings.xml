@@ -31,4 +31,10 @@
     <!-- Chat fragment -->
     <string name="chat_is_empty">Chat is empty</string>
 
+    <!-- Login activity -->
+    <string name="login_activity_title">Please login to WIGO</string>
+
+    <!-- Status list activity -->
+    <string name="status_list_activity_title">Events and chats</string>
+
 </resources>

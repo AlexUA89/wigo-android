@@ -43,6 +43,7 @@ import java.util.UUID;
  */
 public class WigoRestClient {
 
+    public static final String CAN_NOT_CONNECT_TO_SERVER_TEXT = "Can not connect to server";
 
     private RestTemplate client;
 
@@ -68,7 +69,7 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
     }
 
@@ -89,7 +90,7 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
     }
 
@@ -123,7 +124,7 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
     }
 
@@ -144,7 +145,7 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
 
     }
@@ -153,7 +154,7 @@ public class WigoRestClient {
         Objects.requireNonNull(statusDto);
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl + "/api/status/" + statusDto.getId() + "/messages"
-                + "?fromDate=" + DateUtils.calendarToString(fromDate);
+                + "?from=" + DateUtils.calendarToString(fromDate);
         HttpEntity request = new HttpEntity(getHeaders());
         try {
             ResponseEntity<MessageDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, MessageDto[].class);
@@ -166,7 +167,7 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
     }
 
@@ -185,19 +186,19 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
     }
 
-    public UUID sendMessage(StatusDto statusDto, MessageDto messageDto) throws WigoException {
+    public MessageDto sendMessage(StatusDto statusDto, MessageDto messageDto) throws WigoException {
         Objects.requireNonNull(messageDto);
         Objects.requireNonNull(statusDto);
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl + "/api/status/" + statusDto.getId() + "/messages";
         HttpEntity<MessageDto> request = new HttpEntity(messageDto, getHeaders());
-        ResponseEntity<UUID> response = null;
+        ResponseEntity<MessageDto> response = null;
         try {
-            response = client.exchange(requestUrl, HttpMethod.POST, request, UUID.class, messageDto);
+            response = client.exchange(requestUrl, HttpMethod.POST, request, MessageDto.class, messageDto);
             return response.getBody();
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -207,7 +208,7 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
     }
 
@@ -230,7 +231,7 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(e.getMessage());
+            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
         }
     }
 

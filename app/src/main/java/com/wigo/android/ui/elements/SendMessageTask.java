@@ -7,8 +7,6 @@ import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
 
-import java.util.UUID;
-
 /**
  * Created by AlexUA89 on 10/25/2016.
  */
@@ -28,9 +26,8 @@ public class SendMessageTask extends AsyncTask<Void, Void, Void> {
     @Override
     protected Void doInBackground(Void... params) {
         try {
-            UUID newMessageId = ContextProvider.getWigoRestClient().sendMessage(statusDto, messageDto);
-            messageDto.setId(newMessageId);
-            if (newMessageId == null) {
+            messageDto = ContextProvider.getWigoRestClient().sendMessage(statusDto, messageDto);
+            if (messageDto.getId() == null) {
                 this.cancel(true);
             }
         } catch (WigoException e) {
