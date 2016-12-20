@@ -19,7 +19,7 @@ import java.util.Set;
 
 public class CategoriesProvider {
 
-    private static final float SCALE_FOR_MAP_ITEMS = 2f;
+    private static final float SCALE_FOR_MAP_ITEMS = 2.5f;
     private static HashMap<String, Bitmap> bitmapHashMap;
     public static final String OTHER = "OTHER";
 
