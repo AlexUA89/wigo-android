@@ -108,10 +108,11 @@
                     android:id="@+id/url_container"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:visibility="gone">
+                    android:visibility="gone"
+                    android:weightSum="9">
 
                     <TextView
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
                         android:layout_weight="1"
@@ -120,10 +121,11 @@
 
                     <TextView
                         android:id="@+id/url_text"
-                        android:layout_width="match_parent"
+                        android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_margin="@dimen/activity_vertical_margin"
-                        android:layout_weight="1" />
+                        android:layout_marginRight="@dimen/activity_vertical_margin"
+                        android:autoLink="web"
+                        android:layout_weight="8" />
                 </LinearLayout>
             </LinearLayout>
 

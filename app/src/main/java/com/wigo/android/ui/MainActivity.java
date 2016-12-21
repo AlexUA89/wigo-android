@@ -28,6 +28,7 @@ import com.wigo.android.ui.fragments.MapFragment;
 import com.wigo.android.ui.slidingmenu.NavDrawerListAdapter;
 
 import java.text.ParseException;
+import java.util.UUID;
 
 public class MainActivity extends FragmentActivity {
 
@@ -112,7 +113,7 @@ public class MainActivity extends FragmentActivity {
                     try {
                         statusDto = ContextProvider.getWigoRestClient().getStatusById(status.getId());
                         if (statusDto != null) {
-                            openChatFragment(statusDto);
+                            openChatFragment(statusDto.getId());
                         } else {
                             mainActivity.runOnUiThread(new Runnable() {
                                 @Override
@@ -185,31 +186,55 @@ public class MainActivity extends FragmentActivity {
         mDrawerToggle.syncState();
     }
 
-    public void openChatFragment(final StatusDto statusDto) {
+    public void openChatFragment(final UUID statusId) {
         LoadMapStatusesTask.cancel();
-        runOnUiThread(new Runnable() {
+        new Thread(new Runnable() {
             @Override
             public void run() {
-                if (chatFragment == null || !chatFragment.getStatus().equals(statusDto)) {
-                    chatFragment = new ChatFragment();
-                    runOnUiThread(new Runnable() {
+                try {
+                    final StatusDto statusDto = ContextProvider.getWigoRestClient().getStatusById(statusId);
+                    if (statusDto != null) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                if (chatFragment == null || !chatFragment.getStatus().equals(statusDto)) {
+                                    chatFragment = new ChatFragment();
+                                    runOnUiThread(new Runnable() {
+                                        @Override
+                                        public void run() {
+                                            getActionBar().setTitle(statusDto.getName());
+                                        }
+                                    });
+                                    Bundle args = new Bundle();
+                                    try {
+                                        args.putString(ChatFragment.STATUS_DTO, ContextProvider.getObjectMapper().writeValueAsString(statusDto));
+                                    } catch (JsonProcessingException e) {
+                                        e.printStackTrace();
+                                    }
+                                    chatFragment.setArguments(args);
+                                }
+                                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();
+                                menu.findItem(R.id.share_menu_item).setVisible(true);
+                            }
+                        });
+                    } else {
+                        mainActivity.runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ContextProvider.getAppContext(), "Can not find such event on server", Toast.LENGTH_SHORT).show();// display toast
+                            }
+                        });
+                    }
+                } catch (final WigoException e) {
+                    mainActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
-                            getActionBar().setTitle(statusDto.getName());
+                            Toast.makeText(ContextProvider.getAppContext(), "Can not connect to server: " + e.getMessage(), Toast.LENGTH_SHORT).show();// display toast
                         }
                     });
-                    Bundle args = new Bundle();
-                    try {
-                        args.putString(ChatFragment.STATUS_DTO, ContextProvider.getObjectMapper().writeValueAsString(statusDto));
-                    } catch (JsonProcessingException e) {
-                        e.printStackTrace();
-                    }
-                    chatFragment.setArguments(args);
                 }
-                getSupportFragmentManager().beginTransaction().replace(R.id.fragment_container, chatFragment, ChatFragment.FRAGMENT_TAG).addToBackStack(null).commit();
-                menu.findItem(R.id.share_menu_item).setVisible(true);
             }
-        });
+        }).start();
     }
 
     public void openMapFragment() {

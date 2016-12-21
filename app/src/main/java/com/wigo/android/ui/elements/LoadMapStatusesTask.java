@@ -5,7 +5,7 @@ import android.os.Handler;
 
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.wigo.android.core.ContextProvider;
-import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
 
 import java.util.ArrayList;
@@ -21,7 +21,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
 
     private LoadMapStatusesTaskListener listener;
     private LatLngBounds curScreen;
-    private List<StatusDto> statuses;
+    private List<StatusSmallDto> statuses;
     private List<String> tags = new ArrayList<>();
     private Set<String> categories = new HashSet<>();
     private Calendar fromDate;
@@ -97,7 +97,7 @@ public class LoadMapStatusesTask extends AsyncTask<Void, Void, Void> {
     }
 
     public interface LoadMapStatusesTaskListener {
-        void loadMapStatusesDone(List<StatusDto> statuses);
+        void loadMapStatusesDone(List<StatusSmallDto> statuses);
 
         void loadMapStateseTimeoutError(LatLngBounds curScreen);
 

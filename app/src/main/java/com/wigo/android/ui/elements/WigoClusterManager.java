@@ -9,7 +9,7 @@ import com.google.maps.android.MarkerManager;
 import com.google.maps.android.clustering.Cluster;
 import com.google.maps.android.clustering.ClusterManager;
 import com.wigo.android.core.ContextProvider;
-import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.ui.MainActivity;
 
 import java.util.HashMap;
@@ -20,18 +20,18 @@ import java.util.UUID;
  * Created by AlexUA89 on 12/18/2016.
  */
 
-public class WigoClusterManager extends ClusterManager<StatusDto> implements ClusterManager.OnClusterItemClickListener<StatusDto>, ClusterManager.OnClusterInfoWindowClickListener<StatusDto>, ClusterManager.OnClusterItemInfoWindowClickListener<StatusDto> {
+public class WigoClusterManager extends ClusterManager<StatusSmallDto> implements ClusterManager.OnClusterItemClickListener<StatusSmallDto>, ClusterManager.OnClusterInfoWindowClickListener<StatusSmallDto>, ClusterManager.OnClusterItemInfoWindowClickListener<StatusSmallDto> {
 
-    private HashMap<UUID, StatusDto> statuses = new HashMap<>();
+    private HashMap<UUID, StatusSmallDto> statuses = new HashMap<>();
     private Context context;
 
     public WigoClusterManager(Context context, GoogleMap map) {
         super(context, map, new MarkerManager(map));
         this.context = context;
         this.setRenderer(new StatusIconRenderer(context, map, this));
-        this.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<StatusDto>() {
+        this.setOnClusterClickListener(new ClusterManager.OnClusterClickListener<StatusSmallDto>() {
             @Override
-            public boolean onClusterClick(Cluster<StatusDto> cluster) {
+            public boolean onClusterClick(Cluster<StatusSmallDto> cluster) {
                 return false;
             }
         });
@@ -53,10 +53,10 @@ public class WigoClusterManager extends ClusterManager<StatusDto> implements Clu
 
     }
 
-    public void addStatuses(List<StatusDto> statuses){
-        for (StatusDto status : statuses) {
+    public void addStatuses(List<StatusSmallDto> statuses){
+        for (StatusSmallDto status : statuses) {
             if (!this.statuses.keySet().contains(status.getId())) {
-                StatusDto posTemp = this.statuses.put(status.getId(), status);
+                StatusSmallDto posTemp = this.statuses.put(status.getId(), status);
                 this.addItem(status);
             }
         }
@@ -64,19 +64,19 @@ public class WigoClusterManager extends ClusterManager<StatusDto> implements Clu
     }
 
     @Override
-    public boolean onClusterItemClick(StatusDto statusDto) {
+    public boolean onClusterItemClick(StatusSmallDto statusDto) {
         return false;
     }
 
     @Override
-    public void onClusterInfoWindowClick(Cluster<StatusDto> cluster) {
+    public void onClusterInfoWindowClick(Cluster<StatusSmallDto> cluster) {
 
     }
 
     @Override
-    public void onClusterItemInfoWindowClick(StatusDto statusDto) {
-        StatusDto status = statuses.get(statusDto.getId());
-        ((MainActivity) context).openChatFragment(status);
+    public void onClusterItemInfoWindowClick(StatusSmallDto statusDto) {
+        StatusSmallDto status = statuses.get(statusDto.getId());
+        ((MainActivity) context).openChatFragment(status.getId());
         Toast.makeText(ContextProvider.getAppContext(), statusDto.getName(), Toast.LENGTH_SHORT).show();// display toast
     }
 

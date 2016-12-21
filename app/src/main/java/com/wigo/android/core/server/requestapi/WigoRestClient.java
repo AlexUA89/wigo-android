@@ -11,6 +11,7 @@ import com.wigo.android.core.server.dto.FaceBookUserInfoDto;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
+import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.core.server.dto.WigoUserInfoResponseDto;
 import com.wigo.android.core.server.requestapi.errors.LoginError;
 import com.wigo.android.core.server.requestapi.errors.RequestError;
@@ -28,9 +29,11 @@ import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
+import java.io.InterruptedIOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -94,7 +97,7 @@ public class WigoRestClient {
         }
     }
 
-    public List<StatusDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude, List<String> tags, Set<String> categories, Calendar fromDate, Calendar toDate, String searchText) throws WigoException {
+    public List<StatusSmallDto> getStatusesListFromServer(double startLatitude, double endLatitude, double startLongitude, double endLongitude, List<String> tags, Set<String> categories, Calendar fromDate, Calendar toDate, String searchText) throws WigoException {
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl
                 + "/api/status?startLatitude=" + Math.min(startLatitude, endLatitude)
@@ -114,7 +117,7 @@ public class WigoRestClient {
         }
         HttpEntity request = new HttpEntity(getHeaders());
         try {
-            ResponseEntity<StatusDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusDto[].class);
+            ResponseEntity<StatusSmallDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusSmallDto[].class);
             return Arrays.asList(response.getBody());
         } catch (HttpClientErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
@@ -124,8 +127,11 @@ public class WigoRestClient {
                 throw new RequestError(e.getMessage());
             }
         } catch (ResourceAccessException e) {
-            throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
+            if(!(e.getCause() instanceof InterruptedIOException)){
+                throw new RequestError(CAN_NOT_CONNECT_TO_SERVER_TEXT);
+            }
         }
+        return Collections.emptyList();
     }
 
     public StatusDto getStatusById(UUID statusId) throws WigoException {

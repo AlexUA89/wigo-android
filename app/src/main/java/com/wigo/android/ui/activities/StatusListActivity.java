@@ -15,7 +15,7 @@ import android.widget.TextView;
 
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
-import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.ui.elements.CategoriesProvider;
 
 import java.util.Collections;
@@ -32,7 +32,7 @@ public class StatusListActivity extends Activity {
     public static final String CHOOSED_STATUS = "CHOOSED_STATUS";
 
     private ListView statusesList;
-    private List<StatusDto> statuses;
+    private List<StatusSmallDto> statuses;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,10 +40,10 @@ public class StatusListActivity extends Activity {
         setTitle(getResources().getString(R.string.status_list_activity_title));
         setContentView(R.layout.status_list_activity);
 
-        statuses = (List<StatusDto>) getIntent().getExtras().get(STATUSES);
-        Collections.sort(statuses, new Comparator<StatusDto>() {
+        statuses = (List<StatusSmallDto>) getIntent().getExtras().get(STATUSES);
+        Collections.sort(statuses, new Comparator<StatusSmallDto>() {
             @Override
-            public int compare(StatusDto lhs, StatusDto rhs) {
+            public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
                 return lhs.getName().compareTo(rhs.getName());
             }
         });
@@ -98,7 +98,7 @@ public class StatusListActivity extends Activity {
         }
     }
 
-    private void chooseStatus(StatusDto statusDto) {
+    private void chooseStatus(StatusSmallDto statusDto) {
         Intent returnIntent = new Intent();
         returnIntent.putExtra(CHOOSED_STATUS, statusDto);
         setResult(Activity.RESULT_OK, returnIntent);

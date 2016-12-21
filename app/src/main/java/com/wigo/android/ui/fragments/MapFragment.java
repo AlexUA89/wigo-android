@@ -38,6 +38,7 @@ import com.wigo.android.core.database.Database;
 import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.StatusDto;
+import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.activities.CategoryActivity;
@@ -58,7 +59,7 @@ import java.util.List;
 /**
  * Created by olkh on 11/13/2015.
  */
-public class MapFragment extends Fragment implements ClusterManager.OnClusterClickListener<StatusDto>, OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener, GoogleMap.OnCameraIdleListener {
+public class MapFragment extends Fragment implements ClusterManager.OnClusterClickListener<StatusSmallDto>, OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener, GoogleMap.OnCameraIdleListener {
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
     private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
@@ -127,9 +128,9 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
         Calendar c = Calendar.getInstance();
         if (fromDate == null) {
             fromDate = Calendar.getInstance();
-            fromDate.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 0, 0, 0);
+            fromDate.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0);
         }
-        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), 23, 59, 59);
+        c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
         c.add(Calendar.DATE, 1);
         toDate = SharedPrefHelper.getToDateSearch(c);
         redrawDateButtons();
@@ -251,7 +252,7 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
     }
 
     @Override
-    public void loadMapStatusesDone(List<StatusDto> statuses) {
+    public void loadMapStatusesDone(List<StatusSmallDto> statuses) {
         mClusterManager.addStatuses(statuses);
     }
 
@@ -286,8 +287,8 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
             refreshMap();
         }
         if (requestCode == PICK_STATUSES && resultCode == getActivity().RESULT_OK) {
-            StatusDto status = (StatusDto) data.getExtras().get(StatusListActivity.CHOOSED_STATUS);
-            ((MainActivity) getActivity()).openChatFragment(status);
+            StatusSmallDto status = (StatusSmallDto) data.getExtras().get(StatusListActivity.CHOOSED_STATUS);
+            ((MainActivity) getActivity()).openChatFragment(status.getId());
         }
         if (requestCode == CREATE_STATUS && resultCode == getActivity().RESULT_OK) {
             try {
@@ -299,7 +300,7 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
                 statusDb.setLocalId(db.insertNewDBStorable(statusDb));
                 db.close();
                 ((MainActivity) getActivity()).updateMenuList();
-                ((MainActivity) getActivity()).openChatFragment(status);
+                ((MainActivity) getActivity()).openChatFragment(status.getId());
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -308,7 +309,7 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
     }
 
     @Override
-    public boolean onClusterClick(Cluster<StatusDto> cluster) {
+    public boolean onClusterClick(Cluster<StatusSmallDto> cluster) {
         Intent pickStatusIntent = new Intent(ContextProvider.getAppContext(), StatusListActivity.class);
         Bundle bundle = new Bundle();
         bundle.putSerializable(StatusListActivity.STATUSES, new ArrayList<>(cluster.getItems()));

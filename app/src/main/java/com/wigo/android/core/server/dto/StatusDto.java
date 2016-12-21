@@ -2,7 +2,6 @@ package com.wigo.android.core.server.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.maps.android.clustering.ClusterItem;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,37 +11,15 @@ import java.util.UUID;
 /**
  * Created by AlexUA89 on 10/13/2016.
  */
-public class StatusDto extends Dto implements ClusterItem{
+public class StatusDto extends StatusSmallDto implements Dto{
 
-    private UUID id;
     private UUID userId;
-    private double latitude;
-    private double longitude;
-    private String name;
     private String text;
     private Date startDate;
     private Date endDate;
-    private String kind;
     private String url;
     private List<String> hashtags;
-    private String category;
     private List<String> images = new ArrayList<>();
-
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
-
-    public UUID getId() {
-        return id;
-    }
-
-    public void setId(UUID id) {
-        this.id = id;
-    }
 
     public UUID getUserId() {
         return userId;
@@ -50,30 +27,6 @@ public class StatusDto extends Dto implements ClusterItem{
 
     public void setUserId(UUID userId) {
         this.userId = userId;
-    }
-
-    public double getLatitude() {
-        return latitude;
-    }
-
-    public void setLatitude(double latitude) {
-        this.latitude = latitude;
-    }
-
-    public double getLongitude() {
-        return longitude;
-    }
-
-    public void setLongitude(double longitude) {
-        this.longitude = longitude;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
     }
 
     public String getText() {
@@ -114,14 +67,6 @@ public class StatusDto extends Dto implements ClusterItem{
 
     public void setUrl(String url) {
         this.url = url;
-    }
-
-    public String getCategory() {
-        return category;
-    }
-
-    public void setCategory(String category) {
-        this.category = category;
     }
 
     public List<String> getImages() {

@@ -2,7 +2,7 @@
     <string name="server_url">http://54.208.250.42:8080/wigo-server</string>
 
     <string name="app_name">WIGO</string>
-    <string name="save_database_to_sd">Save database to SD card</string>
+    <string name="save_database_to_sd">Save database to SD card (for dev)</string>
     <string name="share_menu_item">Share event</string>
     <string name="crash_toast_text">Error, we sent report to developers</string>
 

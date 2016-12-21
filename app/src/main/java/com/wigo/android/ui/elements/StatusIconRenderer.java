@@ -7,8 +7,8 @@ import com.google.android.gms.maps.model.BitmapDescriptor;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.maps.android.clustering.ClusterManager;
 import com.google.maps.android.clustering.view.DefaultClusterRenderer;
-import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusKind;
+import com.wigo.android.core.server.dto.StatusSmallDto;
 
 import java.util.HashMap;
 
@@ -16,13 +16,13 @@ import java.util.HashMap;
  * Created by AlexUA89 on 12/18/2016.
  */
 
-public class StatusIconRenderer extends DefaultClusterRenderer<StatusDto> {
+public class StatusIconRenderer extends DefaultClusterRenderer<StatusSmallDto> {
 
     private BitmapDescriptor eventBitmap;
     private BitmapDescriptor chatBitmap;
     private HashMap<String, BitmapDescriptor> imagesBitmaps = new HashMap<>();
 
-    public StatusIconRenderer(Context context, GoogleMap map, ClusterManager<StatusDto> clusterManager) {
+    public StatusIconRenderer(Context context, GoogleMap map, ClusterManager<StatusSmallDto> clusterManager) {
         super(context, map, clusterManager);
         imagesBitmaps = CategoriesProvider.getMapOfCategoriesAndImagesForMap();
         eventBitmap = CategoriesProvider.getDefaultEventImage();
@@ -30,7 +30,7 @@ public class StatusIconRenderer extends DefaultClusterRenderer<StatusDto> {
     }
 
     @Override
-    protected void onBeforeClusterItemRendered(StatusDto item, MarkerOptions markerOptions) {
+    protected void onBeforeClusterItemRendered(StatusSmallDto item, MarkerOptions markerOptions) {
         markerOptions.title(item.getName());
         if (StatusKind.event.toString().equals(item.getKind())) {
             BitmapDescriptor bitmap = eventBitmap;
