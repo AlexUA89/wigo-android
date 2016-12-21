@@ -121,8 +121,14 @@ public class LoginActivity extends Activity {
                         SharedPrefHelper.setUserId(wigoUserInfoResponseDto.getUser().getId().toString());
                         SharedPrefHelper.setToken(wigoUserInfoResponseDto.getToken());
                         finish();
-                    } catch (WigoException requestError) {
-                        Toast.makeText(ContextProvider.getAppContext(), "Can not connect to server: " + requestError.getMessage(), Toast.LENGTH_LONG).show();
+                    } catch (final WigoException requestError) {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(ContextProvider.getAppContext(), "Can not connect to server: " + requestError.getMessage(), Toast.LENGTH_LONG).show();
+                            }
+                        });
+                        finish();
                     }
                 }
             }

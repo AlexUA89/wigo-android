@@ -26,6 +26,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpServerErrorException;
 import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
 
@@ -64,7 +65,7 @@ public class WigoRestClient {
         try {
             ResponseEntity<FaceBookUserInfoDto> response = client.exchange(requestUrl, HttpMethod.GET, request, FaceBookUserInfoDto.class);
             return response.getBody();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
@@ -85,7 +86,7 @@ public class WigoRestClient {
         try {
             ResponseEntity<WigoUserInfoResponseDto> response = client.exchange(requestUrl, HttpMethod.POST, request, WigoUserInfoResponseDto.class, request);
             return response.getBody();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
@@ -119,7 +120,7 @@ public class WigoRestClient {
         try {
             ResponseEntity<StatusSmallDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusSmallDto[].class);
             return Arrays.asList(response.getBody());
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
@@ -143,7 +144,7 @@ public class WigoRestClient {
             ResponseEntity<StatusDto> response = client.exchange(requestUrl, HttpMethod.GET, request, StatusDto.class);
             result = response.getBody();
             return result;
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
@@ -165,7 +166,7 @@ public class WigoRestClient {
         try {
             ResponseEntity<MessageDto[]> response = client.exchange(requestUrl, HttpMethod.GET, request, MessageDto[].class);
             return new ArrayList<>(Arrays.asList(response.getBody()));
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
@@ -184,7 +185,7 @@ public class WigoRestClient {
         try {
             ResponseEntity<String[]> response = client.exchange(requestUrl, HttpMethod.GET, request, String[].class);
             return new ArrayList<>(Arrays.asList(response.getBody()));
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
@@ -206,7 +207,7 @@ public class WigoRestClient {
         try {
             response = client.exchange(requestUrl, HttpMethod.POST, request, MessageDto.class, messageDto);
             return response.getBody();
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
@@ -229,7 +230,7 @@ public class WigoRestClient {
             response = client.exchange(requestUrl, HttpMethod.POST, request, UUID.class, statusDto);
             statusDto.setId(response.getBody());
             return statusDto;
-        } catch (HttpClientErrorException e) {
+        } catch (HttpClientErrorException | HttpServerErrorException e) {
             if (e.getStatusCode() == HttpStatus.UNAUTHORIZED) {
                 startLogicActvity();
                 throw new LoginError();
