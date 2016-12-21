@@ -128,7 +128,7 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
         Calendar c = Calendar.getInstance();
         if (fromDate == null) {
             fromDate = Calendar.getInstance();
-            fromDate.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0);
+            fromDate.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 0, 0, 0);
         }
         c.set(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH), 23, 59, 59);
         c.add(Calendar.DATE, 1);
