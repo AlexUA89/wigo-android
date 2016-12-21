@@ -62,7 +62,7 @@ import java.util.List;
 public class MapFragment extends Fragment implements ClusterManager.OnClusterClickListener<StatusSmallDto>, OnMapReadyCallback, GoogleMap.OnMapClickListener, GoogleMap.OnMapLongClickListener, LoadMapStatusesTask.LoadMapStatusesTaskListener, GoogleMap.OnCameraIdleListener {
 
     public static final String FRAGMENT_TAG = "FRAGMENT_MAP";
-    private static final LatLng KIEV = new LatLng(50.449362, 30.479365);
+    private static final LatLng KIEV = new LatLng(50.450361, 30.523687);
     private static final float DEFAULT_ZOOM = 14;
     private static final int PICK_CATEGORIES = 1;
     private static final int CREATE_STATUS = 2;
