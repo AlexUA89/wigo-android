@@ -4,7 +4,7 @@
     <string name="app_name">WIGO</string>
     <string name="save_database_to_sd">Save database to SD card (for dev)</string>
     <string name="share_menu_item">Share event</string>
-    <string name="crash_toast_text">Error, we sent report to developers</string>
+    <string name="crash_toast_text">Please choose the way to send error to developers</string>
 
     <string name="hello_world">Hello world!</string>
     <string name="drawer_open">Slider Menu Opened</string>
