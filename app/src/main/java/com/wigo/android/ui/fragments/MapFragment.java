@@ -300,6 +300,9 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
                 statusDb.setLocalId(db.insertNewDBStorable(statusDb));
                 db.close();
                 ((MainActivity) getActivity()).updateMenuList();
+                ArrayList<StatusSmallDto> newStatus = new ArrayList<>();
+                newStatus.add(status);
+                loadMapStatusesDone(newStatus);
                 ((MainActivity) getActivity()).openChatFragment(status.getId());
             } catch (IOException e) {
                 e.printStackTrace();
