@@ -145,7 +145,8 @@ public class ChatMessagesAdapter extends BaseAdapter {
             calendar.setTime(messagesArray.get(messagesArray.size() - 1).getCreated());
             calendar.add(Calendar.MILLISECOND, 1);
         } else {
-            calendar.roll(Calendar.MONTH, 1);
+            if(calendar.get(Calendar.MONTH) == 0) calendar.roll(Calendar.YEAR, -1);
+            calendar.roll(Calendar.MONTH, -1);
         }
         return calendar;
     }
