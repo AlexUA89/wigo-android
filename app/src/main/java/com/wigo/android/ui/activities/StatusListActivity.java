@@ -64,24 +64,21 @@ public class StatusListActivity extends Activity {
         byAlph = (ToggleButton) findViewById(R.id.list_by_alphabet);
         byCategory.setChecked(true);
         byAlph.setChecked(false);
+        sortList();
         byCategory.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!byCategory.isChecked()) {
-                    byCategory.setChecked(true);
-                    byAlph.setChecked(false);
-                    sortList();
-                }
+                byCategory.setChecked(true);
+                byAlph.setChecked(false);
+                sortList();
             }
         });
         byAlph.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!byAlph.isChecked()) {
-                    byAlph.setChecked(true);
-                    byCategory.setChecked(false);
-                    sortList();
-                }
+                byAlph.setChecked(true);
+                byCategory.setChecked(false);
+                sortList();
             }
         });
     }
@@ -104,11 +101,11 @@ public class StatusListActivity extends Activity {
             Collections.sort(statuses, new Comparator<StatusSmallDto>() {
                 @Override
                 public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
-                    return lhs.getName().compareTo(rhs.getName());
+                    return lhs.getName().compareToIgnoreCase(rhs.getName());
                 }
             });
         }
-        ((BaseAdapter)statusesList.getAdapter()).notifyDataSetChanged();
+        ((BaseAdapter) statusesList.getAdapter()).notifyDataSetChanged();
     }
 
 

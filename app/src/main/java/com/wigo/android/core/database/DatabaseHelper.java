@@ -45,12 +45,10 @@ class DatabaseHelper extends SQLiteOpenHelper {
     }
 
     private void up1to2(SQLiteDatabase db) {
-        db.execSQL("BEGIN TRANSACTION;\n" +
-                "UPDATE status_table SET category = 'chat' WHERE category is NULL OR kind = 'chat';\n" +
+        db.execSQL("UPDATE status_table SET category = 'chat' WHERE category is NULL OR kind = 'chat';\n" +
                 "CREATE TABLE IF NOT EXISTS status_table_temp ( local_id INTEGER PRIMARY KEY NOT NULL, id TEXT NOT NULL, user_id TEXT NOT NULL, latitude REAL, longitude REAL, name TEXT, text TEXT, url URL, start_date INTEGER NOT NULL, end_date INTEGER NOT NULL, last_open_date INTEGER NOT NULL, category TEXT NOT NULL, hashtags TEXT NOT NULL, images TEXT NOT NULL);\n" +
                 "INSERT INTO status_table_temp SELECT local_id,id, user_id, latitude, longitude, name, text, url, start_date, end_date, last_open_date, category TEXT, hashtags TEXT, images TEXT FROM status_table;\n" +
                 "DROP TABLE status_table;\n" +
-                "ALTER TABLE status_table_temp RENAME TO status_table;\n" +
-                "commit;");
+                "ALTER TABLE status_table_temp RENAME TO status_table;");
     }
 }
