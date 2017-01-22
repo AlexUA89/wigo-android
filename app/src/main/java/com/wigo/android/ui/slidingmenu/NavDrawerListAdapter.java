@@ -1,8 +1,6 @@
 package com.wigo.android.ui.slidingmenu;
 
 import android.app.Activity;
-import android.content.Context;
-import android.content.res.TypedArray;
 import android.database.Cursor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,14 +9,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.database.DBManager;
 import com.wigo.android.core.database.Database;
 import com.wigo.android.core.database.datas.Status;
-import com.wigo.android.core.server.dto.StatusKind;
-import com.wigo.android.core.utils.BitmapUtils;
+import com.wigo.android.core.server.dto.StatusCategory;
+import com.wigo.android.ui.elements.CategoriesProvider;
 
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -86,7 +83,8 @@ public class NavDrawerListAdapter extends BaseAdapter {
         // displaying count
         // check whether it set visible or not
         txtCount.setVisibility(View.GONE);
-        if (StatusKind.chat.toString().equals(statuses.get(position).getKind())) {
+        imgIcon.setImageResource(CategoriesProvider.getMapOfCategoriesAndResources().get(statuses.get(position).getCategory().toString()));
+        if (StatusCategory.CHAT.equals(statuses.get(position).getCategory())) {
             imgIcon.setImageResource(R.mipmap.chat);
         } else {
             imgIcon.setImageResource(R.mipmap.other);

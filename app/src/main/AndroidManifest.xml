@@ -96,7 +96,7 @@
         </activity>
 
         <activity
-            android:name="com.wigo.android.ui.activities.CreateStatusActivity"
+            android:name="com.wigo.android.ui.activities.CreateEventActivity"
             android:theme="@android:style/Theme.Holo.Light.Dialog"
             android:screenOrientation="portrait">
         </activity>

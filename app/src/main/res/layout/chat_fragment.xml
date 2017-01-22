@@ -41,7 +41,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
                         android:layout_weight="1"
-                        android:text="From"
+                        android:text="@string/chat_from"
                         android:textColor="@color/counter_text_bg" />
 
                     <TextView
@@ -63,7 +63,7 @@
                         android:layout_height="wrap_content"
                         android:layout_margin="@dimen/activity_vertical_margin"
                         android:layout_weight="1"
-                        android:text="To"
+                        android:text="@string/chat_to"
                         android:textColor="@color/counter_text_bg" />
 
                     <TextView
@@ -81,21 +81,22 @@
                     android:layout_weight="1"
                     android:fillViewport="true"
                     android:visibility="gone">
+
                     <LinearLayout
                         android:id="@+id/chat_fragment_image_layout"
                         android:layout_width="match_parent"
-                        android:orientation="horizontal"
                         android:layout_height="match_parent"
-                        android:gravity="center"/>
+                        android:gravity="center"
+                        android:orientation="horizontal" />
                 </HorizontalScrollView>
 
-
-                <TextView
+                <com.wigo.android.ui.elements.ExpandableTextView
                     android:id="@+id/status_desc"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/activity_vertical_margin"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
+
 
                 <TextView
                     android:id="@+id/status_hashtags"
@@ -124,8 +125,8 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_marginRight="@dimen/activity_vertical_margin"
-                        android:autoLink="web"
-                        android:layout_weight="8" />
+                        android:layout_weight="8"
+                        android:autoLink="web" />
                 </LinearLayout>
             </LinearLayout>
 
@@ -134,22 +135,25 @@
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
                 android:layout_margin="@dimen/activity_vertical_margin"
-                android:background="@color/chat_list_background"
                 android:layout_weight="1"
+                android:background="@color/chat_list_background"
                 android:divider="@null"
                 android:dividerHeight="0dp"
                 android:nestedScrollingEnabled="true" />
-            <TextView android:id="@+id/chat_listView_empty"
+
+            <TextView
+                android:id="@+id/chat_listView_empty"
                 android:layout_width="match_parent"
                 android:layout_height="100dp"
                 android:layout_margin="@dimen/activity_vertical_margin"
-                android:gravity="center"
                 android:background="@color/chat_list_background"
-                android:textColor="@color/chat_list_item_name_date"
-                android:text="@string/chat_is_empty"/>
+                android:gravity="center"
+                android:text="@string/chat_is_empty"
+                android:textColor="@color/chat_list_item_name_date" />
 
         </LinearLayout>
     </ScrollView>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

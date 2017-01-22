@@ -23,7 +23,6 @@ public final class Tables {
         public static String TEXT = "text";
         public static String START_DATE = "start_date";
         public static String END_DATE = "end_date";
-        public static String KIND = "kind";
         public static String URL = "url";
         public static String CATEGORY = "category";
         public static String HASHTAGS = "hashtags";

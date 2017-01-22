@@ -44,7 +44,8 @@
             android:layout_height="match_parent"
             android:gravity="center"
             android:scaleType="fitCenter"
-            android:src="@mipmap/category" />
+            android:src="@mipmap/filter" />
+
     </LinearLayout>
 
     <LinearLayout
@@ -77,16 +78,29 @@
         android:layout_height="match_parent"
         tools:context=".MapsActivity">
 
-        <ImageButton
-            android:id="@+id/map_plus_button"
+        <LinearLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="right|bottom"
-            android:layout_marginTop="20dp"
-            android:background="@null"
             android:padding="10dp"
             android:paddingRight="10dp"
-            android:src="@drawable/plus_button_selector" />
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/map_plus_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="@null"
+                android:src="@drawable/plus_button_selector" />
+
+            <ImageButton
+                android:id="@+id/map_list_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:scaleType="fitCenter"
+                android:src="@mipmap/category" />
+        </LinearLayout>
 
     </fragment>
 

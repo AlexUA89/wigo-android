@@ -42,7 +42,7 @@ import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.activities.CategoryActivity;
-import com.wigo.android.ui.activities.CreateStatusActivity;
+import com.wigo.android.ui.activities.CreateEventActivity;
 import com.wigo.android.ui.activities.StatusListActivity;
 import com.wigo.android.ui.elements.CategoriesProvider;
 import com.wigo.android.ui.elements.LoadMapStatusesTask;
@@ -71,7 +71,7 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
     private View view;
     private GoogleMap mMap;
     private EditText textSearch;
-    private ImageButton categoryButton, searchButton;
+    private ImageButton categoryButton, searchButton, listActivityButton;
     private Calendar fromDate, toDate;
     private Button fromDateButton;
     private Button toDateButton;
@@ -102,6 +102,7 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
 
         categoryButton = (ImageButton) fragmentView.findViewById(R.id.category_button);
         searchButton = (ImageButton) fragmentView.findViewById(R.id.map_search_button);
+        listActivityButton = (ImageButton) fragmentView.findViewById(R.id.map_list_button);
         fragmentView.findViewById(R.id.map_plus_button).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -110,6 +111,7 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
         });
         fromDateButton = (Button) fragmentView.findViewById(R.id.from_date_button);
         toDateButton = (Button) fragmentView.findViewById(R.id.to_date_button);
+
         textSearch = (EditText) fragmentView.findViewById(R.id.text_search_field);
         categoryButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -168,6 +170,18 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
                 dialog.show();
             }
         });
+
+        listActivityButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent pickStatusIntent = new Intent(ContextProvider.getAppContext(), StatusListActivity.class);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable(StatusListActivity.STATUSES, new ArrayList<>(mClusterManager.getStatuses()));
+                pickStatusIntent.putExtras(bundle);
+                startActivityForResult(pickStatusIntent, PICK_STATUSES);
+            }
+        });
+
     }
 
     private void redrawDateButtons() {
@@ -200,8 +214,8 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
 
     @Override
     public void onMapLongClick(LatLng point) {
-        Intent createStatus = new Intent(ContextProvider.getAppContext(), CreateStatusActivity.class);
-        createStatus.putExtra(CreateStatusActivity.POINT, point);
+        Intent createStatus = new Intent(ContextProvider.getAppContext(), CreateEventActivity.class);
+        createStatus.putExtra(CreateEventActivity.POINT, point);
         startActivityForResult(createStatus, CREATE_STATUS);
     }
 
@@ -292,11 +306,11 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
         }
         if (requestCode == CREATE_STATUS && resultCode == getActivity().RESULT_OK) {
             try {
-                StatusDto status = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateStatusActivity.CREATED_STATUS), StatusDto.class);
+                StatusDto status = ContextProvider.getObjectMapper().readValue(data.getStringExtra(CreateEventActivity.CREATED_STATUS), StatusDto.class);
                 Database db = DBManager.getDatabase();
                 db.open();
                 Status statusDb = new Status(status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
-                        status.getStartDate(), status.getEndDate(), status.getKind(), status.getCategory(), status.getHashtags(), status.getImages(), new Date());
+                        status.getStartDate(), status.getEndDate(), status.getCategory(), status.getHashtags(), status.getImages(), new Date());
                 statusDb.setLocalId(db.insertNewDBStorable(statusDb));
                 db.close();
                 ((MainActivity) getActivity()).updateMenuList();

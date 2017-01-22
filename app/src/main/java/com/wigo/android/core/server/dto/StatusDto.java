@@ -95,7 +95,6 @@ public class StatusDto extends StatusSmallDto implements Dto{
             return false;
         if (endDate != null ? !endDate.equals(statusDto.endDate) : statusDto.endDate != null)
             return false;
-        if (kind != null ? !kind.equals(statusDto.kind) : statusDto.kind != null) return false;
         return hashtags != null ? hashtags.equals(statusDto.hashtags) : statusDto.hashtags == null;
 
     }
@@ -114,7 +113,6 @@ public class StatusDto extends StatusSmallDto implements Dto{
         result = 31 * result + (text != null ? text.hashCode() : 0);
         result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
         result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
-        result = 31 * result + (kind != null ? kind.hashCode() : 0);
         result = 31 * result + (hashtags != null ? hashtags.hashCode() : 0);
         return result;
     }

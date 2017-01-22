@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Parcel;
 
 import com.wigo.android.core.database.constants.Tables;
+import com.wigo.android.core.server.dto.StatusCategory;
 import com.wigo.android.ui.elements.CategoriesProvider;
 
 import java.text.ParseException;
@@ -28,14 +29,13 @@ public class Status extends DBStorable {
     private String text;
     private Date startDate;
     private Date endDate;
-    private String kind;
     private String url;
     private Date lastOpenDate;
     private List<String> hashtags;
     private String category;
     private List<String> images;
 
-    private Status(long localId, UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, String category, List<String> hashtags, List<String> images, Date lastOpenDate) {
+    private Status(long localId, UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String category, List<String> hashtags, List<String> images, Date lastOpenDate) {
         if (localId < DBStorable.DEFAULT_ROW_ID) {
             throw new IllegalArgumentException("localId can not be " + localId);
         }
@@ -57,8 +57,6 @@ public class Status extends DBStorable {
         this.startDate = startDate;
         if (endDate == null) throw new IllegalArgumentException("endDate can not be null");
         this.endDate = endDate;
-        if (kind == null) throw new IllegalArgumentException("kind can not be null");
-        this.kind = kind;
         this.lastOpenDate = lastOpenDate;
         this.category = CategoriesProvider.OTHER;
         if (category != null) this.category = category;
@@ -68,18 +66,18 @@ public class Status extends DBStorable {
         if (images != null) this.images = images;
     }
 
-    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String kind, String category, List<String> hashtags, List<String> images, Date lastOpenDate) {
-        this(DBStorable.DEFAULT_ROW_ID, id, userId, latitude, longitude, name, text, url, startDate, endDate, kind, category, hashtags, images, lastOpenDate);
+    public Status(UUID id, UUID userId, double latitude, double longitude, String name, String text, String url, Date startDate, Date endDate, String category, List<String> hashtags, List<String> images, Date lastOpenDate) {
+        this(DBStorable.DEFAULT_ROW_ID, id, userId, latitude, longitude, name, text, url, startDate, endDate, category, hashtags, images, lastOpenDate);
     }
 
     public Status(Status status) {
         this(status.getLocalId(), status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
-                status.getStartDate(), status.getEndDate(), status.getKind(), status.getCategory(), status.getHashtags(), status.getImages(), status.getLastOpenDate());
+                status.getStartDate(), status.getEndDate(), status.getCategory().toString(), status.getHashtags(), status.getImages(), status.getLastOpenDate());
     }
 
     public Status(Parcel in) {
         this(in.readLong(), UUID.fromString(in.readString()), UUID.fromString(in.readString()), in.readDouble(), in.readDouble(), in.readString(), in.readString(), in.readString(),
-                (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), in.readString(), splitString(in.readString()), splitString(in.readString()), (java.util.Date) in.readSerializable());
+                (java.util.Date) in.readSerializable(), (java.util.Date) in.readSerializable(), in.readString(), splitString(in.readString()), splitString(in.readString()), (java.util.Date) in.readSerializable());
     }
 
     public Status(Cursor c) throws ParseException {
@@ -93,7 +91,6 @@ public class Status extends DBStorable {
                 c.getString(c.getColumnIndex(Tables.STATUS_TABLE.URL)),
                 new Date(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.START_DATE))),
                 new Date(c.getLong(c.getColumnIndex(Tables.STATUS_TABLE.END_DATE))),
-                c.getString(c.getColumnIndex(Tables.STATUS_TABLE.KIND)),
                 c.getString(c.getColumnIndex(Tables.STATUS_TABLE.CATEGORY)),
                 splitString(c.getString(c.getColumnIndex(Tables.STATUS_TABLE.HASHTAGS))),
                 splitString(c.getString(c.getColumnIndex(Tables.STATUS_TABLE.IMAGES))),
@@ -117,7 +114,6 @@ public class Status extends DBStorable {
         values.put(Tables.STATUS_TABLE.URL, url);
         values.put(Tables.STATUS_TABLE.START_DATE, startDate.getTime());
         values.put(Tables.STATUS_TABLE.END_DATE, endDate.getTime());
-        values.put(Tables.STATUS_TABLE.KIND, kind);
         values.put(Tables.STATUS_TABLE.CATEGORY, category);
         values.put(Tables.STATUS_TABLE.HASHTAGS, listToString(hashtags));
         values.put(Tables.STATUS_TABLE.IMAGES, listToString(images));
@@ -151,7 +147,6 @@ public class Status extends DBStorable {
         dest.writeString(url);
         dest.writeSerializable(startDate);
         dest.writeSerializable(endDate);
-        dest.writeString(kind);
         dest.writeString(category);
         dest.writeString(listToString(hashtags));
         dest.writeString(listToString(images));
@@ -238,14 +233,6 @@ public class Status extends DBStorable {
         this.endDate = endDate;
     }
 
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
-    }
-
     public Date getLastOpenDate() {
         return lastOpenDate;
     }
@@ -278,8 +265,10 @@ public class Status extends DBStorable {
         this.hashtags = hashtags;
     }
 
-    public String getCategory() {
-        return category;
+    public StatusCategory getCategory() {
+        StatusCategory cat = StatusCategory.valueOf(category);
+        if(cat!=null) return cat;
+        return StatusCategory.OTHER;
     }
 
     public void setCategory(String category) {

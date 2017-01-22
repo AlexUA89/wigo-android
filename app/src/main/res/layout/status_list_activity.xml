@@ -6,14 +6,39 @@
     android:orientation="vertical"
     android:padding="10dp">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:weightSum="4">
+
+        <ToggleButton
+            android:id="@+id/list_by_сategory"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textOff="@string/status_list_by_category"
+            android:textOn="@string/status_list_by_category"/>
+
+        <ToggleButton
+            android:id="@+id/list_by_alphabet"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:textOff="@string/status_list_by_alphabet"
+            android:textOn="@string/status_list_by_alphabet"/>
+
+    </LinearLayout>
+
+
     <ListView
-        android:layout_margin="@dimen/activity_vertical_margin"
         android:id="@+id/status_list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:nestedScrollingEnabled="true"
+        android:layout_margin="@dimen/activity_vertical_margin"
+        android:layout_weight="1"
         android:divider="@null"
         android:dividerHeight="0dp"
-        android:layout_weight="1"/>
+        android:nestedScrollingEnabled="true" />
 
 </LinearLayout>

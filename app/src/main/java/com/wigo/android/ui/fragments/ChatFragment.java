@@ -29,15 +29,19 @@ import com.wigo.android.core.database.datas.Status;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
-import com.wigo.android.core.server.dto.StatusKind;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.base.BaseTextWatcher;
 import com.wigo.android.ui.elements.ChatMessagesAdapter;
+import com.wigo.android.ui.elements.ExpandableTextView;
 import com.wigo.android.ui.elements.LoadMessageFroStatusTask;
 import com.wigo.android.ui.elements.SendMessageTask;
 
+import org.springframework.util.StringUtils;
+
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -102,7 +106,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         db.close();
         if (statusDb == null) {
             statusDb = new Status(status.getId(), status.getUserId(), status.getLatitude(), status.getLongitude(), status.getName(), status.getText(), status.getUrl(),
-                    status.getStartDate(), status.getEndDate(), status.getKind(), status.getCategory(), status.getHashtags(), status.getImages(), new Date());
+                    status.getStartDate(), status.getEndDate(), status.getCategory(), status.getHashtags(), status.getImages(), new Date());
         }
         scrollView = (ScrollView) fragmentView.findViewById(R.id.chat_fragment_scroll_view);
         msg = (EditText) fragmentView.findViewById(R.id.chat_fragment_msg);
@@ -111,29 +115,31 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
         adapter = new ChatMessagesAdapter(status.getId());
         messagesList.setAdapter(adapter);
         TextView statusName = (TextView) fragmentView.findViewById(R.id.status_name);
-        TextView statusText = (TextView) fragmentView.findViewById(R.id.status_desc);
+        ExpandableTextView expandableTextView = (ExpandableTextView) fragmentView.findViewById(R.id.status_desc);
         TextView statusHashtags = (TextView) fragmentView.findViewById(R.id.status_hashtags);
         statusName.setVisibility(View.VISIBLE);
         statusName.setText(status.getName());
-        if (StatusKind.event.toString().equals(status.getKind())) {
-            statusText.setVisibility(View.VISIBLE);
-            statusText.setText(status.getText());
-            ((TextView) fragmentView.findViewById(R.id.from_text)).setText(status.getStartDate().toString());
-            ((TextView) fragmentView.findViewById(R.id.to_text)).setText(status.getEndDate().toString());
-            fragmentView.findViewById(R.id.from_container).setVisibility(View.VISIBLE);
-            fragmentView.findViewById(R.id.to_container).setVisibility(View.VISIBLE);
-            if (status.getUrl() != null && !status.getUrl().isEmpty()) {
-                ((TextView) fragmentView.findViewById(R.id.url_text)).setText(status.getUrl());
-                fragmentView.findViewById(R.id.url_container).setVisibility(View.VISIBLE);
-            }
-            if (!status.getImages().isEmpty()) {
-                fragmentView.findViewById(R.id.chat_fragment_image_scroll_view).setVisibility(View.VISIBLE);
-                LinearLayout horizontalScrollView = (LinearLayout) fragmentView.findViewById(R.id.chat_fragment_image_layout);
-                for (int i = 0; i < status.getImages().size(); i++) {
-                    ImageView image = new ImageView(getActivity());
-                    Picasso.with(getActivity()).load(status.getImages().get(i)).into(image);
-                    horizontalScrollView.addView(image);
-                }
+        if (!StringUtils.isEmpty(status.getText())) {
+            expandableTextView.setVisibility(View.VISIBLE);
+            expandableTextView.setText(status.getText());
+        }
+        DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, getResources().getConfiguration().locale);
+        DateFormat time = new SimpleDateFormat("HH:mm:ss");
+        ((TextView) fragmentView.findViewById(R.id.from_text)).setText(df.format(status.getStartDate())+" "+time.format(status.getStartDate()));
+        ((TextView) fragmentView.findViewById(R.id.to_text)).setText(df.format(status.getEndDate())+" "+time.format(status.getEndDate()));
+        fragmentView.findViewById(R.id.from_container).setVisibility(View.VISIBLE);
+        fragmentView.findViewById(R.id.to_container).setVisibility(View.VISIBLE);
+        if (!StringUtils.isEmpty(status.getUrl())) {
+            ((TextView) fragmentView.findViewById(R.id.url_text)).setText(status.getUrl());
+            fragmentView.findViewById(R.id.url_container).setVisibility(View.VISIBLE);
+        }
+        if (!status.getImages().isEmpty()) {
+            fragmentView.findViewById(R.id.chat_fragment_image_scroll_view).setVisibility(View.VISIBLE);
+            LinearLayout horizontalScrollView = (LinearLayout) fragmentView.findViewById(R.id.chat_fragment_image_layout);
+            for (int i = 0; i < status.getImages().size(); i++) {
+                ImageView image = new ImageView(getActivity());
+                Picasso.with(getActivity()).load(status.getImages().get(i)).into(image);
+                horizontalScrollView.addView(image);
             }
         }
         if (status.getHashtags() != null && !status.getHashtags().isEmpty()) {
@@ -202,7 +208,7 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
     public void loadMessagesDone(List<MessageDto> messages) {
         adapter.mergMessageArray(messages);
         messagesList.setSelection(adapter.getCount() - 1);
-        if(loadMessages!=null && handler != null) {
+        if (loadMessages != null && handler != null) {
             handler.postDelayed(loadMessages, 5000);
         }
     }

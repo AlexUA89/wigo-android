@@ -21,20 +21,30 @@
 
     <!-- Category activity -->
     <string name="category_activity_title">Choose categories</string>
+    <string name="category_activity_button_all_deselect">Deselect all</string>
+    <string name="category_activity_button_all_select">Select all</string>
 
     <!-- Create status activity -->
-    <string name="create_status_title">Create new chat on map</string>
-    <string name="create_status_new_chat_name">Chat name:</string>
-    <string name="create_status_empty_name">Please enter name for new chat</string>
-    <string name="create_status_connection_error">Can not create status</string>
+    <string name="create_status_title">Create new event on map</string>
+    <string name="create_status_new_event_name">Event name:</string>
+    <string name="create_status_new_event_description">Event description:</string>
+    <string name="create_status_empty_name">Please enter name for new event</string>
+    <string name="create_status_empty_category">Please enter category for new event</string>
+    <string name="create_status_connection_error">Can not create event</string>
+    <string name="create_status_choose_category">Choose category</string>
 
     <!-- Chat fragment -->
     <string name="chat_is_empty">Chat is empty</string>
+    <string name="chat_from">От</string>
+    <string name="chat_to">До</string>
+    <string name="chat_continue_reading">...... Продолжить читать.</string>
 
     <!-- Login activity -->
     <string name="login_activity_title">Please login to WIGO</string>
 
     <!-- Status list activity -->
     <string name="status_list_activity_title">Events and chats</string>
+    <string name="status_list_by_category">По дате</string>
+    <string name="status_list_by_alphabet">По категориям</string>
 
 </resources>

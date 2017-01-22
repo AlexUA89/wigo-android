@@ -12,6 +12,7 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.ui.MainActivity;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -61,6 +62,10 @@ public class WigoClusterManager extends ClusterManager<StatusSmallDto> implement
             }
         }
         this.cluster();
+    }
+
+    public Collection<StatusSmallDto> getStatuses() {
+        return statuses.values();
     }
 
     @Override

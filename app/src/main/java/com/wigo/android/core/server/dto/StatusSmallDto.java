@@ -17,7 +17,6 @@ public class StatusSmallDto implements Dto, ClusterItem {
     protected double latitude;
     protected double longitude;
     protected String category;
-    protected String kind;
 
     public UUID getId() {
         return id;
@@ -47,8 +46,8 @@ public class StatusSmallDto implements Dto, ClusterItem {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
+    public void setCategory(StatusCategory category) {
+        this.category = category.toString();
     }
 
     public String getName() {
@@ -57,14 +56,6 @@ public class StatusSmallDto implements Dto, ClusterItem {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public String getKind() {
-        return kind;
-    }
-
-    public void setKind(String kind) {
-        this.kind = kind;
     }
 
     @JsonIgnore

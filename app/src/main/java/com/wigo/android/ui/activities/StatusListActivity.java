@@ -12,6 +12,7 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.ToggleButton;
 
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
@@ -33,6 +34,7 @@ public class StatusListActivity extends Activity {
 
     private ListView statusesList;
     private List<StatusSmallDto> statuses;
+    private ToggleButton byCategory, byAlph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,6 +59,56 @@ public class StatusListActivity extends Activity {
                 chooseStatus(statuses.get(position));
             }
         });
+
+        byCategory = (ToggleButton) findViewById(R.id.list_by_сategory);
+        byAlph = (ToggleButton) findViewById(R.id.list_by_alphabet);
+        byCategory.setChecked(true);
+        byAlph.setChecked(false);
+        byCategory.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!byCategory.isChecked()) {
+                    byCategory.setChecked(true);
+                    byAlph.setChecked(false);
+                    sortList();
+                }
+            }
+        });
+        byAlph.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (!byAlph.isChecked()) {
+                    byAlph.setChecked(true);
+                    byCategory.setChecked(false);
+                    sortList();
+                }
+            }
+        });
+    }
+
+    private void sortList() {
+        if (byCategory.isChecked()) {
+            Collections.sort(statuses, new Comparator<StatusSmallDto>() {
+                @Override
+                public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
+                    int temp = lhs.getCategory().compareTo(rhs.getCategory());
+                    if (temp == 0) {
+                        return lhs.getName().compareTo(rhs.getName());
+                    } else {
+                        return temp;
+                    }
+                }
+            });
+        }
+        if (byAlph.isChecked()) {
+            Collections.sort(statuses, new Comparator<StatusSmallDto>() {
+                @Override
+                public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
+                    return lhs.getName().compareTo(rhs.getName());
+                }
+            });
+        }
+        ((BaseAdapter)statusesList.getAdapter()).notifyDataSetChanged();
     }
 
 
@@ -92,7 +144,7 @@ public class StatusListActivity extends Activity {
                 view = lInflater.inflate(R.layout.status_list_item, parent, false);
             }
             ((TextView) view.findViewById(R.id.status_item_text)).setText(statuses.get(position).getName());
-            ((ImageView) view.findViewById(R.id.status_item_image_view)).setImageBitmap(CategoriesProvider.getMapOfCategoriesAndImages().get(statuses.get(position).getCategory()));
+            ((ImageView) view.findViewById(R.id.status_item_image_view)).setImageBitmap(CategoriesProvider.getMapOfCategoiesAndBitmaps().get(statuses.get(position).getCategory()));
             convertView = view;
             return convertView;
         }
