@@ -90,7 +90,7 @@ public class StatusListActivity extends Activity {
                 public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
                     int temp = lhs.getCategory().compareTo(rhs.getCategory());
                     if (temp == 0) {
-                        return lhs.getName().compareTo(rhs.getName());
+                        return lhs.getName().replaceAll("\\s+","").compareToIgnoreCase(rhs.getName().replaceAll("\\s+",""));
                     } else {
                         return temp;
                     }
@@ -101,7 +101,7 @@ public class StatusListActivity extends Activity {
             Collections.sort(statuses, new Comparator<StatusSmallDto>() {
                 @Override
                 public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
-                    return lhs.getName().compareToIgnoreCase(rhs.getName());
+                    return lhs.getName().replaceAll("\\s+","").compareToIgnoreCase(rhs.getName().replaceAll("\\s+",""));
                 }
             });
         }
