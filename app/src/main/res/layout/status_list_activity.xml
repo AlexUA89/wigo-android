@@ -13,12 +13,12 @@
         android:weightSum="4">
 
         <ToggleButton
-            android:id="@+id/list_by_сategory"
+            android:id="@+id/list_by_date"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="2"
-            android:textOff="@string/status_list_by_category"
-            android:textOn="@string/status_list_by_category"/>
+            android:textOff="@string/status_list_by_date"
+            android:textOn="@string/status_list_by_date"/>
 
         <ToggleButton
             android:id="@+id/list_by_alphabet"

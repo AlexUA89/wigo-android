@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
@@ -15,8 +14,6 @@ public class StatusDto extends StatusSmallDto implements Dto{
 
     private UUID userId;
     private String text;
-    private Date startDate;
-    private Date endDate;
     private String url;
     private List<String> hashtags;
     private List<String> images = new ArrayList<>();
@@ -35,22 +32,6 @@ public class StatusDto extends StatusSmallDto implements Dto{
 
     public void setText(String text) {
         this.text = text;
-    }
-
-    public Date getStartDate() {
-        return startDate;
-    }
-
-    public void setStartDate(Date startDate) {
-        this.startDate = startDate;
-    }
-
-    public Date getEndDate() {
-        return endDate;
-    }
-
-    public void setEndDate(Date endDate) {
-        this.endDate = endDate;
     }
 
     public List<String> getHashtags() {
@@ -91,9 +72,9 @@ public class StatusDto extends StatusSmallDto implements Dto{
             return false;
         if (name != null ? !name.equals(statusDto.name) : statusDto.name != null) return false;
         if (text != null ? !text.equals(statusDto.text) : statusDto.text != null) return false;
-        if (startDate != null ? !startDate.equals(statusDto.startDate) : statusDto.startDate != null)
+        if (getStartDate() != null ? !getStartDate().equals(statusDto.getStartDate()) : statusDto.getStartDate() != null)
             return false;
-        if (endDate != null ? !endDate.equals(statusDto.endDate) : statusDto.endDate != null)
+        if (getEndDate() != null ? !getEndDate().equals(statusDto.getEndDate()) : statusDto.getEndDate() != null)
             return false;
         return hashtags != null ? hashtags.equals(statusDto.hashtags) : statusDto.hashtags == null;
 
@@ -111,8 +92,8 @@ public class StatusDto extends StatusSmallDto implements Dto{
         result = 31 * result + (int) (temp ^ (temp >>> 32));
         result = 31 * result + (name != null ? name.hashCode() : 0);
         result = 31 * result + (text != null ? text.hashCode() : 0);
-        result = 31 * result + (startDate != null ? startDate.hashCode() : 0);
-        result = 31 * result + (endDate != null ? endDate.hashCode() : 0);
+        result = 31 * result + (getStartDate() != null ? getStartDate().hashCode() : 0);
+        result = 31 * result + (getEndDate() != null ? getEndDate().hashCode() : 0);
         result = 31 * result + (hashtags != null ? hashtags.hashCode() : 0);
         return result;
     }

@@ -30,6 +30,7 @@ import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.MessageDto;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.requestapi.errors.WigoException;
+import com.wigo.android.core.utils.DateUtils;
 import com.wigo.android.ui.MainActivity;
 import com.wigo.android.ui.base.BaseTextWatcher;
 import com.wigo.android.ui.elements.ChatMessagesAdapter;
@@ -40,8 +41,6 @@ import com.wigo.android.ui.elements.SendMessageTask;
 import org.springframework.util.StringUtils;
 
 import java.io.IOException;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -123,10 +122,8 @@ public class ChatFragment extends Fragment implements LoadMessageFroStatusTask.L
             expandableTextView.setVisibility(View.VISIBLE);
             expandableTextView.setText(status.getText());
         }
-        DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, getResources().getConfiguration().locale);
-        DateFormat time = new SimpleDateFormat("HH:mm:ss");
-        ((TextView) fragmentView.findViewById(R.id.from_text)).setText(df.format(status.getStartDate())+" "+time.format(status.getStartDate()));
-        ((TextView) fragmentView.findViewById(R.id.to_text)).setText(df.format(status.getEndDate())+" "+time.format(status.getEndDate()));
+        ((TextView) fragmentView.findViewById(R.id.from_text)).setText(DateUtils.dateToUIDate(status.getStartDate(), getResources().getConfiguration().locale));
+        ((TextView) fragmentView.findViewById(R.id.to_text)).setText(DateUtils.dateToUIDate(status.getEndDate(), getResources().getConfiguration().locale));
         fragmentView.findViewById(R.id.from_container).setVisibility(View.VISIBLE);
         fragmentView.findViewById(R.id.to_container).setVisibility(View.VISIBLE);
         if (!StringUtils.isEmpty(status.getUrl())) {

@@ -44,7 +44,7 @@
 
     <!-- Status list activity -->
     <string name="status_list_activity_title">Events and chats</string>
-    <string name="status_list_by_category">По категории</string>
+    <string name="status_list_by_date">По дате</string>
     <string name="status_list_by_alphabet">По алфавиту</string>
 
 </resources>

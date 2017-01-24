@@ -17,6 +17,7 @@ import android.widget.ToggleButton;
 import com.wigo.android.R;
 import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.server.dto.StatusSmallDto;
+import com.wigo.android.core.utils.DateUtils;
 import com.wigo.android.ui.elements.CategoriesProvider;
 
 import java.util.Collections;
@@ -34,7 +35,7 @@ public class StatusListActivity extends Activity {
 
     private ListView statusesList;
     private List<StatusSmallDto> statuses;
-    private ToggleButton byCategory, byAlph;
+    private ToggleButton byDate, byAlph;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +47,7 @@ public class StatusListActivity extends Activity {
         Collections.sort(statuses, new Comparator<StatusSmallDto>() {
             @Override
             public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
-                return lhs.getName().compareTo(rhs.getName());
+                return lhs.getStartDate().compareTo(rhs.getStartDate());
             }
         });
 
@@ -60,15 +61,15 @@ public class StatusListActivity extends Activity {
             }
         });
 
-        byCategory = (ToggleButton) findViewById(R.id.list_by_сategory);
+        byDate = (ToggleButton) findViewById(R.id.list_by_date);
         byAlph = (ToggleButton) findViewById(R.id.list_by_alphabet);
-        byCategory.setChecked(true);
+        byDate.setChecked(true);
         byAlph.setChecked(false);
         sortList();
-        byCategory.setOnClickListener(new View.OnClickListener() {
+        byDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                byCategory.setChecked(true);
+                byDate.setChecked(true);
                 byAlph.setChecked(false);
                 sortList();
             }
@@ -77,23 +78,18 @@ public class StatusListActivity extends Activity {
             @Override
             public void onClick(View v) {
                 byAlph.setChecked(true);
-                byCategory.setChecked(false);
+                byDate.setChecked(false);
                 sortList();
             }
         });
     }
 
     private void sortList() {
-        if (byCategory.isChecked()) {
+        if (byDate.isChecked()) {
             Collections.sort(statuses, new Comparator<StatusSmallDto>() {
                 @Override
                 public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
-                    int temp = lhs.getCategory().compareTo(rhs.getCategory());
-                    if (temp == 0) {
-                        return lhs.getName().replaceAll("\\s+","").compareToIgnoreCase(rhs.getName().replaceAll("\\s+",""));
-                    } else {
-                        return temp;
-                    }
+                    return lhs.getStartDate().compareTo(rhs.getStartDate());
                 }
             });
         }
@@ -101,7 +97,7 @@ public class StatusListActivity extends Activity {
             Collections.sort(statuses, new Comparator<StatusSmallDto>() {
                 @Override
                 public int compare(StatusSmallDto lhs, StatusSmallDto rhs) {
-                    return lhs.getName().replaceAll("\\s+","").compareToIgnoreCase(rhs.getName().replaceAll("\\s+",""));
+                    return lhs.getName().replaceAll("\\s+", "").compareToIgnoreCase(rhs.getName().replaceAll("\\s+", ""));
                 }
             });
         }
@@ -140,7 +136,7 @@ public class StatusListActivity extends Activity {
             if (convertView == null) {
                 view = lInflater.inflate(R.layout.status_list_item, parent, false);
             }
-            ((TextView) view.findViewById(R.id.status_item_text)).setText(statuses.get(position).getName());
+            ((TextView) view.findViewById(R.id.status_item_text)).setText(statuses.get(position).getName() + " " + DateUtils.dateToUIDate(statuses.get(position).getStartDate(),getResources().getConfiguration().locale));
             ((ImageView) view.findViewById(R.id.status_item_image_view)).setImageBitmap(CategoriesProvider.getMapOfCategoiesAndBitmaps().get(statuses.get(position).getCategory()));
             convertView = view;
             return convertView;

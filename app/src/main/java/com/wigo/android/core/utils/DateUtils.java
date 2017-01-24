@@ -5,6 +5,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 /**
@@ -31,5 +32,11 @@ public class DateUtils {
         TimeZone tz = TimeZone.getTimeZone("UTC");
         DATE_FORMAT.setTimeZone(tz);
         return DATE_FORMAT.format(date);
+    }
+
+    public static String dateToUIDate(Date date, Locale locale) {
+        DateFormat df = DateFormat.getDateInstance(DateFormat.DEFAULT, locale);
+        DateFormat time = new SimpleDateFormat("HH:mm");
+        return time.format(date) + " " + df.format(date);
     }
 }
