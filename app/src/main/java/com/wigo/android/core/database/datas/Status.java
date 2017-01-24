@@ -266,7 +266,7 @@ public class Status extends DBStorable {
     }
 
     public StatusCategory getCategory() {
-        StatusCategory cat = StatusCategory.valueOf(category);
+        StatusCategory cat = StatusCategory.valueOf(category.toUpperCase());
         if(cat!=null) return cat;
         return StatusCategory.OTHER;
     }
