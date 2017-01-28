@@ -71,8 +71,8 @@ public class CategoriesProvider {
         imagesBitmaps.put("MUSIC_EVENT", R.mipmap.music_event);
         imagesBitmaps.put("WORKSHOP", R.mipmap.workshop);
         imagesBitmaps.put("CHAT", R.mipmap.chat);
-        imagesBitmaps.put("CELEBRATION", R.mipmap.chat);
-        imagesBitmaps.put("ACTIVITY", R.mipmap.chat);
+        imagesBitmaps.put("CELEBRATION", R.mipmap.celebration);
+        imagesBitmaps.put("ACTIVITY", R.mipmap.activity);
         imagesBitmaps.put(OTHER, R.mipmap.other);
         resourcesMap = imagesBitmaps;
         return imagesBitmaps;

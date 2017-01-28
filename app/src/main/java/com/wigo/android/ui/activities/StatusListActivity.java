@@ -136,7 +136,11 @@ public class StatusListActivity extends Activity {
             if (convertView == null) {
                 view = lInflater.inflate(R.layout.status_list_item, parent, false);
             }
-            ((TextView) view.findViewById(R.id.status_item_text)).setText(statuses.get(position).getName() + " " + DateUtils.dateToUIDate(statuses.get(position).getStartDate(),getResources().getConfiguration().locale));
+            if (byDate.isChecked()) {
+                ((TextView) view.findViewById(R.id.status_item_text)).setText(DateUtils.dateToUIDate(statuses.get(position).getStartDate(), getResources().getConfiguration().locale) + " " + statuses.get(position).getName());
+            } else {
+                ((TextView) view.findViewById(R.id.status_item_text)).setText(statuses.get(position).getName() + " " + DateUtils.dateToUIDate(statuses.get(position).getStartDate(), getResources().getConfiguration().locale));
+            }
             ((ImageView) view.findViewById(R.id.status_item_image_view)).setImageBitmap(CategoriesProvider.getMapOfCategoiesAndBitmaps().get(statuses.get(position).getCategory()));
             convertView = view;
             return convertView;
