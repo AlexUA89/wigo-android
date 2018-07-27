@@ -1,5 +1,5 @@
 <resources>
-    <string name="server_url">http://wigo.ml</string>
+    <string name="server_url">http://54.37.10.104:8080</string>
 
     <string name="app_name">WIGO</string>
     <string name="save_database_to_sd">Save database to SD card (for dev)</string>

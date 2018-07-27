@@ -1,16 +1,13 @@
 package com.wigo.android.ui.fragments;
 
-import android.Manifest;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -27,6 +24,7 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.CameraPosition;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
 import com.google.maps.android.clustering.Cluster;
@@ -241,21 +239,17 @@ public class MapFragment extends Fragment implements ClusterManager.OnClusterCli
         //define my last location
         LocationManager mLocationManager = (LocationManager) ContextProvider.getAppContext().getSystemService(Context.LOCATION_SERVICE);
         Criteria criteria = new Criteria();
-        String provider = mLocationManager.getBestProvider(criteria, true);
+        String provider = mLocationManager.getBestProvider(criteria, false);
         LatLng location;
-        if (ActivityCompat.checkSelfPermission(ContextProvider.getAppContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
-                ActivityCompat.checkSelfPermission(ContextProvider.getAppContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+        Location l = mLocationManager.getLastKnownLocation(provider);
+        if (l == null) {
             location = KIEV;
         } else {
-            Location l = mLocationManager.getLastKnownLocation(provider);
-            if (l == null) {
-                location = KIEV;
-            } else {
-                location = new LatLng(l.getLatitude(), l.getLongitude());
-            }
-            mMap.setMyLocationEnabled(true);
+            location = new LatLng(l.getLatitude(), l.getLongitude());
         }
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(location));
+        mMap.setMyLocationEnabled(true);
+
+        mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(location, 15));
 
         CameraUpdate zoom = CameraUpdateFactory.zoomTo(DEFAULT_ZOOM);
         googleMap.moveCamera(zoom);
