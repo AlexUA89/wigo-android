@@ -83,4 +83,16 @@ public class StatusSmallDto implements Dto, ClusterItem {
         return new LatLng(latitude, longitude);
     }
 
+    @JsonIgnore
+    @Override
+    public String getTitle() {
+        return name;
+    }
+
+    @JsonIgnore
+    @Override
+    public String getSnippet() {
+        return name + " " + startDate + " " + endDate;
+    }
+
 }
