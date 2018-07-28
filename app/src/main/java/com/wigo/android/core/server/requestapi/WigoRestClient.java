@@ -9,7 +9,6 @@ import com.wigo.android.core.ContextProvider;
 import com.wigo.android.core.preferences.SharedPrefHelper;
 import com.wigo.android.core.server.dto.FaceBookUserInfoDto;
 import com.wigo.android.core.server.dto.MessageDto;
-import com.wigo.android.core.server.dto.StatusCategory;
 import com.wigo.android.core.server.dto.StatusDto;
 import com.wigo.android.core.server.dto.StatusSmallDto;
 import com.wigo.android.core.server.dto.WigoUserInfoResponseDto;
@@ -221,7 +220,7 @@ public class WigoRestClient {
 
     public StatusDto createNewChat(StatusDto statusDto) throws WigoException {
         Objects.requireNonNull(statusDto);
-        statusDto.setCategory(StatusCategory.CHAT);
+//        statusDto.setCategory(StatusCategory.CHAT);
         String serverUrl = ContextProvider.getAppContext().getString(R.string.server_url);
         String requestUrl = serverUrl + "/api/status/";
         HttpEntity<StatusDto> request = new HttpEntity(statusDto, getHeaders());
