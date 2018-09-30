@@ -12,6 +12,7 @@ import com.wigo.android.core.server.requestapi.WigoRestClient;
 import org.acra.ACRA;
 import org.acra.ReportingInteractionMode;
 import org.acra.annotation.ReportsCrashes;
+import org.springframework.http.HttpMethod;
 
 /**
  * Created with IntelliJ IDEA.
@@ -31,6 +32,8 @@ public class ContextProvider extends Application {
     private static WigoObjectMapper objectMapper;
 
     private static WigoRestClient wigoRestClient;
+
+    private static HttpMethod GET = HttpMethod.valueOf("GET");
 
     @Override
     public void onCreate() {
